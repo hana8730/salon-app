@@ -146,9 +146,12 @@
     .time-col { flex: 0 0 42px; }
     .time-header-cell { height: 36px; }
     .time-label {
-      height: 60px; font-size: .72rem; color: var(--sub);
+      height: 30px; font-size: .72rem; color: var(--sub);
       display: flex; align-items: flex-start; justify-content: flex-end;
-      padding: 4px 6px 0 0;
+      padding: 3px 6px 0 0;
+    }
+    .time-label.half-hour {
+      height: 30px; border-bottom: 1px dashed rgba(180,165,200,.25);
     }
 
     /* Day column */
@@ -711,10 +714,13 @@ function renderCalendar() {
 
   if (!timeCol.querySelector('.time-label')) {
     for (let h = HOUR_START; h < HOUR_END; h++) {
-      const el = document.createElement('div');
-      el.className = 'time-label';
-      el.textContent = `${h}:00`;
-      timeCol.appendChild(el);
+      const el1 = document.createElement('div');
+      el1.className = 'time-label';
+      el1.textContent = `${h}:00`;
+      timeCol.appendChild(el1);
+      const el2 = document.createElement('div');
+      el2.className = 'time-label half-hour';
+      timeCol.appendChild(el2);
     }
   }
 
@@ -763,15 +769,18 @@ function renderCalendar() {
       slots.appendChild(overlay);
     }
 
-    // Background hour cells
+    // Background cells — 30分単位で独立したクリック枠
     for (let h = HOUR_START; h < HOUR_END; h++) {
-      const cell = document.createElement('div');
-      const tv   = `${pad(h)}:00`;
-      const open = isOpenSlot(ds, tv);
-      cell.className = 'hour-slot' + (open ? '' : ' closed');
-      cell.style.cssText = `position:absolute;top:${(h-HOUR_START)*SLOT_PX}px;left:0;right:0;height:${SLOT_PX}px`;
-      if (open) cell.addEventListener('click', () => openNewRes(ds, tv));
-      slots.appendChild(cell);
+      for (const m of [0, 30]) {
+        const cell  = document.createElement('div');
+        const tv    = `${pad(h)}:${pad(m)}`;
+        const open  = isOpenSlot(ds, tv);
+        const topPx = ((h - HOUR_START) * 60 + m) / 60 * SLOT_PX;
+        cell.className = 'hour-slot' + (open ? '' : ' closed');
+        cell.style.cssText = `position:absolute;top:${topPx}px;left:0;right:0;height:${SLOT_PX/2}px`;
+        if (open) cell.addEventListener('click', () => openNewRes(ds, tv));
+        slots.appendChild(cell);
+      }
     }
 
     // Gather day reservations
@@ -842,17 +851,16 @@ function renderCalendar() {
       }
     });
 
-    // SalonBoard blocks
+    // SalonBoard blocks — 30分（1スロット）単位で表示、クリック透過
     getSBReservations().filter(r => r.date === ds).forEach(res => {
       const [h,m] = res.time.split(':').map(Number);
       const startMin = h*60+m;
-      const dur      = res.duration || SB_DEFAULT_DURATION;
       const topPx    = ((startMin - HOUR_START*60) / 60) * SLOT_PX;
-      const heightPx = Math.max((dur/60)*SLOT_PX-2, 22);
+      const heightPx = SLOT_PX / 2 - 1; // 1スロット（30分）分の高さ
 
       const block = document.createElement('div');
       block.className = 'sb-block';
-      block.style.cssText = `top:${topPx}px;height:${heightPx}px;left:3px;right:3px;`;
+      block.style.cssText = `top:${topPx}px;height:${heightPx}px;left:3px;right:3px;pointer-events:none;`;
       block.innerHTML = `<span class="sb-tag">SB</span> 予約済み`;
       slots.appendChild(block);
     });

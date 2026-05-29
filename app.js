@@ -140,10 +140,13 @@ function loadDB() {
     { id: 3, name: '田中 美咲', color: '#6DBF82' },
   ];
   db.menus = [
-    { id: 1, name: 'カット',       duration: 30,  price: 0 },
-    { id: 2, name: 'カットカラー', duration: 90,  price: 0 },
-    { id: 3, name: '縮毛矯正',     duration: 120, price: 0 },
-    { id: 4, name: 'リタッチのみ', duration: 60,  price: 0 },
+    { id: 1, name: 'カット',              duration: 30,  price: 0 },
+    { id: 2, name: 'カットカラー',        duration: 90,  price: 0 },
+    { id: 3, name: '縮毛矯正',            duration: 120, price: 0 },
+    { id: 4, name: 'リタッチのみ',        duration: 60,  price: 0 },
+    { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
+    { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
+    { id: 7, name: '相談したい',          duration: 90,  price: 0 },
   ];
   const today = dateStr(new Date());
   db.reservations = [
@@ -166,6 +169,32 @@ function loadDB() {
       { date: d2, time: '18:30', customerName: '赤津 未来', reservationNo: 'BF03085526', stylist: '指名なし', menu: 'シルエットカット',          duration: 60, source: 'salonboard' },
     ]);
   }
+}
+
+// ─── Menu Migration ───────────────────────────────────────────────────────────
+// 新しいメニューが既存データに未登録なら追加する
+const BUILTIN_MENUS = [
+  { id: 1, name: 'カット',              duration: 30,  price: 0 },
+  { id: 2, name: 'カットカラー',        duration: 90,  price: 0 },
+  { id: 3, name: '縮毛矯正',            duration: 120, price: 0 },
+  { id: 4, name: 'リタッチのみ',        duration: 60,  price: 0 },
+  { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
+  { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
+  { id: 7, name: '相談したい',          duration: 90,  price: 0 },
+];
+
+function migrateMenus() {
+  let changed = false;
+  BUILTIN_MENUS.forEach(bm => {
+    const exists = db.menus.some(m => m.name === bm.name);
+    if (!exists) {
+      // IDが衝突しないよう安全なIDを割り当て
+      const newId = Math.max(0, ...db.menus.map(m => m.id)) + 1;
+      db.menus.push({ ...bm, id: newId });
+      changed = true;
+    }
+  });
+  if (changed) saveDB();
 }
 
 // Returns a date string N days from today (to make demo SB data visible in calendar)
@@ -826,6 +855,7 @@ window.openEditMenu  = openEditMenu;
 
 document.addEventListener('DOMContentLoaded', () => {
   loadDB();
+  migrateMenus();
   fetchSBSync().then(() => { updateSyncBadge(); render(); });
   updateSyncBadge();
 

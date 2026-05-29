@@ -513,13 +513,38 @@ function loadDB() {
     { id: 3, name: '田中 美咲', color: '#6DBF82' },
   ];
   db.menus = [
-    { id: 1, name: 'カット',       duration: 30,  price: 0 },
-    { id: 2, name: 'カットカラー', duration: 90,  price: 0 },
-    { id: 3, name: '縮毛矯正',     duration: 120, price: 0 },
-    { id: 4, name: 'リタッチのみ', duration: 60,  price: 0 },
+    { id: 1, name: 'カット',              duration: 30,  price: 0 },
+    { id: 2, name: 'カットカラー',        duration: 90,  price: 0 },
+    { id: 3, name: '縮毛矯正',            duration: 120, price: 0 },
+    { id: 4, name: 'リタッチのみ',        duration: 60,  price: 0 },
+    { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
+    { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
+    { id: 7, name: '相談したい',          duration: 90,  price: 0 },
   ];
   db.reservations = [];
   saveDB();
+}
+
+const BUILTIN_MENUS_C = [
+  { id: 1, name: 'カット',              duration: 30,  price: 0 },
+  { id: 2, name: 'カットカラー',        duration: 90,  price: 0 },
+  { id: 3, name: '縮毛矯正',            duration: 120, price: 0 },
+  { id: 4, name: 'リタッチのみ',        duration: 60,  price: 0 },
+  { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
+  { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
+  { id: 7, name: '相談したい',          duration: 90,  price: 0 },
+];
+
+function migrateMenus() {
+  let changed = false;
+  BUILTIN_MENUS_C.forEach(bm => {
+    if (!db.menus.some(m => m.name === bm.name)) {
+      const newId = Math.max(0, ...db.menus.map(m => m.id)) + 1;
+      db.menus.push({ ...bm, id: newId });
+      changed = true;
+    }
+  });
+  if (changed) saveDB();
 }
 
 function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
@@ -624,6 +649,7 @@ function showApp() {
   document.getElementById('app-screen').style.display   = 'flex';
   document.getElementById('user-badge').textContent = currentUser.name + ' さん';
   loadDB();
+  migrateMenus();
   updateSyncBadge();
   renderAll();
 }

@@ -140,14 +140,18 @@ function loadDB() {
     { id: 3, name: '田中 美咲', color: '#6DBF82' },
   ];
   db.menus = [
-    { id: 1, name: 'カット',              duration: 30,  price: 0 },
-    { id: 2, name: 'カットカラー',        duration: 90,  price: 0 },
-    { id: 3, name: '縮毛矯正',            duration: 120, price: 0 },
-    { id: 4, name: 'リタッチのみ',        duration: 60,  price: 0 },
-    { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
-    { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
-    { id: 7, name: '相談したい',          duration: 90,  price: 0 },
-    { id: 8, name: 'ヘナ＋カット',        duration: 90,  price: 0 },
+    { id:  1, name: 'シルエットカット',          duration:  30, price: 0 },
+    { id:  2, name: 'カットカラー',              duration:  90, price: 0 },
+    { id:  3, name: '縮毛矯正',                  duration: 120, price: 0 },
+    { id:  4, name: 'リタッチのみ',              duration:  60, price: 0 },
+    { id:  5, name: 'カット＋シャンプー',        duration:  30, price: 0 },
+    { id:  6, name: 'カット＋ブロー',            duration:  30, price: 0 },
+    { id:  7, name: '相談したい',                duration:  90, price: 0 },
+    { id:  8, name: 'ヘナ＋カット',              duration:  90, price: 0 },
+    { id:  9, name: 'カット＋パーマ',            duration:  90, price: 0 },
+    { id: 10, name: 'カット＋デジタルパーマ',    duration:  90, price: 0 },
+    { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
+    { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
   ];
   const today = dateStr(new Date());
   db.reservations = [
@@ -175,22 +179,28 @@ function loadDB() {
 // ─── Menu Migration ───────────────────────────────────────────────────────────
 // 新しいメニューが既存データに未登録なら追加する
 const BUILTIN_MENUS = [
-  { id: 1, name: 'カット',              duration: 30,  price: 0 },
-  { id: 2, name: 'カットカラー',        duration: 90,  price: 0 },
-  { id: 3, name: '縮毛矯正',            duration: 120, price: 0 },
-  { id: 4, name: 'リタッチのみ',        duration: 60,  price: 0 },
-  { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
-  { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
-  { id: 7, name: '相談したい',          duration: 90,  price: 0 },
-  { id: 8, name: 'ヘナ＋カット',        duration: 90,  price: 0 },
+  { id:  1, name: 'シルエットカット',          duration:  30, price: 0 },
+  { id:  2, name: 'カットカラー',              duration:  90, price: 0 },
+  { id:  3, name: '縮毛矯正',                  duration: 120, price: 0 },
+  { id:  4, name: 'リタッチのみ',              duration:  60, price: 0 },
+  { id:  5, name: 'カット＋シャンプー',        duration:  30, price: 0 },
+  { id:  6, name: 'カット＋ブロー',            duration:  30, price: 0 },
+  { id:  7, name: '相談したい',                duration:  90, price: 0 },
+  { id:  8, name: 'ヘナ＋カット',              duration:  90, price: 0 },
+  { id:  9, name: 'カット＋パーマ',            duration:  90, price: 0 },
+  { id: 10, name: 'カット＋デジタルパーマ',    duration:  90, price: 0 },
+  { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
+  { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
 ];
 
 function migrateMenus() {
   let changed = false;
+  // 「カット」→「シルエットカット」リネーム
+  const oldCut = db.menus.find(m => m.name === 'カット');
+  if (oldCut) { oldCut.name = 'シルエットカット'; changed = true; }
+  // 新規メニューの追加
   BUILTIN_MENUS.forEach(bm => {
-    const exists = db.menus.some(m => m.name === bm.name);
-    if (!exists) {
-      // IDが衝突しないよう安全なIDを割り当て
+    if (!db.menus.some(m => m.name === bm.name)) {
       const newId = Math.max(0, ...db.menus.map(m => m.id)) + 1;
       db.menus.push({ ...bm, id: newId });
       changed = true;

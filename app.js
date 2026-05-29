@@ -147,6 +147,7 @@ function loadDB() {
     { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
     { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
     { id: 7, name: '相談したい',          duration: 90,  price: 0 },
+    { id: 8, name: 'ヘナ＋カット',        duration: 90,  price: 0 },
   ];
   const today = dateStr(new Date());
   db.reservations = [
@@ -181,6 +182,7 @@ const BUILTIN_MENUS = [
   { id: 5, name: 'カット＋シャンプー',  duration: 30,  price: 0 },
   { id: 6, name: 'カット＋ブロー',      duration: 30,  price: 0 },
   { id: 7, name: '相談したい',          duration: 90,  price: 0 },
+  { id: 8, name: 'ヘナ＋カット',        duration: 90,  price: 0 },
 ];
 
 function migrateMenus() {

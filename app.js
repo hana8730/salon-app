@@ -90,7 +90,7 @@ function checkConflicts(newRes) {
 let db = { staff: [], menus: [], reservations: [] };
 
 function loadDB() {
-  const raw = localStorage.getItem('salonboard_v2');
+  const raw = localStorage.getItem('salonboard_v3');
   if (raw) { db = JSON.parse(raw); return; }
 
   // seed data
@@ -100,19 +100,17 @@ function loadDB() {
     { id: 3, name: '田中 美咲', color: '#6DBF82' },
   ];
   db.menus = [
-    { id: 1, name: 'カット',          duration: 60,  price: 5000  },
-    { id: 2, name: 'カラー',          duration: 90,  price: 9000  },
-    { id: 3, name: 'パーマ',          duration: 120, price: 12000 },
-    { id: 4, name: 'トリートメント', duration: 30,  price: 3000  },
-    { id: 5, name: 'カット＋カラー', duration: 150, price: 13000 },
+    { id: 1, name: 'カット',       duration: 30,  price: 0 },
+    { id: 2, name: 'カットカラー', duration: 90,  price: 0 },
+    { id: 3, name: '縮毛矯正',     duration: 120, price: 0 },
+    { id: 4, name: 'リタッチのみ', duration: 60,  price: 0 },
   ];
   const today = dateStr(new Date());
   db.reservations = [
     { id:1, date:today, time:'10:00', customerName:'佐藤 由美',   phone:'090-1234-5678', staffId:1, menuId:1, notes:'' },
-    { id:2, date:today, time:'11:30', customerName:'伊藤 めぐみ', phone:'080-9876-5432', staffId:2, menuId:2, notes:'アレルギーあり' },
-    { id:3, date:today, time:'14:00', customerName:'渡辺 あおい', phone:'',              staffId:3, menuId:3, notes:'' },
-    { id:4, date:today, time:'10:00', customerName:'小林 はな',   phone:'090-3333-4444', staffId:2, menuId:4, notes:'' },
-    { id:5, date:today, time:'13:00', customerName:'松本 ゆり',   phone:'',              staffId:1, menuId:5, notes:'' },
+    { id:2, date:today, time:'10:30', customerName:'伊藤 めぐみ', phone:'080-9876-5432', staffId:2, menuId:2, notes:'' },
+    { id:3, date:today, time:'13:00', customerName:'渡辺 あおい', phone:'',              staffId:1, menuId:3, notes:'' },
+    { id:4, date:today, time:'11:00', customerName:'小林 はな',   phone:'090-3333-4444', staffId:2, menuId:4, notes:'' },
   ];
   saveDB();
 
@@ -138,7 +136,7 @@ function nextWeekday(offsetDays) {
 }
 
 function saveDB() {
-  localStorage.setItem('salonboard_v2', JSON.stringify(db));
+  localStorage.setItem('salonboard_v3', JSON.stringify(db));
 }
 
 function nextId(arr) {

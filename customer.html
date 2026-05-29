@@ -79,6 +79,20 @@
     }
     .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
 
+    /* ── SB Sync Badge ────────────────────────────── */
+    .sb-sync-badge {
+      display: flex; align-items: center; gap: 5px;
+      font-size: .75rem; color: var(--sub);
+      background: #F3EEF7; border: 1px solid var(--border);
+      border-radius: 20px; padding: 4px 10px;
+      white-space: nowrap;
+    }
+    .sb-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #ccc; flex: 0 0 7px;
+    }
+    .sb-dot.synced { background: #4CAF50; }
+
     /* ── Nav Tabs ─────────────────────────────────── */
     .c-nav {
       background: var(--surface); border-bottom: 1px solid var(--border);
@@ -323,6 +337,10 @@
     <div class="c-header-left">
       <div class="c-logo">✂ サロン予約</div>
       <div class="c-user-badge" id="user-badge"></div>
+      <div class="sb-sync-badge" id="sb-sync-badge">
+        <span class="sb-dot" id="sb-dot"></span>
+        <span id="sb-sync-label">SB未同期</span>
+      </div>
     </div>
     <button class="btn-logout" id="logout-btn">ログアウト</button>
   </header>
@@ -465,6 +483,23 @@ function getSBReservations() {
   return JSON.parse(localStorage.getItem(SB_KEY) || '[]');
 }
 
+function updateSyncBadge() {
+  const dot   = document.getElementById('sb-dot');
+  const label = document.getElementById('sb-sync-label');
+  if (!dot || !label) return;
+  const t    = localStorage.getItem('salonboard_sync_time');
+  const list = getSBReservations();
+  if (!t || !list.length) {
+    dot.className = 'sb-dot';
+    label.textContent = 'SB未同期';
+  } else {
+    const d = new Date(t);
+    const hhmm = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    dot.className = 'sb-dot synced';
+    label.textContent = `SB同期済 ${d.getMonth()+1}/${d.getDate()} ${hhmm}（${list.length}件）`;
+  }
+}
+
 function getStaff(id) { return db.staff.find(s => s.id === +id); }
 function getMenu(id)  { return db.menus.find(m => m.id === +id); }
 function nextId(arr)  { return arr.length ? Math.max(...arr.map(x=>x.id))+1 : 1; }
@@ -529,6 +564,7 @@ function showApp() {
   document.getElementById('app-screen').style.display   = 'flex';
   document.getElementById('user-badge').textContent = currentUser.name + ' さん';
   loadDB();
+  updateSyncBadge();
   renderAll();
 }
 
@@ -1028,6 +1064,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('res-modal').addEventListener('click', e => {
     if (e.target === document.getElementById('res-modal'))
       closeModal('res-modal');
+  });
+
+  // ── Auto-refresh when admin syncs SalonBoard (cross-tab localStorage event)
+  window.addEventListener('storage', e => {
+    if (e.key === SB_KEY || e.key === DB_KEY) {
+      loadDB();
+      updateSyncBadge();
+      render();
+    }
   });
 
   // ── Restore session or show login

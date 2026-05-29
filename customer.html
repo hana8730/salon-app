@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ご予約 | サロン</title>
+  <style>
+    /* ── Variables ────────────────────────────────── */
+    :root {
+      --primary:   #C75B8A;
+      --primary-h: #b04a77;
+      --accent:    #F4845F;
+      --bg:        #F7F4F9;
+      --surface:   #FFFFFF;
+      --border:    #E6DEF0;
+      --text:      #2D1F33;
+      --sub:       #7A6B82;
+      --danger:    #D9534F;
+      --own-color: #C75B8A;
+      --slot-h:    60px;
+      --hour-start: 9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ── Login Screen ─────────────────────────────── */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
+    }
+    .login-card {
+      background: var(--surface); border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(199,91,138,.15);
+      padding: 40px 36px; width: 100%; max-width: 400px;
+    }
+    .login-logo { font-size: 1.6rem; font-weight: 700; color: var(--primary); text-align: center; margin-bottom: 8px; }
+    .login-sub  { text-align: center; color: var(--sub); font-size: .9rem; margin-bottom: 32px; }
+    .login-card label { display: block; font-size: .85rem; font-weight: 600; color: var(--sub); margin-bottom: 6px; margin-top: 20px; }
+    .login-card input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 1rem; outline: none;
+      transition: border-color .2s;
+    }
+    .login-card input:focus { border-color: var(--primary); }
+    .btn-login {
+      margin-top: 28px; width: 100%; padding: 14px;
+      background: var(--primary); color: #fff; border: none;
+      border-radius: 8px; font-size: 1.05rem; font-weight: 600;
+      cursor: pointer; transition: background .2s;
+    }
+    .btn-login:hover { background: var(--primary-h); }
+    .login-error {
+      margin-top: 14px; color: var(--danger); font-size: .88rem;
+      text-align: center; display: none;
+    }
+
+    /* ── App (post-login) ─────────────────────────── */
+    #app-screen { display: none; flex-direction: column; min-height: 100vh; }
+
+    /* ── Header ───────────────────────────────────── */
+    .c-header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 16px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .c-header-left { display: flex; align-items: center; gap: 14px; }
+    .c-logo { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+    .c-user-badge {
+      font-size: .8rem; background: #F9EEF5;
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 4px 12px; color: var(--primary); font-weight: 600;
+    }
+    .btn-logout {
+      font-size: .8rem; padding: 6px 14px; border-radius: 20px;
+      border: 1.5px solid var(--border); background: transparent;
+      color: var(--sub); cursor: pointer; transition: all .2s;
+    }
+    .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ── Nav Tabs ─────────────────────────────────── */
+    .c-nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; gap: 4px; padding: 0 16px;
+    }
+    .c-tab {
+      padding: 10px 20px; font-size: .9rem; font-weight: 600;
+      border: none; background: transparent; cursor: pointer;
+      color: var(--sub); border-bottom: 2.5px solid transparent;
+      transition: all .18s;
+    }
+    .c-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    /* ── Views ────────────────────────────────────── */
+    .c-view { display: none; flex: 1; }
+    .c-view.active { display: block; }
+
+    /* ── Calendar ─────────────────────────────────── */
+    .cal-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .cal-header h2 { font-size: 1rem; font-weight: 600; flex: 1; text-align: center; }
+    .nav-arrow {
+      width: 32px; height: 32px; border: 1.5px solid var(--border);
+      border-radius: 8px; background: transparent; cursor: pointer;
+      font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+      transition: all .18s;
+    }
+    .nav-arrow:hover { border-color: var(--primary); color: var(--primary); }
+    .today-btn {
+      padding: 6px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; background: transparent; cursor: pointer;
+      font-size: .85rem; font-weight: 600; transition: all .18s;
+    }
+    .today-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .view-switcher { display: flex; gap: 4px; }
+    .view-btn {
+      padding: 4px 12px; border: 1.5px solid var(--border);
+      border-radius: 6px; background: transparent; cursor: pointer;
+      font-size: .82rem; transition: all .18s;
+    }
+    .view-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Calendar scroll wrapper */
+    .cal-scroll { overflow-x: auto; }
+    .cal-container { display: flex; min-width: 0; }
+
+    /* Time column */
+    .time-col { flex: 0 0 42px; }
+    .time-header-cell { height: 36px; }
+    .time-label {
+      height: 60px; font-size: .72rem; color: var(--sub);
+      display: flex; align-items: flex-start; justify-content: flex-end;
+      padding: 4px 6px 0 0;
+    }
+
+    /* Day column */
+    .day-col { flex: 1 1 0; min-width: 80px; border-left: 1px solid var(--border); }
+    .day-col-header {
+      height: 36px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-size: .78rem; border-bottom: 1px solid var(--border);
+      background: var(--surface); position: sticky; top: 56px;
+    }
+    .day-col-header.is-today { background: #FDF0F7; }
+    .day-weekname { font-size: .7rem; color: var(--sub); }
+    .day-weekname.sat { color: #4A90D9; }
+    .day-weekname.sun { color: var(--danger); }
+    .day-daynum { font-size: .95rem; font-weight: 700; }
+    .day-col-header.is-today .day-daynum { color: var(--primary); }
+
+    .day-slots { position: relative; }
+    .hour-slot {
+      position: absolute; left: 0; right: 0;
+      border-bottom: 1px solid #F0EAF6;
+      cursor: pointer; transition: background .15s;
+    }
+    .hour-slot:hover { background: #FDF0F7; }
+
+    /* Reservation block */
+    .res-block {
+      position: absolute; border-radius: 6px;
+      border-left: 3.5px solid; padding: 4px 6px;
+      font-size: .72rem; overflow: hidden; cursor: pointer;
+      transition: filter .15s;
+    }
+    .res-block:hover { filter: brightness(.92); }
+    .rb-label { font-weight: 700; line-height: 1.3; }
+    .rb-time  { color: inherit; opacity: .75; font-size: .68rem; margin-top: 2px; }
+    .rb-own-badge {
+      display: inline-block; font-size: .62rem;
+      background: var(--primary); color: #fff;
+      border-radius: 4px; padding: 0 4px; margin-bottom: 2px;
+    }
+
+    /* "Booked" block (others) */
+    .booked-block {
+      position: absolute; border-radius: 5px; padding: 3px 6px;
+      background: #F0EAF6; border-left: 3px solid #D0B8E0;
+      font-size: .7rem; color: #8B6FA8; overflow: hidden;
+      pointer-events: none;
+    }
+    .booked-label { font-weight: 600; }
+
+    /* SalonBoard block */
+    .sb-block {
+      position: absolute; border-radius: 5px; padding: 3px 6px;
+      background: repeating-linear-gradient(45deg,rgba(120,120,140,.08),rgba(120,120,140,.08) 4px,transparent 4px,transparent 10px);
+      border: 1.5px dashed #9E9EBB; font-size: .7rem; color: #6B6B8A;
+      overflow: hidden; pointer-events: none;
+    }
+    .sb-tag {
+      display: inline-block; font-size: .6rem; font-weight: 700;
+      background: #9E9EBB; color: #fff; border-radius: 3px;
+      padding: 0 4px; margin-right: 3px;
+    }
+
+    /* ── My Reservations ──────────────────────────── */
+    .my-res-header { padding: 16px 20px; }
+    .my-res-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .my-res-empty {
+      text-align: center; padding: 60px 20px; color: var(--sub);
+    }
+    .my-res-empty .es-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .my-res-card {
+      margin: 0 16px 10px; border-radius: 12px;
+      background: var(--surface); border: 1.5px solid var(--border);
+      padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+      cursor: pointer; transition: all .18s;
+    }
+    .my-res-card:hover { border-color: var(--primary); box-shadow: 0 2px 12px rgba(199,91,138,.12); }
+    .mrc-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; background: var(--primary); }
+    .mrc-body { flex: 1; min-width: 0; }
+    .mrc-name { font-weight: 700; font-size: .95rem; }
+    .mrc-sub  { font-size: .8rem; color: var(--sub); margin-top: 2px; }
+    .mrc-time { text-align: right; flex: 0 0 auto; }
+    .mrc-date { font-size: .78rem; color: var(--sub); }
+    .mrc-dur  { font-size: .82rem; font-weight: 600; margin-top: 2px; }
+    .past-badge {
+      font-size: .68rem; background: #EEE; color: #999;
+      border-radius: 4px; padding: 1px 6px; margin-left: 6px;
+    }
+
+    /* ── Floating Action Button ───────────────────── */
+    .fab {
+      position: fixed; bottom: 28px; right: 24px;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--primary); color: #fff; border: none;
+      font-size: 1.6rem; line-height: 1; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(199,91,138,.45);
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s; z-index: 200;
+    }
+    .fab:hover { background: var(--primary-h); transform: scale(1.07); }
+
+    /* ── Modal ────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 500; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border-radius: 16px;
+      width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 12px 40px rgba(0,0,0,.2);
+      animation: modal-in .18s ease;
+    }
+    @keyframes modal-in { from { transform: translateY(10px); opacity: 0; } }
+    .modal-header {
+      padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header h3 { font-size: 1.05rem; font-weight: 700; }
+    .modal-close {
+      width: 28px; height: 28px; border: none; background: #F0EAF6;
+      border-radius: 50%; font-size: 1rem; cursor: pointer; color: var(--sub);
+    }
+    .modal form { padding: 20px 24px 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--sub); margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: .95rem; outline: none; font-family: inherit;
+      transition: border-color .18s; background: var(--bg);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); background: #fff; }
+    .form-group input[readonly] { background: #F3EEF7; color: var(--sub); cursor: not-allowed; }
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+    .end-time-hint { font-size: .82rem; color: var(--primary); font-weight: 600; margin-bottom: 10px; min-height: 20px; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 10px 22px; background: var(--primary); color: #fff;
+      border: none; border-radius: 8px; font-size: .92rem; font-weight: 600;
+      cursor: pointer; transition: background .18s;
+    }
+    .btn-primary:hover { background: var(--primary-h); }
+    .btn-secondary {
+      padding: 10px 22px; background: transparent; color: var(--sub);
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: .92rem; font-weight: 600; cursor: pointer; transition: all .18s;
+    }
+    .btn-secondary:hover { border-color: var(--sub); }
+    .btn-danger {
+      padding: 10px 22px; background: transparent; color: var(--danger);
+      border: 1.5px solid var(--danger); border-radius: 8px;
+      font-size: .92rem; font-weight: 600; cursor: pointer; transition: all .18s;
+    }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .conflict-warning {
+      background: #FFF3CD; border: 1.5px solid #FFC107; border-radius: 8px;
+      padding: 10px 14px; font-size: .82rem; margin-bottom: 12px;
+    }
+    .conflict-warning.hard { background: #FDECEA; border-color: var(--danger); }
+    .cw-title { font-weight: 700; margin-bottom: 4px; }
+    .cw-item  { margin-top: 2px; padding-left: 4px; }
+  </style>
+</head>
+<body>
+
+<!-- ===== Login Screen ===== -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">✂ サロン予約</div>
+    <div class="login-sub">お名前と電話番号でログインしてください</div>
+    <label>お名前 *</label>
+    <input type="text" id="login-name" placeholder="田中 花子" autocomplete="name">
+    <label>電話番号 *</label>
+    <input type="tel" id="login-phone" placeholder="090-0000-0000" autocomplete="tel">
+    <button class="btn-login" id="login-btn">ログイン</button>
+    <div class="login-error" id="login-error">お名前と電話番号を入力してください</div>
+  </div>
+</div>
+
+<!-- ===== App Screen ===== -->
+<div id="app-screen">
+
+  <header class="c-header">
+    <div class="c-header-left">
+      <div class="c-logo">✂ サロン予約</div>
+      <div class="c-user-badge" id="user-badge"></div>
+    </div>
+    <button class="btn-logout" id="logout-btn">ログアウト</button>
+  </header>
+
+  <nav class="c-nav">
+    <button class="c-tab active" data-view="calendar">カレンダー</button>
+    <button class="c-tab" data-view="my-reservations">マイ予約</button>
+  </nav>
+
+  <!-- Calendar View -->
+  <div id="view-calendar" class="c-view active">
+    <div class="cal-header">
+      <button class="nav-arrow" id="c-prev">&#8249;</button>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <h2 id="c-period-title"></h2>
+        <div class="view-switcher">
+          <button class="view-btn active" data-cal-view="week">週</button>
+          <button class="view-btn" data-cal-view="day">日</button>
+        </div>
+      </div>
+      <button class="nav-arrow" id="c-next">&#8250;</button>
+      <button class="today-btn" id="c-today">今日</button>
+    </div>
+    <div class="cal-scroll">
+      <div class="cal-container">
+        <div class="time-col" id="c-time-col">
+          <div class="time-header-cell"></div>
+        </div>
+        <div id="c-cal-grid" style="display:flex;flex:1;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Reservations View -->
+  <div id="view-my-reservations" class="c-view">
+    <div class="my-res-header"><h2>マイ予約</h2></div>
+    <div id="my-res-list"></div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button class="fab" id="fab-btn" title="新規予約">＋</button>
+
+</div><!-- /#app-screen -->
+
+<!-- ===== Modal: Reservation ===== -->
+<div class="modal-overlay" id="res-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="res-modal-title">新規予約</h3>
+      <button class="modal-close" id="res-modal-close">×</button>
+    </div>
+    <form id="res-form">
+      <input type="hidden" id="res-id">
+      <div class="form-group">
+        <label>お客様名</label>
+        <input type="text" id="res-customer" readonly>
+      </div>
+      <div class="form-group">
+        <label>電話番号</label>
+        <input type="tel" id="res-phone" readonly>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>日付 *</label>
+          <input type="date" id="res-date" required>
+        </div>
+        <div class="form-group">
+          <label>開始時間 *</label>
+          <select id="res-time" required></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>スタッフ *</label>
+          <select id="res-staff" required>
+            <option value="">選択してください</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>メニュー *</label>
+          <select id="res-menu" required>
+            <option value="">選択してください</option>
+          </select>
+        </div>
+      </div>
+      <div id="res-endtime-hint" class="end-time-hint"></div>
+      <div id="res-conflict" class="conflict-warning" style="display:none"></div>
+      <div class="form-group">
+        <label>備考</label>
+        <textarea id="res-notes" rows="2" placeholder="アレルギー・特記事項など"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-danger" id="res-delete-btn" style="display:none">削除</button>
+        <button type="button" class="btn-secondary" id="res-cancel-btn">キャンセル</button>
+        <button type="submit" class="btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+const HOUR_START = 9;
+const HOUR_END   = 21;
+const SLOT_PX    = 60;
+const DAY_NAMES  = ['日','月','火','水','木','金','土'];
+const DB_KEY     = 'salonboard_v3';
+const SB_KEY     = 'salonboard_sync_v1';
+const SB_DEFAULT_DURATION = 60;
+const SESSION_KEY = 'salon_customer_session';
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+let db = { staff: [], menus: [], reservations: [] };
+let currentUser = null; // { name, phone }
+
+function loadDB() {
+  const raw = localStorage.getItem(DB_KEY);
+  if (raw) { db = JSON.parse(raw); return; }
+  // Seed so the customer page still works even if admin was never opened
+  db.staff = [
+    { id: 1, name: '山田 花子', color: '#E85D9A' },
+    { id: 2, name: '鈴木 さくら', color: '#5BB8D4' },
+    { id: 3, name: '田中 美咲', color: '#6DBF82' },
+  ];
+  db.menus = [
+    { id: 1, name: 'カット',       duration: 30,  price: 0 },
+    { id: 2, name: 'カットカラー', duration: 90,  price: 0 },
+    { id: 3, name: '縮毛矯正',     duration: 120, price: 0 },
+    { id: 4, name: 'リタッチのみ', duration: 60,  price: 0 },
+  ];
+  db.reservations = [];
+  saveDB();
+}
+
+function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+
+function getSBReservations() {
+  return JSON.parse(localStorage.getItem(SB_KEY) || '[]');
+}
+
+function getStaff(id) { return db.staff.find(s => s.id === +id); }
+function getMenu(id)  { return db.menus.find(m => m.id === +id); }
+function nextId(arr)  { return arr.length ? Math.max(...arr.map(x=>x.id))+1 : 1; }
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function dateStr(d) {
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function pad(n)    { return String(n).padStart(2,'0'); }
+function addMinutes(timeStr, mins) {
+  const [h,m] = timeStr.split(':').map(Number);
+  const t = h*60+m+mins;
+  return `${pad(Math.floor(t/60))}:${pad(t%60)}`;
+}
+function displayDate(str) {
+  const [y,m,d] = str.split('-');
+  return `${y}年${parseInt(m)}月${parseInt(d)}日`;
+}
+function timeToMin(t) {
+  const [h,m] = t.split(':').map(Number);
+  return h*60+m;
+}
+function overlaps(aS,aE,bS,bE) { return aS < bE && aE > bS; }
+function hexToRgba(hex, a) {
+  const n = parseInt(hex.replace('#',''),16);
+  return `rgba(${n>>16},${(n>>8)&0xff},${n&0xff},${a})`;
+}
+function darken(hex, amt) {
+  const n = parseInt(hex.replace('#',''),16);
+  const r = Math.max(0,(n>>16)-amt);
+  const g = Math.max(0,((n>>8)&0xff)-amt);
+  const b = Math.max(0,(n&0xff)-amt);
+  return `#${((r<<16)|(g<<8)|b).toString(16).padStart(6,'0')}`;
+}
+
+// ─── Session ──────────────────────────────────────────────────────────────────
+function isOwnReservation(res) {
+  if (!currentUser) return false;
+  return res.customerName === currentUser.name && res.phone === currentUser.phone;
+}
+
+function restoreSession() {
+  const raw = sessionStorage.getItem(SESSION_KEY);
+  if (!raw) return false;
+  currentUser = JSON.parse(raw);
+  return true;
+}
+
+function startSession(name, phone) {
+  currentUser = { name, phone };
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+}
+
+function endSession() {
+  currentUser = null;
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+// ─── Login ────────────────────────────────────────────────────────────────────
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display   = 'flex';
+  document.getElementById('user-badge').textContent = currentUser.name + ' さん';
+  loadDB();
+  renderAll();
+}
+
+function showLogin() {
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app-screen').style.display   = 'none';
+}
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentView = 'calendar';
+let calView     = 'week';
+let cursorDate  = new Date();
+let editResId   = null;
+
+// ─── View switching ───────────────────────────────────────────────────────────
+function switchView(name) {
+  currentView = name;
+  document.querySelectorAll('.c-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.c-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`view-${name}`).classList.add('active');
+  document.querySelector(`.c-tab[data-view="${name}"]`).classList.add('active');
+  render();
+}
+
+function renderAll() { render(); }
+function render() {
+  if (currentView === 'calendar') renderCalendar();
+  else renderMyResList();
+}
+
+// ─── Calendar ─────────────────────────────────────────────────────────────────
+function weekDates(base) {
+  const d   = new Date(base);
+  const dow = d.getDay();
+  d.setDate(d.getDate() - (dow === 0 ? 6 : dow - 1));
+  return Array.from({length:7}, (_,i) => { const x=new Date(d); x.setDate(d.getDate()+i); return x; });
+}
+
+function renderCalendar() {
+  const grid    = document.getElementById('c-cal-grid');
+  const timeCol = document.getElementById('c-time-col');
+  const title   = document.getElementById('c-period-title');
+  const todayS  = dateStr(new Date());
+
+  if (!timeCol.querySelector('.time-label')) {
+    for (let h = HOUR_START; h < HOUR_END; h++) {
+      const el = document.createElement('div');
+      el.className = 'time-label';
+      el.textContent = `${h}:00`;
+      timeCol.appendChild(el);
+    }
+  }
+
+  const dates = calView === 'week' ? weekDates(cursorDate) : [cursorDate];
+
+  if (calView === 'week') {
+    const s = dates[0], e = dates[6];
+    title.textContent = `${s.getFullYear()}年${s.getMonth()+1}月${s.getDate()}日 〜 ${e.getMonth()+1}月${e.getDate()}日`;
+  } else {
+    const d = cursorDate;
+    title.textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${DAY_NAMES[d.getDay()]}）`;
+  }
+
+  grid.innerHTML = '';
+
+  dates.forEach(date => {
+    const ds  = dateStr(date);
+    const col = document.createElement('div');
+    col.className = 'day-col';
+
+    const hdr = document.createElement('div');
+    const dow = date.getDay();
+    hdr.className = 'day-col-header' + (ds === todayS ? ' is-today' : '');
+    const wn = document.createElement('div');
+    wn.className = 'day-weekname' + (dow===0 ? ' sun' : dow===6 ? ' sat' : '');
+    wn.textContent = DAY_NAMES[dow];
+    const dn = document.createElement('div');
+    dn.className = 'day-daynum';
+    dn.textContent = date.getDate();
+    hdr.append(wn, dn);
+    col.appendChild(hdr);
+
+    const slots = document.createElement('div');
+    slots.className = 'day-slots';
+    const hours = HOUR_END - HOUR_START;
+    slots.style.cssText = `height:${hours*SLOT_PX}px;position:relative;`;
+
+    // Background hour cells (clickable to create)
+    for (let h = HOUR_START; h < HOUR_END; h++) {
+      const cell = document.createElement('div');
+      cell.className = 'hour-slot';
+      cell.style.cssText = `position:absolute;top:${(h-HOUR_START)*SLOT_PX}px;left:0;right:0;height:${SLOT_PX}px`;
+      const tv = `${pad(h)}:00`;
+      cell.addEventListener('click', () => openNewRes(ds, tv));
+      slots.appendChild(cell);
+    }
+
+    // Gather day reservations
+    const dayRes = db.reservations
+      .filter(r => r.date === ds)
+      .map(r => {
+        const [h,m] = r.time.split(':').map(Number);
+        const menu = getMenu(r.menuId);
+        return { ...r, startMin: h*60+m, endMin: h*60+m+(menu?.duration||60) };
+      })
+      .sort((a,b) => a.startMin - b.startMin);
+
+    // Lane splitting for overlaps
+    const laneGroups = [];
+    dayRes.forEach(res => {
+      let placed = false;
+      for (let c = 0; c < laneGroups.length; c++) {
+        if (laneGroups[c][laneGroups[c].length-1].endMin <= res.startMin) {
+          laneGroups[c].push(res); res._lane = c; placed = true; break;
+        }
+      }
+      if (!placed) { res._lane = laneGroups.length; laneGroups.push([res]); }
+    });
+    const numLanes = laneGroups.length || 1;
+
+    dayRes.forEach(res => {
+      const menu  = getMenu(res.menuId);
+      const staff = getStaff(res.staffId);
+      if (!menu || !staff) return;
+
+      const topPx    = ((res.startMin - HOUR_START*60) / 60) * SLOT_PX;
+      const heightPx = Math.max((menu.duration / 60) * SLOT_PX - 2, 22);
+      const laneW    = 100 / numLanes;
+      const laneL    = res._lane * laneW;
+
+      const isOwn = isOwnReservation(res);
+
+      if (isOwn) {
+        // Own reservation — clickable, shows menu name
+        const block = document.createElement('div');
+        block.className = 'res-block';
+        block.style.cssText = `
+          top:${topPx}px; height:${heightPx}px;
+          left:calc(${laneL}% + 3px); width:calc(${laneW}% - 6px);
+          background:${hexToRgba(staff.color, .22)};
+          border-left-color:${staff.color};
+          color:${darken(staff.color, 50)};
+          z-index:2;
+        `;
+        const endT = addMinutes(res.time, menu.duration);
+        block.innerHTML = `
+          <div class="rb-own-badge">自分</div>
+          <div class="rb-label">${menu.name}</div>
+          ${heightPx > 50 ? `<div class="rb-time">${res.time}〜${endT}</div>` : ''}
+        `;
+        block.addEventListener('click', e => { e.stopPropagation(); openEditRes(res.id); });
+        slots.appendChild(block);
+      } else {
+        // Other customers — masked as "予約済み"
+        const block = document.createElement('div');
+        block.className = 'booked-block';
+        block.style.cssText = `
+          top:${topPx}px; height:${heightPx}px;
+          left:calc(${laneL}% + 3px); width:calc(${laneW}% - 6px);
+        `;
+        block.innerHTML = `<div class="booked-label">予約済み</div>`;
+        slots.appendChild(block);
+      }
+    });
+
+    // SalonBoard blocks
+    getSBReservations().filter(r => r.date === ds).forEach(res => {
+      const [h,m] = res.time.split(':').map(Number);
+      const startMin = h*60+m;
+      const dur      = res.duration || SB_DEFAULT_DURATION;
+      const topPx    = ((startMin - HOUR_START*60) / 60) * SLOT_PX;
+      const heightPx = Math.max((dur/60)*SLOT_PX-2, 22);
+
+      const block = document.createElement('div');
+      block.className = 'sb-block';
+      block.style.cssText = `top:${topPx}px;height:${heightPx}px;left:3px;right:3px;`;
+      block.innerHTML = `<span class="sb-tag">SB</span> 予約済み`;
+      slots.appendChild(block);
+    });
+
+    col.appendChild(slots);
+    grid.appendChild(col);
+  });
+}
+
+// ─── My Reservations List ─────────────────────────────────────────────────────
+function renderMyResList() {
+  const container = document.getElementById('my-res-list');
+  const todayS = dateStr(new Date());
+
+  const myRes = db.reservations
+    .filter(r => isOwnReservation(r))
+    .sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+
+  if (!myRes.length) {
+    container.innerHTML = `
+      <div class="my-res-empty">
+        <div class="es-icon">📅</div>
+        <div>ご予約がありません</div>
+        <div style="font-size:.85rem;color:var(--sub);margin-top:8px">＋ ボタンから新規予約できます</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = myRes.map(r => {
+    const staff = getStaff(r.staffId);
+    const menu  = getMenu(r.menuId);
+    const endT  = menu ? addMinutes(r.time, menu.duration) : '?';
+    const isPast = r.date < todayS;
+    return `
+      <div class="my-res-card" onclick="openEditRes(${r.id})">
+        <div class="mrc-dot" style="background:${staff?.color||'#ccc'}"></div>
+        <div class="mrc-body">
+          <div class="mrc-name">
+            ${menu?.name||'—'}
+            ${isPast ? '<span class="past-badge">終了</span>' : ''}
+          </div>
+          <div class="mrc-sub">${staff?.name||'—'}${r.notes ? ' · '+r.notes : ''}</div>
+        </div>
+        <div class="mrc-time">
+          <div class="mrc-date">${displayDate(r.date)}</div>
+          <div class="mrc-dur">${r.time}〜${endT}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─── Conflict Detection ───────────────────────────────────────────────────────
+function checkConflicts(newRes) {
+  const menu = getMenu(newRes.menuId);
+  if (!menu) return { local: [], sb: [] };
+  const nStart = timeToMin(newRes.time);
+  const nEnd   = nStart + menu.duration;
+
+  const local = db.reservations.filter(r => {
+    if (r.id === newRes.id)               return false;
+    if (r.date   !== newRes.date)         return false;
+    if (+r.staffId !== +newRes.staffId)   return false;
+    const m2 = getMenu(r.menuId);
+    if (!m2) return false;
+    const rS = timeToMin(r.time);
+    return overlaps(nStart, nEnd, rS, rS+m2.duration);
+  });
+
+  const sb = getSBReservations().filter(r => {
+    if (r.date !== newRes.date) return false;
+    const rS = timeToMin(r.time);
+    return overlaps(nStart, nEnd, rS, rS+(r.duration||SB_DEFAULT_DURATION));
+  });
+
+  return { local, sb };
+}
+
+// ─── Reservation Modal ────────────────────────────────────────────────────────
+function buildTimeOptions() {
+  const opts = [];
+  for (let h = HOUR_START; h < HOUR_END; h++) {
+    opts.push(`${pad(h)}:00`);
+    opts.push(`${pad(h)}:30`);
+  }
+  return opts;
+}
+
+function populateTimeSelect(selected) {
+  const sel = document.getElementById('res-time');
+  sel.innerHTML = buildTimeOptions().map(t =>
+    `<option value="${t}" ${t===selected?'selected':''}>${t}</option>`
+  ).join('');
+}
+
+function populateStaffSelect(selected) {
+  const sel = document.getElementById('res-staff');
+  sel.innerHTML = `<option value="">選択してください</option>` +
+    db.staff.map(s =>
+      `<option value="${s.id}" ${s.id===+selected?'selected':''}>${s.name}</option>`
+    ).join('');
+}
+
+function populateMenuSelect(selected) {
+  const sel = document.getElementById('res-menu');
+  sel.innerHTML = `<option value="">選択してください</option>` +
+    db.menus.map(m =>
+      `<option value="${m.id}" ${m.id===+selected?'selected':''}>${m.name}（${m.duration}分）</option>`
+    ).join('');
+}
+
+function updateEndTimeHint() {
+  const timeVal = document.getElementById('res-time').value;
+  const menuId  = document.getElementById('res-menu').value;
+  const staffId = document.getElementById('res-staff').value;
+  const dateVal = document.getElementById('res-date').value;
+  const hint    = document.getElementById('res-endtime-hint');
+  const warn    = document.getElementById('res-conflict');
+
+  if (timeVal && menuId) {
+    const menu = getMenu(menuId);
+    if (menu) hint.textContent = `終了予定 ${addMinutes(timeVal, menu.duration)}（${menu.duration}分）`;
+  } else {
+    hint.textContent = '';
+  }
+
+  if (dateVal && timeVal && menuId && staffId) {
+    const draft = { id: editResId, date: dateVal, time: timeVal, menuId: +menuId, staffId: +staffId };
+    const { local, sb } = checkConflicts(draft);
+    if (!local.length && !sb.length) { warn.style.display='none'; return; }
+    const isHard = local.length > 0;
+    warn.className = `conflict-warning${isHard?' hard':''}`;
+    warn.style.display = 'block';
+    let html = `<div class="cw-title">${isHard?'🚫 予約が重複しています':'⚠️ 近い時間帯に予約があります'}</div>`;
+    local.forEach(r => {
+      const m = getMenu(r.menuId);
+      html += `<div class="cw-item">● ${r.time}〜${addMinutes(r.time,m?.duration||60)}（${m?.name||''}）</div>`;
+    });
+    sb.forEach(r => {
+      html += `<div class="cw-item">● [SB] ${r.time}〜${addMinutes(r.time,r.duration||SB_DEFAULT_DURATION)}</div>`;
+    });
+    warn.innerHTML = html;
+  } else {
+    warn.style.display = 'none';
+  }
+}
+
+function openNewRes(date, time) {
+  editResId = null;
+  document.getElementById('res-modal-title').textContent = '新規予約';
+  document.getElementById('res-id').value      = '';
+  document.getElementById('res-customer').value = currentUser.name;
+  document.getElementById('res-phone').value    = currentUser.phone;
+  document.getElementById('res-date').value     = date || dateStr(new Date());
+  document.getElementById('res-notes').value    = '';
+  document.getElementById('res-delete-btn').style.display = 'none';
+  populateTimeSelect(time || '10:00');
+  populateStaffSelect('');
+  populateMenuSelect('');
+  updateEndTimeHint();
+  openModal('res-modal');
+}
+window.openNewRes = openNewRes;
+
+function openEditRes(id) {
+  const r = db.reservations.find(x => x.id === id);
+  if (!r) return;
+  // Only allow editing own reservations
+  if (!isOwnReservation(r)) {
+    alert('他のお客様の予約は編集できません。');
+    return;
+  }
+  editResId = id;
+  document.getElementById('res-modal-title').textContent = '予約を編集';
+  document.getElementById('res-id').value       = id;
+  document.getElementById('res-customer').value = r.customerName;
+  document.getElementById('res-phone').value    = r.phone;
+  document.getElementById('res-date').value     = r.date;
+  document.getElementById('res-notes').value    = r.notes || '';
+  document.getElementById('res-delete-btn').style.display = 'inline-flex';
+  populateTimeSelect(r.time);
+  populateStaffSelect(r.staffId);
+  populateMenuSelect(r.menuId);
+  updateEndTimeHint();
+  openModal('res-modal');
+}
+window.openEditRes = openEditRes;
+
+function saveRes(e) {
+  e.preventDefault();
+  const r = {
+    id:           editResId || nextId(db.reservations),
+    customerName: currentUser.name,
+    phone:        currentUser.phone,
+    date:         document.getElementById('res-date').value,
+    time:         document.getElementById('res-time').value,
+    staffId:      +document.getElementById('res-staff').value,
+    menuId:       +document.getElementById('res-menu').value,
+    notes:        document.getElementById('res-notes').value.trim(),
+  };
+  if (!r.staffId || !r.menuId) { alert('スタッフとメニューを選択してください'); return; }
+
+  const { local, sb } = checkConflicts(r);
+  if (local.length > 0) {
+    alert('同じスタッフに重複する予約があります。時間またはスタッフを変更してください。');
+    return;
+  }
+  if (sb.length > 0) {
+    const ok = confirm('この時間帯に別の予約があります。このまま保存しますか？');
+    if (!ok) return;
+  }
+
+  if (editResId) {
+    // Ensure we can only save OUR own reservation
+    const existing = db.reservations.find(x => x.id === editResId);
+    if (!existing || !isOwnReservation(existing)) {
+      alert('他のお客様の予約は編集できません。');
+      return;
+    }
+    const i = db.reservations.findIndex(x => x.id === editResId);
+    db.reservations[i] = r;
+  } else {
+    db.reservations.push(r);
+  }
+  saveDB();
+  closeModal('res-modal');
+  render();
+}
+
+function deleteRes() {
+  if (!editResId) return;
+  const existing = db.reservations.find(x => x.id === editResId);
+  if (!existing || !isOwnReservation(existing)) {
+    alert('他のお客様の予約は削除できません。');
+    return;
+  }
+  if (!confirm('この予約を削除しますか？')) return;
+  db.reservations = db.reservations.filter(r => r.id !== editResId);
+  saveDB();
+  closeModal('res-modal');
+  render();
+}
+
+// ─── Modal utils ──────────────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ─── Bootstrap ────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ── Login
+  document.getElementById('login-btn').addEventListener('click', () => {
+    const name  = document.getElementById('login-name').value.trim();
+    const phone = document.getElementById('login-phone').value.trim();
+    const err   = document.getElementById('login-error');
+    if (!name || !phone) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+    startSession(name, phone);
+    showApp();
+  });
+
+  // Allow pressing Enter in phone field to login
+  document.getElementById('login-phone').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-btn').click();
+  });
+  document.getElementById('login-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-phone').focus();
+  });
+
+  // ── Logout
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    if (!confirm('ログアウトしますか？')) return;
+    endSession();
+    showLogin();
+  });
+
+  // ── Nav
+  document.querySelectorAll('.c-tab').forEach(tab =>
+    tab.addEventListener('click', () => switchView(tab.dataset.view))
+  );
+
+  // ── Calendar nav
+  document.getElementById('c-prev').addEventListener('click', () => {
+    calView === 'week'
+      ? cursorDate.setDate(cursorDate.getDate()-7)
+      : cursorDate.setDate(cursorDate.getDate()-1);
+    renderCalendar();
+  });
+  document.getElementById('c-next').addEventListener('click', () => {
+    calView === 'week'
+      ? cursorDate.setDate(cursorDate.getDate()+7)
+      : cursorDate.setDate(cursorDate.getDate()+1);
+    renderCalendar();
+  });
+  document.getElementById('c-today').addEventListener('click', () => {
+    cursorDate = new Date(); renderCalendar();
+  });
+
+  document.querySelectorAll('.view-btn').forEach(btn =>
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      calView = btn.dataset.calView;
+      renderCalendar();
+    })
+  );
+
+  // ── FAB
+  document.getElementById('fab-btn').addEventListener('click', () => openNewRes());
+
+  // ── Reservation form
+  document.getElementById('res-form').addEventListener('submit', saveRes);
+  document.getElementById('res-delete-btn').addEventListener('click', deleteRes);
+  document.getElementById('res-modal-close').addEventListener('click', () => closeModal('res-modal'));
+  document.getElementById('res-cancel-btn').addEventListener('click', () => closeModal('res-modal'));
+  document.getElementById('res-time').addEventListener('change', updateEndTimeHint);
+  document.getElementById('res-menu').addEventListener('change', updateEndTimeHint);
+  document.getElementById('res-staff').addEventListener('change', updateEndTimeHint);
+  document.getElementById('res-date').addEventListener('change', updateEndTimeHint);
+
+  // Click overlay to close
+  document.getElementById('res-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('res-modal'))
+      closeModal('res-modal');
+  });
+
+  // ── Restore session or show login
+  if (restoreSession()) {
+    loadDB();
+    showApp();
+  } else {
+    showLogin();
+  }
+});
+</script>
+</body>
+</html>

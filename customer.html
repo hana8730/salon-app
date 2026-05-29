@@ -280,24 +280,34 @@
 
     /* ── Modal ────────────────────────────────────── */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.45);
-      display: none; align-items: flex-start; justify-content: center;
-      z-index: 500; padding: 16px;
-      overflow-y: auto; -webkit-overflow-scrolling: touch;
-    }
-    @media (min-height: 700px) {
-      .modal-overlay { align-items: center; }
+      /* inset の代わりに明示的に指定（iOS古いバージョン対応） */
+      position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+      background: rgba(0,0,0,.45);
+      display: none; align-items: center; justify-content: center;
+      z-index: 500; padding: 12px;
+      /* overflow は付けない → iOSでタッチイベントが吸収されるのを防ぐ */
     }
     .modal-overlay.open { display: flex; }
     .modal {
       background: var(--surface); border-radius: 16px;
-      width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+      width: 100%; max-width: 480px;
+      /* モーダル内だけスクロール可能にする */
+      max-height: 90vh;
+      max-height: 90dvh; /* iOS Safari 動的ビューポート対応 */
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
       box-shadow: 0 12px 40px rgba(0,0,0,.2);
       animation: modal-in .18s ease;
-      position: relative;
     }
-    @keyframes modal-in { from { transform: translateY(10px); opacity: 0; } }
+    @keyframes modal-in {
+      from { transform: translateY(12px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    /* スマホで画面高さが小さい場合: モーダルを上寄せ */
+    @media (max-height: 680px) {
+      .modal-overlay { align-items: flex-start; padding-top: 8px; }
+    }
     .modal-header {
       padding: 20px 24px 16px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;

@@ -532,17 +532,14 @@ async function fetchSBSync() {
   try {
     const res = await fetch('./sb-sync.json?t=' + Date.now());
     if (!res.ok) return;
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) return;
-    const fileTime = data._syncTime || null;
-    const localTime = localStorage.getItem('salonboard_sync_time');
-    if (!localTime || (fileTime && fileTime > localTime) || !localTime) {
-      const list = data.filter(r => r.source === 'salonboard');
-      localStorage.setItem(SB_KEY, JSON.stringify(list));
-      localStorage.setItem('salonboard_sync_time', new Date().toISOString());
-      updateSyncBadge();
-      render();
-    }
+    const json = await res.json();
+    const list = Array.isArray(json) ? json : (json.reservations || []);
+    const syncTime = json.syncTime || new Date().toISOString();
+    if (!list.length) return;
+    localStorage.setItem(SB_KEY, JSON.stringify(list));
+    localStorage.setItem('salonboard_sync_time', syncTime);
+    updateSyncBadge();
+    render();
   } catch(e) {}
 }
 

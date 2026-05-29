@@ -54,19 +54,19 @@ function saveSBReservations(list) {
   updateSyncBadge();
 }
 
-// sb-sync.json をリポジトリから取得して localStorage を更新
+// sb-sync.json をリポジトリから取得して localStorage を更新（常にファイルを優先）
 async function fetchSBSync() {
   try {
     const res = await fetch('./sb-sync.json?t=' + Date.now());
     if (!res.ok) return;
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) return;
-    // ファイルのデータが localStorage より新しい場合のみ更新
-    const fileTime = data._syncTime || null;
-    const localTime = localStorage.getItem(SB_TIME_KEY);
-    if (!localTime || (fileTime && fileTime > localTime) || !localTime) {
-      saveSBReservations(data.filter(r => r.source === 'salonboard'));
-    }
+    const json = await res.json();
+    // { syncTime, reservations } 形式
+    const list = Array.isArray(json) ? json : (json.reservations || []);
+    const syncTime = json.syncTime || new Date().toISOString();
+    if (!list.length) return;
+    localStorage.setItem(SB_KEY, JSON.stringify(list));
+    localStorage.setItem(SB_TIME_KEY, syncTime);
+    updateSyncBadge();
   } catch(e) { /* ネットワークエラーは無視 */ }
 }
 

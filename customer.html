@@ -528,6 +528,24 @@ function getSBReservations() {
   return JSON.parse(localStorage.getItem(SB_KEY) || '[]');
 }
 
+async function fetchSBSync() {
+  try {
+    const res = await fetch('./sb-sync.json?t=' + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) return;
+    const fileTime = data._syncTime || null;
+    const localTime = localStorage.getItem('salonboard_sync_time');
+    if (!localTime || (fileTime && fileTime > localTime) || !localTime) {
+      const list = data.filter(r => r.source === 'salonboard');
+      localStorage.setItem(SB_KEY, JSON.stringify(list));
+      localStorage.setItem('salonboard_sync_time', new Date().toISOString());
+      updateSyncBadge();
+      render();
+    }
+  } catch(e) {}
+}
+
 function updateSyncBadge() {
   const dot   = document.getElementById('sb-dot');
   const label = document.getElementById('sb-sync-label');
@@ -1170,6 +1188,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Restore session or show login
   if (restoreSession()) {
     loadDB();
+    fetchSBSync();
     showApp();
   } else {
     showLogin();

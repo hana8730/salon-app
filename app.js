@@ -54,6 +54,22 @@ function saveSBReservations(list) {
   updateSyncBadge();
 }
 
+// sb-sync.json をリポジトリから取得して localStorage を更新
+async function fetchSBSync() {
+  try {
+    const res = await fetch('./sb-sync.json?t=' + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) return;
+    // ファイルのデータが localStorage より新しい場合のみ更新
+    const fileTime = data._syncTime || null;
+    const localTime = localStorage.getItem(SB_TIME_KEY);
+    if (!localTime || (fileTime && fileTime > localTime) || !localTime) {
+      saveSBReservations(data.filter(r => r.source === 'salonboard'));
+    }
+  } catch(e) { /* ネットワークエラーは無視 */ }
+}
+
 function updateSyncBadge() {
   const dot   = document.getElementById('sb-dot');
   const label = document.getElementById('sb-sync-label');
@@ -810,6 +826,7 @@ window.openEditMenu  = openEditMenu;
 
 document.addEventListener('DOMContentLoaded', () => {
   loadDB();
+  fetchSBSync().then(() => { updateSyncBadge(); render(); });
   updateSyncBadge();
 
   // Nav tabs

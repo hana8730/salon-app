@@ -188,6 +188,43 @@ body {
   pointer-events: none;
 }
 
+/* ── Closed / Holiday ── */
+.hour-slot.closed {
+  cursor: not-allowed;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(180,165,200,.10),
+    rgba(180,165,200,.10) 3px,
+    transparent 3px, transparent 9px
+  );
+}
+.hour-slot.closed:hover { background: repeating-linear-gradient(
+    -45deg,
+    rgba(180,165,200,.14),
+    rgba(180,165,200,.14) 3px,
+    transparent 3px, transparent 9px
+  );
+}
+.day-col-header.is-closed .day-weekname,
+.day-col-header.is-closed .day-daynum { color: #BBA8CC; }
+.day-col-header.is-closed { background: #F5F0F8; }
+.holiday-overlay {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(180,165,200,.12),
+    rgba(180,165,200,.12) 3px,
+    transparent 3px, transparent 9px
+  );
+  pointer-events: none; z-index: 5;
+}
+.holiday-overlay span {
+  font-size: 11px; font-weight: 700; color: #BBA8CC;
+  letter-spacing: .5px; writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
 /* Reservation blocks */
 .res-block {
   position: absolute; left: 3px; right: 3px;

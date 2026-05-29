@@ -173,6 +173,30 @@
       cursor: pointer; transition: background .15s;
     }
     .hour-slot:hover { background: #FDF0F7; }
+    .hour-slot.closed {
+      cursor: not-allowed;
+      background: repeating-linear-gradient(
+        -45deg, rgba(180,165,200,.10), rgba(180,165,200,.10) 3px,
+        transparent 3px, transparent 9px);
+    }
+    .hour-slot.closed:hover { background: repeating-linear-gradient(
+        -45deg, rgba(180,165,200,.14), rgba(180,165,200,.14) 3px,
+        transparent 3px, transparent 9px); }
+    .day-col-header.is-closed { background: #F5F0F8; }
+    .day-col-header.is-closed .day-weekname,
+    .day-col-header.is-closed .day-daynum { color: #BBA8CC; }
+    .holiday-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: repeating-linear-gradient(
+        -45deg, rgba(180,165,200,.12), rgba(180,165,200,.12) 3px,
+        transparent 3px, transparent 9px);
+      pointer-events: none; z-index: 5;
+    }
+    .holiday-overlay span {
+      font-size: .7rem; font-weight: 700; color: #BBA8CC;
+      writing-mode: vertical-rl; letter-spacing: .5px;
+    }
 
     /* Reservation block */
     .res-block {
@@ -449,6 +473,27 @@ const HOUR_START = 9;
 const HOUR_END   = 21;
 const SLOT_PX    = 60;
 const DAY_NAMES  = ['日','月','火','水','木','金','土'];
+
+// 0=日 1=月 2=火 3=水 4=木 5=金 6=土  null=定休日
+const BUSINESS_HOURS = [
+  null,
+  { open: '17:00', close: '19:30' },
+  { open: '10:00', close: '19:30' },
+  { open: '17:00', close: '19:30' },
+  { open: '17:00', close: '19:30' },
+  null,
+  null,
+];
+function getBusinessHours(ds) {
+  const dow = new Date(ds + 'T00:00:00').getDay();
+  return BUSINESS_HOURS[dow] ?? null;
+}
+function isOpenSlot(ds, hourStr) {
+  const bh = getBusinessHours(ds);
+  if (!bh) return false;
+  const t = timeToMin(hourStr);
+  return t >= timeToMin(bh.open) && t < timeToMin(bh.close);
+}
 const DB_KEY     = 'salonboard_v3';
 const SB_KEY     = 'salonboard_sync_v1';
 const SB_DEFAULT_DURATION = 60;
@@ -635,9 +680,12 @@ function renderCalendar() {
     const col = document.createElement('div');
     col.className = 'day-col';
 
+    const bh  = getBusinessHours(ds);
     const hdr = document.createElement('div');
     const dow = date.getDay();
-    hdr.className = 'day-col-header' + (ds === todayS ? ' is-today' : '');
+    hdr.className = 'day-col-header'
+      + (ds === todayS ? ' is-today' : '')
+      + (!bh ? ' is-closed' : '');
     const wn = document.createElement('div');
     wn.className = 'day-weekname' + (dow===0 ? ' sun' : dow===6 ? ' sat' : '');
     wn.textContent = DAY_NAMES[dow];
@@ -652,13 +700,22 @@ function renderCalendar() {
     const hours = HOUR_END - HOUR_START;
     slots.style.cssText = `height:${hours*SLOT_PX}px;position:relative;`;
 
-    // Background hour cells (clickable to create)
+    // 定休日オーバーレイ
+    if (!bh) {
+      const overlay = document.createElement('div');
+      overlay.className = 'holiday-overlay';
+      overlay.innerHTML = '<span>休業日</span>';
+      slots.appendChild(overlay);
+    }
+
+    // Background hour cells
     for (let h = HOUR_START; h < HOUR_END; h++) {
       const cell = document.createElement('div');
-      cell.className = 'hour-slot';
+      const tv   = `${pad(h)}:00`;
+      const open = isOpenSlot(ds, tv);
+      cell.className = 'hour-slot' + (open ? '' : ' closed');
       cell.style.cssText = `position:absolute;top:${(h-HOUR_START)*SLOT_PX}px;left:0;right:0;height:${SLOT_PX}px`;
-      const tv = `${pad(h)}:00`;
-      cell.addEventListener('click', () => openNewRes(ds, tv));
+      if (open) cell.addEventListener('click', () => openNewRes(ds, tv));
       slots.appendChild(cell);
     }
 
@@ -819,19 +876,31 @@ function checkConflicts(newRes) {
 }
 
 // ─── Reservation Modal ────────────────────────────────────────────────────────
-function buildTimeOptions() {
+function buildTimeOptions(dateStr) {
+  const bh = dateStr ? getBusinessHours(dateStr) : null;
+  const openMin  = bh ? timeToMin(bh.open)  : HOUR_START * 60;
+  const closeMin = bh ? timeToMin(bh.close) : HOUR_END   * 60;
   const opts = [];
   for (let h = HOUR_START; h < HOUR_END; h++) {
-    opts.push(`${pad(h)}:00`);
-    opts.push(`${pad(h)}:30`);
+    for (const m of [0, 30]) {
+      const tMin = h * 60 + m;
+      if (tMin >= openMin && tMin < closeMin) opts.push(`${pad(h)}:${pad(m)}`);
+    }
   }
   return opts;
 }
 
-function populateTimeSelect(selected) {
+function populateTimeSelect(selected, dateStr) {
   const sel = document.getElementById('res-time');
-  sel.innerHTML = buildTimeOptions().map(t =>
-    `<option value="${t}" ${t===selected?'selected':''}>${t}</option>`
+  const bh  = dateStr ? getBusinessHours(dateStr) : null;
+  if (dateStr && bh === null) {
+    sel.innerHTML = '<option value="">— 定休日 —</option>';
+    return;
+  }
+  const opts = buildTimeOptions(dateStr);
+  const best = opts.includes(selected) ? selected : (opts[0] || '');
+  sel.innerHTML = opts.map(t =>
+    `<option value="${t}" ${t === best ? 'selected' : ''}>${t}</option>`
   ).join('');
 }
 
@@ -889,14 +958,16 @@ function updateEndTimeHint() {
 
 function openNewRes(date, time) {
   editResId = null;
+  const dateVal = date || dateStr(new Date());
   document.getElementById('res-modal-title').textContent = '新規予約';
-  document.getElementById('res-id').value      = '';
+  document.getElementById('res-id').value       = '';
   document.getElementById('res-customer').value = currentUser.name;
   document.getElementById('res-phone').value    = currentUser.phone;
-  document.getElementById('res-date').value     = date || dateStr(new Date());
+  document.getElementById('res-date').value     = dateVal;
   document.getElementById('res-notes').value    = '';
   document.getElementById('res-delete-btn').style.display = 'none';
-  populateTimeSelect(time || '10:00');
+  const bh = getBusinessHours(dateVal);
+  populateTimeSelect(time || (bh ? bh.open : '10:00'), dateVal);
   populateStaffSelect('');
   populateMenuSelect('');
   updateEndTimeHint();
@@ -920,7 +991,7 @@ function openEditRes(id) {
   document.getElementById('res-date').value     = r.date;
   document.getElementById('res-notes').value    = r.notes || '';
   document.getElementById('res-delete-btn').style.display = 'inline-flex';
-  populateTimeSelect(r.time);
+  populateTimeSelect(r.time, r.date);
   populateStaffSelect(r.staffId);
   populateMenuSelect(r.menuId);
   updateEndTimeHint();
@@ -941,6 +1012,22 @@ function saveRes(e) {
     notes:        document.getElementById('res-notes').value.trim(),
   };
   if (!r.staffId || !r.menuId) { alert('スタッフとメニューを選択してください'); return; }
+
+  // 営業時間チェック（顧客は完全ブロック）
+  const bhCheck = getBusinessHours(r.date);
+  if (!bhCheck) {
+    alert('この日は定休日です。別の日程をお選びください。');
+    return;
+  }
+  const sMin2 = timeToMin(r.time);
+  const menuForCheck = getMenu(r.menuId);
+  if (menuForCheck) {
+    const eMin2 = sMin2 + menuForCheck.duration;
+    if (sMin2 < timeToMin(bhCheck.open) || eMin2 > timeToMin(bhCheck.close)) {
+      alert(`この時間帯は承っておりません。\n営業時間は ${bhCheck.open}〜${bhCheck.close} です。`);
+      return;
+    }
+  }
 
   const { local, sb } = checkConflicts(r);
   if (local.length > 0) {
@@ -1058,7 +1145,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('res-time').addEventListener('change', updateEndTimeHint);
   document.getElementById('res-menu').addEventListener('change', updateEndTimeHint);
   document.getElementById('res-staff').addEventListener('change', updateEndTimeHint);
-  document.getElementById('res-date').addEventListener('change', updateEndTimeHint);
+  document.getElementById('res-date').addEventListener('change', () => {
+    const dateVal = document.getElementById('res-date').value;
+    const curTime = document.getElementById('res-time').value;
+    populateTimeSelect(curTime, dateVal);
+    updateEndTimeHint();
+  });
 
   // Click overlay to close
   document.getElementById('res-modal').addEventListener('click', e => {

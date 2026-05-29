@@ -306,13 +306,26 @@
     .form-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--sub); margin-bottom: 6px; }
     .form-group input, .form-group select, .form-group textarea {
       width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
-      border-radius: 8px; font-size: .95rem; outline: none; font-family: inherit;
+      border-radius: 8px; font-size: 1rem; outline: none; font-family: inherit;
       transition: border-color .18s; background: var(--bg);
+      /* iOS auto-zoom防止: font-size must be >= 16px */
+      -webkit-appearance: none; appearance: none;
+      touch-action: manipulation;
+    }
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6B82' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+      padding-right: 36px;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); background: #fff; }
     .form-group input[readonly] { background: #F3EEF7; color: var(--sub); cursor: not-allowed; }
     .form-row { display: flex; gap: 12px; }
     .form-row .form-group { flex: 1; }
+    /* スマホ: スタッフ・メニューを縦並びに */
+    @media (max-width: 480px) {
+      .form-row { flex-direction: column; gap: 0; }
+      .modal form { padding: 16px 16px 20px; }
+    }
     .end-time-hint { font-size: .82rem; color: var(--primary); font-weight: 600; margin-bottom: 10px; min-height: 20px; }
     .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
     .btn-primary {
@@ -586,6 +599,18 @@ async function fetchSBSync() {
   } catch(e) {}
 }
 
+async function fetchSalonConfig() {
+  try {
+    const res = await fetch('./salon-config.json?t=' + Date.now());
+    if (!res.ok) return;
+    const cfg = await res.json();
+    if (cfg.staff && cfg.staff.length) {
+      db.staff = cfg.staff;
+      saveDB();
+    }
+  } catch(e) {}
+}
+
 function updateSyncBadge() {
   const dot   = document.getElementById('sb-dot');
   const label = document.getElementById('sb-sync-label');
@@ -668,6 +693,8 @@ function showApp() {
   document.getElementById('user-badge').textContent = currentUser.name + ' さん';
   loadDB();
   migrateMenus();
+  fetchSalonConfig().then(() => renderAll());
+  fetchSBSync();
   updateSyncBadge();
   renderAll();
 }
@@ -1234,6 +1261,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Restore session or show login
   if (restoreSession()) {
     loadDB();
+    fetchSalonConfig().then(() => renderAll());
     fetchSBSync();
     showApp();
   } else {

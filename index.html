@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>サロンボード</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">✂ サロンボード</div>
+      <nav class="nav-tabs">
+        <button class="nav-tab active" data-view="calendar">カレンダー</button>
+        <button class="nav-tab" data-view="reservations">予約一覧</button>
+        <button class="nav-tab" data-view="staff">スタッフ</button>
+        <button class="nav-tab" data-view="menu">メニュー</button>
+      </nav>
+      <div class="sb-sync-badge" id="sb-sync-badge">
+        <span class="sb-dot" id="sb-dot"></span>
+        <span id="sb-sync-label">SB未同期</span>
+      </div>
+      </nav>
+    </div>
+    <button class="btn-primary" id="new-reservation-btn">＋ 新規予約</button>
+  </header>
+
+  <!-- ===== Calendar View ===== -->
+  <div id="view-calendar" class="view active">
+    <div class="calendar-header">
+      <button class="nav-arrow" id="prev-period">&#8249;</button>
+      <div class="week-display">
+        <h2 id="period-title"></h2>
+        <div class="view-switcher">
+          <button class="view-btn active" data-cal-view="week">週</button>
+          <button class="view-btn" data-cal-view="day">日</button>
+        </div>
+      </div>
+      <button class="nav-arrow" id="next-period">&#8250;</button>
+      <button class="today-btn" id="today-btn">今日</button>
+    </div>
+    <div class="calendar-scroll-wrapper">
+      <div class="calendar-container">
+        <div class="time-column" id="time-column">
+          <div class="time-header-cell"></div>
+        </div>
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Reservations List ===== -->
+  <div id="view-reservations" class="view">
+    <div class="list-header">
+      <h2>予約一覧</h2>
+      <input type="text" id="search-input" class="search-input" placeholder="名前・メニュー・スタッフで検索…">
+    </div>
+    <div id="reservations-list"></div>
+  </div>
+
+  <!-- ===== Staff View ===== -->
+  <div id="view-staff" class="view">
+    <div class="list-header">
+      <h2>スタッフ管理</h2>
+      <button class="btn-primary" id="add-staff-btn">＋ スタッフ追加</button>
+    </div>
+    <div class="card-grid" id="staff-grid"></div>
+  </div>
+
+  <!-- ===== Menu View ===== -->
+  <div id="view-menu" class="view">
+    <div class="list-header">
+      <h2>メニュー管理</h2>
+      <button class="btn-primary" id="add-menu-btn">＋ メニュー追加</button>
+    </div>
+    <div class="card-grid" id="menu-grid"></div>
+  </div>
+
+</div><!-- /#app -->
+
+<!-- ===== Modal: Reservation ===== -->
+<div class="modal-overlay" id="reservation-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="res-modal-title">新規予約</h3>
+      <button class="modal-close" data-close="reservation-modal">×</button>
+    </div>
+    <form id="reservation-form">
+      <input type="hidden" id="res-id">
+      <div class="form-group">
+        <label>お客様名 *</label>
+        <input type="text" id="res-customer" placeholder="田中 花子" required>
+      </div>
+      <div class="form-group">
+        <label>電話番号</label>
+        <input type="tel" id="res-phone" placeholder="090-0000-0000">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>日付 *</label>
+          <input type="date" id="res-date" required>
+        </div>
+        <div class="form-group">
+          <label>開始時間 *</label>
+          <select id="res-time" required></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>スタッフ *</label>
+          <select id="res-staff" required>
+            <option value="">選択してください</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>メニュー *</label>
+          <select id="res-menu" required>
+            <option value="">選択してください</option>
+          </select>
+        </div>
+      </div>
+      <div id="res-endtime-display" class="end-time-hint"></div>
+      <div id="conflict-warning" class="conflict-warning" style="display:none"></div>
+      <div class="form-group">
+        <label>備考</label>
+        <textarea id="res-notes" rows="2" placeholder="アレルギー・特記事項など"></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-danger" id="res-delete-btn" style="display:none">削除</button>
+        <button type="button" class="btn-secondary" data-close="reservation-modal">キャンセル</button>
+        <button type="submit" class="btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== Modal: Staff ===== -->
+<div class="modal-overlay" id="staff-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="staff-modal-title">スタッフ追加</h3>
+      <button class="modal-close" data-close="staff-modal">×</button>
+    </div>
+    <form id="staff-form">
+      <input type="hidden" id="staff-id">
+      <div class="form-group">
+        <label>スタッフ名 *</label>
+        <input type="text" id="staff-name" placeholder="山田 花子" required>
+      </div>
+      <div class="form-group">
+        <label>担当カラー</label>
+        <div class="color-picker" id="color-picker"></div>
+        <input type="hidden" id="staff-color">
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-danger" id="staff-delete-btn" style="display:none">削除</button>
+        <button type="button" class="btn-secondary" data-close="staff-modal">キャンセル</button>
+        <button type="submit" class="btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== Modal: Menu ===== -->
+<div class="modal-overlay" id="menu-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="menu-modal-title">メニュー追加</h3>
+      <button class="modal-close" data-close="menu-modal">×</button>
+    </div>
+    <form id="menu-form">
+      <input type="hidden" id="menu-id">
+      <div class="form-group">
+        <label>メニュー名 *</label>
+        <input type="text" id="menu-name" placeholder="カット" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>所要時間（分）*</label>
+          <input type="number" id="menu-duration" min="15" step="15" placeholder="60" required>
+        </div>
+        <div class="form-group">
+          <label>料金（円）*</label>
+          <input type="number" id="menu-price" min="0" step="100" placeholder="5000" required>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-danger" id="menu-delete-btn" style="display:none">削除</button>
+        <button type="button" class="btn-secondary" data-close="menu-modal">キャンセル</button>
+        <button type="submit" class="btn-primary">保存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -281,15 +281,21 @@
     /* ── Modal ────────────────────────────────────── */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,.45);
-      display: none; align-items: center; justify-content: center;
+      display: none; align-items: flex-start; justify-content: center;
       z-index: 500; padding: 16px;
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    @media (min-height: 700px) {
+      .modal-overlay { align-items: center; }
     }
     .modal-overlay.open { display: flex; }
     .modal {
       background: var(--surface); border-radius: 16px;
       width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       box-shadow: 0 12px 40px rgba(0,0,0,.2);
       animation: modal-in .18s ease;
+      position: relative;
     }
     @keyframes modal-in { from { transform: translateY(10px); opacity: 0; } }
     .modal-header {
@@ -305,26 +311,30 @@
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--sub); margin-bottom: 6px; }
     .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
-      border-radius: 8px; font-size: 1rem; outline: none; font-family: inherit;
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 16px; outline: none; font-family: inherit;
       transition: border-color .18s; background: var(--bg);
-      /* iOS auto-zoom防止: font-size must be >= 16px */
-      -webkit-appearance: none; appearance: none;
-      touch-action: manipulation;
+      box-sizing: border-box;
     }
+    /* selectのみ appearance: none（カスタム矢印用）＋ iOS/Androidでネイティブpickerを維持 */
     .form-group select {
+      -webkit-appearance: none; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6B82' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 12px center;
-      padding-right: 36px;
+      padding-right: 36px; cursor: pointer;
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); background: #fff; }
     .form-group input[readonly] { background: #F3EEF7; color: var(--sub); cursor: not-allowed; }
     .form-row { display: flex; gap: 12px; }
     .form-row .form-group { flex: 1; }
-    /* スマホ: スタッフ・メニューを縦並びに */
-    @media (max-width: 480px) {
+    /* スマホ: 縦並び＋十分な余白でタップしやすく */
+    @media (max-width: 520px) {
       .form-row { flex-direction: column; gap: 0; }
-      .modal form { padding: 16px 16px 20px; }
+      .modal form { padding: 16px 16px 24px; }
+      .form-group input, .form-group select, .form-group textarea {
+        font-size: 16px; padding: 14px 14px;
+        min-height: 48px;
+      }
     }
     .end-time-hint { font-size: .82rem; color: var(--primary); font-weight: 600; margin-bottom: 10px; min-height: 20px; }
     .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }

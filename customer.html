@@ -325,10 +325,11 @@
       border-radius: 8px; font-size: 16px; outline: none; font-family: inherit;
       transition: border-color .18s; background: var(--bg);
       box-sizing: border-box;
+      touch-action: manipulation; /* Android: タップをスクロールと誤判定させない */
+      -webkit-tap-highlight-color: rgba(199,91,138,.12);
     }
-    /* selectのみ appearance: none（カスタム矢印用）＋ iOS/Androidでネイティブpickerを維持 */
+    /* selectのみ appearance: none（カスタム矢印用） */
     .form-group select {
-      -webkit-appearance: none; appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A6B82' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 12px center;
       padding-right: 36px; cursor: pointer;

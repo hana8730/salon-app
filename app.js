@@ -153,6 +153,7 @@ function loadDB() {
     { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
     { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
     { id: 13, name: '前髪カット',               duration:  30, price: 0 },
+    { id: 14, name: 'カラーのみブリーチなし',   duration:  60, price: 0 },
   ];
   const today = dateStr(new Date());
   db.reservations = [
@@ -193,6 +194,7 @@ const BUILTIN_MENUS = [
   { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
   { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
   { id: 13, name: '前髪カット',               duration:  30, price: 0 },
+  { id: 14, name: 'カラーのみブリーチなし',   duration:  60, price: 0 },
 ];
 
 function migrateMenus() {

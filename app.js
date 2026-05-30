@@ -152,6 +152,7 @@ function loadDB() {
     { id: 10, name: 'カット＋デジタルパーマ',    duration:  90, price: 0 },
     { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
     { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
+    { id: 13, name: '前髪カット',               duration:  30, price: 0 },
   ];
   const today = dateStr(new Date());
   db.reservations = [
@@ -191,6 +192,7 @@ const BUILTIN_MENUS = [
   { id: 10, name: 'カット＋デジタルパーマ',    duration:  90, price: 0 },
   { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
   { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
+  { id: 13, name: '前髪カット',               duration:  30, price: 0 },
 ];
 
 function migrateMenus() {

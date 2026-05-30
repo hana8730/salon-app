@@ -141,19 +141,19 @@ function loadDB() {
   ];
   db.menus = [
     { id:  1, name: 'シルエットカット',          duration:  30, price: 0 },
-    { id:  2, name: 'カットカラー',              duration:  90, price: 0 },
-    { id:  3, name: '縮毛矯正',                  duration: 120, price: 0 },
-    { id:  4, name: 'リタッチのみ',              duration:  60, price: 0 },
+    { id: 13, name: '前髪カット',               duration:  30, price: 0 },
     { id:  5, name: 'カット＋シャンプー',        duration:  30, price: 0 },
     { id:  6, name: 'カット＋ブロー',            duration:  30, price: 0 },
     { id:  7, name: '相談したい',                duration:  90, price: 0 },
+    { id:  4, name: 'リタッチのみ',              duration:  60, price: 0 },
+    { id: 14, name: 'カラーのみブリーチなし',   duration:  60, price: 0 },
+    { id:  2, name: 'カットカラー',              duration:  90, price: 0 },
+    { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
     { id:  8, name: 'ヘナ＋カット',              duration:  90, price: 0 },
     { id:  9, name: 'カット＋パーマ',            duration:  90, price: 0 },
     { id: 10, name: 'カット＋デジタルパーマ',    duration:  90, price: 0 },
     { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
-    { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
-    { id: 13, name: '前髪カット',               duration:  30, price: 0 },
-    { id: 14, name: 'カラーのみブリーチなし',   duration:  60, price: 0 },
+    { id:  3, name: '縮毛矯正',                  duration: 120, price: 0 },
   ];
   const today = dateStr(new Date());
   db.reservations = [
@@ -179,23 +179,26 @@ function loadDB() {
 }
 
 // ─── Menu Migration ───────────────────────────────────────────────────────────
-// 新しいメニューが既存データに未登録なら追加する
+// 新しいメニューが既存データに未登録なら追加する（表示順も管理）
 const BUILTIN_MENUS = [
   { id:  1, name: 'シルエットカット',          duration:  30, price: 0 },
-  { id:  2, name: 'カットカラー',              duration:  90, price: 0 },
-  { id:  3, name: '縮毛矯正',                  duration: 120, price: 0 },
-  { id:  4, name: 'リタッチのみ',              duration:  60, price: 0 },
+  { id: 13, name: '前髪カット',               duration:  30, price: 0 },
   { id:  5, name: 'カット＋シャンプー',        duration:  30, price: 0 },
   { id:  6, name: 'カット＋ブロー',            duration:  30, price: 0 },
   { id:  7, name: '相談したい',                duration:  90, price: 0 },
+  { id:  4, name: 'リタッチのみ',              duration:  60, price: 0 },
+  { id: 14, name: 'カラーのみブリーチなし',   duration:  60, price: 0 },
+  { id:  2, name: 'カットカラー',              duration:  90, price: 0 },
+  { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
   { id:  8, name: 'ヘナ＋カット',              duration:  90, price: 0 },
   { id:  9, name: 'カット＋パーマ',            duration:  90, price: 0 },
   { id: 10, name: 'カット＋デジタルパーマ',    duration:  90, price: 0 },
   { id: 11, name: '髪質改善',                  duration:  90, price: 0 },
-  { id: 12, name: 'バレイヤージュ',            duration: 150, price: 0 },
-  { id: 13, name: '前髪カット',               duration:  30, price: 0 },
-  { id: 14, name: 'カラーのみブリーチなし',   duration:  60, price: 0 },
+  { id:  3, name: '縮毛矯正',                  duration: 120, price: 0 },
 ];
+
+// 表示順の定義（この順番でメニューを並べる）
+const MENU_ORDER = BUILTIN_MENUS.map(m => m.name);
 
 function migrateMenus() {
   let changed = false;
@@ -210,6 +213,16 @@ function migrateMenus() {
       changed = true;
     }
   });
+  // 表示順を MENU_ORDER に合わせて並び替え
+  const before = JSON.stringify(db.menus.map(m => m.id));
+  db.menus.sort((a, b) => {
+    const ai = MENU_ORDER.indexOf(a.name);
+    const bi = MENU_ORDER.indexOf(b.name);
+    const ar = ai === -1 ? 999 : ai;
+    const br = bi === -1 ? 999 : bi;
+    return ar - br;
+  });
+  if (JSON.stringify(db.menus.map(m => m.id)) !== before) changed = true;
   if (changed) saveDB();
 }
 

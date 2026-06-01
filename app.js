@@ -37,6 +37,50 @@ function isOpenSlot(ds, hourStr) {
   return t >= timeToMin(bh.open) && t < timeToMin(bh.close);
 }
 
+// ─── Firebase 初期化 ──────────────────────────────────────────────────────────
+const _fbConfig = {
+  apiKey:            "AIzaSyACUf_FViHawfZl9Ez0oc2G-HywgMSPsM4",
+  authDomain:        "salon-app-c1357.firebaseapp.com",
+  databaseURL:       "https://salon-app-c1357-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "salon-app-c1357",
+  storageBucket:     "salon-app-c1357.firebasestorage.app",
+  messagingSenderId: "545064540572",
+  appId:             "1:545064540572:web:1c66d4e2f9e8b353df1059"
+};
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+  firebase.initializeApp(_fbConfig);
+}
+const FB_KEY = 'firebase_customer_reservations';
+
+// Firebase からの顧客予約をメモリにキャッシュ
+let fbCustomerReservations = [];
+
+// Firebase のリアルタイムリスナーを開始（管理アプリ用）
+function startAdminFirebaseListener() {
+  if (typeof firebase === 'undefined') return;
+  firebase.database().ref('reservations').on('value', snapshot => {
+    const data = snapshot.val() || {};
+    fbCustomerReservations = Object.values(data).map(v => ({
+      id:           'fb_' + v.localId,
+      customerName: v.customerName,
+      phone:        v.phone,
+      date:         v.date,
+      time:         v.time,
+      staffId:      v.staffId,
+      menuId:       v.menuId,
+      notes:        v.notes || '',
+      duration:     60,
+      source:       'customer'
+    }));
+    renderAll();
+  });
+}
+
+// Firebase の顧客予約を取得（render で使用）
+function getFBCustomerReservations() {
+  return fbCustomerReservations;
+}
+
 // ─── SalonBoard Integration ────────────────────────────────────────────────────
 
 const SB_KEY      = 'salonboard_sync_v1';
@@ -488,6 +532,28 @@ function renderCalendar() {
       slots.appendChild(block);
     });
 
+    // ── Firebase 顧客予約ブロック (read-only, ピンク系)
+    const fbRes = getFBCustomerReservations().filter(r => r.date === ds);
+    fbRes.forEach(res => {
+      const menu = getMenu(res.menuId);
+      const [h, m] = res.time.split(':').map(Number);
+      const startMin = h * 60 + m;
+      const dur      = menu ? menu.duration : SB_DEFAULT_DURATION;
+      const topPx    = ((startMin - HOUR_START * 60) / 60) * SLOT_PX;
+      const heightPx = Math.max((dur / 60) * SLOT_PX - 2, 22);
+
+      const block = document.createElement('div');
+      block.className = 'sb-block';
+      block.style.cssText = `top:${topPx}px; height:${heightPx}px; background:repeating-linear-gradient(45deg,#fce4f0,#fce4f0 4px,#fff0f6 4px,#fff0f6 8px); border-left:3px solid #C75B8A;`;
+      block.title = `[顧客予約] ${res.customerName} ${res.time}〜 ${menu?.name || ''}`;
+      block.innerHTML = `
+        <span class="sb-tag" style="background:#C75B8A;">顧客</span>
+        <div class="sb-name">${res.customerName}</div>
+        ${heightPx > 40 ? `<div class="sb-menu">${menu?.name || ''}</div>` : ''}
+      `;
+      slots.appendChild(block);
+    });
+
     col.appendChild(slots);
     grid.appendChild(col);
   });
@@ -497,7 +563,8 @@ function renderCalendar() {
 
 function renderResList(q = '') {
   const container = document.getElementById('reservations-list');
-  let list = [...db.reservations];
+  // 管理アプリ予約 + Firebase顧客予約 を合わせて表示
+  let list = [...db.reservations, ...getFBCustomerReservations()];
 
   if (q) {
     const lq = q.toLowerCase();
@@ -887,6 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
   migrateMenus();
   fetchSBSync().then(() => { updateSyncBadge(); render(); });
   updateSyncBadge();
+  startAdminFirebaseListener();   // ← Firebase 顧客予約をリアルタイム取得
 
   // Nav tabs
   document.querySelectorAll('.nav-tab').forEach(tab =>

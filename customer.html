@@ -375,6 +375,9 @@
     .cw-title { font-weight: 700; margin-bottom: 4px; }
     .cw-item  { margin-top: 2px; padding-left: 4px; }
   </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -505,6 +508,65 @@
 
 <script>
 'use strict';
+
+// ─── Firebase 初期化 ──────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey:            "AIzaSyACUf_FViHawfZl9Ez0oc2G-HywgMSPsM4",
+  authDomain:        "salon-app-c1357.firebaseapp.com",
+  databaseURL:       "https://salon-app-c1357-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "salon-app-c1357",
+  storageBucket:     "salon-app-c1357.firebasestorage.app",
+  messagingSenderId: "545064540572",
+  appId:             "1:545064540572:web:1c66d4e2f9e8b353df1059"
+};
+firebase.initializeApp(firebaseConfig);
+const fbDB = firebase.database();
+
+// Firebase に予約を保存
+function saveResToFirebase(r) {
+  const key = 'res_' + r.id;
+  fbDB.ref('reservations/' + key).set({
+    localId:      r.id,
+    customerName: r.customerName,
+    phone:        r.phone,
+    date:         r.date,
+    time:         r.time,
+    staffId:      r.staffId,
+    menuId:       r.menuId,
+    notes:        r.notes || '',
+    source:       'customer',
+    updatedAt:    Date.now()
+  });
+}
+
+// Firebase から予約を削除
+function deleteResFromFirebase(id) {
+  fbDB.ref('reservations/res_' + id).remove();
+}
+
+// Firebase のリアルタイムリスナーを開始
+// Firebase 上のデータを db.reservations に反映して再描画
+function startFirebaseListener() {
+  fbDB.ref('reservations').on('value', snapshot => {
+    const fbData = snapshot.val() || {};
+    // Firebase から取得した予約を db.reservations に反映
+    // （localStorageのスタッフ/メニューデータはそのまま保持）
+    const fbList = Object.values(fbData).map(v => ({
+      id:           v.localId,
+      customerName: v.customerName,
+      phone:        v.phone,
+      date:         v.date,
+      time:         v.time,
+      staffId:      v.staffId,
+      menuId:       v.menuId,
+      notes:        v.notes || '',
+      source:       'customer'
+    }));
+    db.reservations = fbList;
+    saveDB();
+    renderAll();
+  });
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const HOUR_START = 9;
@@ -745,6 +807,7 @@ function showApp() {
   fetchSBSync();
   updateSyncBadge();
   renderAll();
+  startFirebaseListener();   // ← Firebase リアルタイム同期開始
 }
 
 function showLogin() {
@@ -1191,6 +1254,7 @@ function saveRes(e) {
     db.reservations.push(r);
   }
   saveDB();
+  saveResToFirebase(r);   // ← Firebase にも保存
   closeModal('res-modal');
   render();
 }
@@ -1205,6 +1269,7 @@ function deleteRes() {
   if (!confirm('この予約を削除しますか？')) return;
   db.reservations = db.reservations.filter(r => r.id !== editResId);
   saveDB();
+  deleteResFromFirebase(editResId);   // ← Firebase からも削除
   closeModal('res-modal');
   render();
 }

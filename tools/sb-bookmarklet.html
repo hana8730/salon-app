@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SalonBoard 同期ツール</title>
+  <style>
+    :root {
+      --pink: #C75B8A;
+      --pink-dark: #a84875;
+      --green: #27ae60;
+      --red: #e74c3c;
+      --bg: #f9f4f7;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: #2D1F33;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+    .container { max-width: 560px; margin: 0 auto; }
+
+    .logo {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--pink);
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #7A6B82;
+      font-size: .9rem;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(199,91,138,.1);
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--pink);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-badge {
+      background: var(--pink);
+      color: white;
+      border-radius: 50%;
+      width: 24px; height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    p { font-size: .9rem; line-height: 1.7; color: #444; }
+    .note {
+      background: #fef9fb;
+      border-left: 3px solid var(--pink);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: .85rem;
+      margin-top: 12px;
+      color: #555;
+    }
+
+    /* Token input */
+    .token-area { margin-top: 14px; }
+    .token-area label { font-size: .85rem; font-weight: 600; color: #7A6B82; display: block; margin-bottom: 6px; }
+    .token-row { display: flex; gap: 8px; }
+    .token-row input {
+      flex: 1; padding: 10px 14px;
+      border: 1.5px solid #E6DEF0;
+      border-radius: 8px;
+      font-size: .9rem;
+      outline: none;
+    }
+    .token-row input:focus { border-color: var(--pink); }
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .btn-primary { background: var(--pink); color: white; }
+    .btn-primary:hover { background: var(--pink-dark); }
+    .btn-sm { padding: 6px 14px; font-size: .8rem; }
+    #token-status { margin-top: 8px; font-size: .85rem; min-height: 20px; }
+    .ok  { color: var(--green); }
+    .err { color: var(--red);   }
+
+    /* Bookmarklet box */
+    .bm-box {
+      margin-top: 16px;
+      background: #fef9fb;
+      border: 2px dashed #e0c8d8;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      opacity: .4;
+      transition: .3s;
+      pointer-events: none;
+    }
+    .bm-box.ready {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .bm-link {
+      display: inline-block;
+      background: var(--pink);
+      color: white !important;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: grab;
+      box-shadow: 0 4px 16px rgba(199,91,138,.4);
+      transition: .2s;
+      user-select: none;
+    }
+    .bm-link:active { cursor: grabbing; transform: scale(.97); }
+    .bm-hint { font-size: .8rem; color: #7A6B82; margin-top: 10px; }
+    .bm-locked { font-size: .85rem; color: #7A6B82; }
+
+    /* Usage steps */
+    .usage-steps { list-style: none; padding: 0; }
+    .usage-steps li {
+      padding: 8px 0;
+      padding-left: 28px;
+      position: relative;
+      font-size: .9rem;
+      color: #444;
+      border-bottom: 1px solid #f0eaf4;
+    }
+    .usage-steps li:last-child { border-bottom: none; }
+    .usage-steps li::before {
+      content: attr(data-n);
+      position: absolute;
+      left: 0;
+      background: #f0eaf4;
+      color: var(--pink);
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 10px;
+    }
+
+    .link-btn {
+      display: inline-block;
+      color: var(--pink);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: .85rem;
+    }
+    .link-btn:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="logo">🌸 SalonBoard 同期ツール</div>
+  <p class="subtitle">SalonBoardの予約データをワンクリックで管理アプリに同期します</p>
+
+  <!-- Step 1: GitHub Token -->
+  <div class="card">
+    <h2><span class="step-badge">1</span> GitHubトークンを設定</h2>
+    <p>GitHubにデータを書き込むための鍵を一度だけ設定します。</p>
+    <div class="note">
+      📌 <a class="link-btn" href="https://github.com/settings/tokens/new?scopes=public_repo&description=SalonBoard+Sync" target="_blank">こちら</a>からトークンを作成してください。<br>
+      「Expiration: No expiration」→「Generate token」→ 表示されたトークンをコピー
+    </div>
+    <div class="token-area">
+      <label>GitHubトークン（ghp_... または github_pat_...）</label>
+      <div class="token-row">
+        <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxx">
+        <button class="btn btn-primary btn-sm" onclick="verifyToken()">確認</button>
+      </div>
+      <div id="token-status"></div>
+    </div>
+  </div>
+
+  <!-- Step 2: Bookmarklet -->
+  <div class="card">
+    <h2><span class="step-badge">2</span> ブックマークレットを登録</h2>
+    <p>下のボタンをブラウザの<strong>ブックマークバー</strong>にドラッグして追加してください。</p>
+
+    <div class="bm-box" id="bm-box">
+      <a id="bm-link" class="bm-link" href="#">🌸 SB同期</a>
+      <div class="bm-hint" id="bm-hint">← ブックマークバーにドラッグ</div>
+    </div>
+    <div id="bm-locked" class="note" style="margin-top:12px;">
+      ⬆ ステップ1でトークンを確認すると有効になります
+    </div>
+  </div>
+
+  <!-- Step 3: Usage -->
+  <div class="card">
+    <h2><span class="step-badge">3</span> 使い方</h2>
+    <ul class="usage-steps">
+      <li data-n="1">サロンボードをChrome で開いてログインする</li>
+      <li data-n="2">ブックマークバーの <strong>🌸 SB同期</strong> をクリック</li>
+      <li data-n="3">ピンクのバーが表示されて自動で取得開始（約30秒）</li>
+      <li data-n="4">「✅ 同期完了！」が表示されたら完了</li>
+      <li data-n="5">管理アプリを開くと最新の予約が反映されている</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+
+const GITHUB_REPO   = 'hana8730/salon-app';
+const GITHUB_FILE   = 'sb-sync.json';
+const GITHUB_BRANCH = 'main';
+const HANA_ID       = 'T000997646';
+const LS_KEY        = 'sb_sync_github_token';
+const DAYS          = 60;
+
+// ── Restore saved token ────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(LS_KEY);
+  if (saved) {
+    document.getElementById('token-input').value = saved;
+    setStatus('ok', '✅ 保存済みのトークンが読み込まれました');
+    buildBookmarklet(saved);
+  }
+});
+
+// ── Verify token ───────────────────────────────────────────
+async function verifyToken() {
+  const token = document.getElementById('token-input').value.trim();
+  if (!token) { setStatus('err','トークンを入力してください'); return; }
+  setStatus('','確認中...');
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+      headers: { Authorization: 'token ' + token }
+    });
+    if (r.ok) {
+      localStorage.setItem(LS_KEY, token);
+      setStatus('ok', '✅ トークンOK！ブックマークレットが有効になりました');
+      buildBookmarklet(token);
+    } else if (r.status === 401) {
+      setStatus('err', '❌ トークンが無効です。再度確認してください');
+    } else if (r.status === 404) {
+      setStatus('err', '❌ リポジトリが見つかりません');
+    } else {
+      setStatus('err', '❌ エラー: ' + r.status);
+    }
+  } catch(e) {
+    setStatus('err', '❌ 接続エラー: ' + e.message);
+  }
+}
+
+function setStatus(type, msg) {
+  const el = document.getElementById('token-status');
+  el.textContent = msg;
+  el.className = type;
+}
+
+// ── Build bookmarklet ──────────────────────────────────────
+function buildBookmarklet(token) {
+  const code = `(async function(){
+'use strict';
+var REPO='${GITHUB_REPO}',FILE='${GITHUB_FILE}',BRANCH='${GITHUB_BRANCH}',HANA='${HANA_ID}',TOKEN='${token}',DAYS=${DAYS};
+var ui=document.createElement('div');
+ui.style.cssText='position:fixed;top:20px;right:20px;background:#C75B8A;color:white;padding:16px 24px;border-radius:12px;z-index:99999;font-size:14px;min-width:220px;box-shadow:0 4px 20px rgba(0,0,0,.3);line-height:1.6;';
+ui.innerHTML='🌸 SalonBoard同期中...<br><small>準備中</small>';
+document.body.appendChild(ui);
+function pd(s){return s.slice(0,4)+'-'+s.slice(4,6)+'-'+s.slice(6,8);}
+function pt(s){return s.slice(0,2)+':'+s.slice(2,4);}
+function ext(doc){
+  var cards=doc.querySelectorAll('div[id^="reserve_item_"]');
+  return Array.from(cards).map(function(c){
+    var resNo=c.querySelector('.panel_reserve_id')&&c.querySelector('.panel_reserve_id').textContent.trim()||c.id.replace('reserve_item_','');
+    var cust=(c.querySelector('.reserveItemCustomer')&&c.querySelector('.reserveItemCustomer').textContent.trim()||'');
+    var sid=(c.querySelector('.panel_reserve_stylistId')&&c.querySelector('.panel_reserve_stylistId').textContent.trim()||'');
+    var d=(c.querySelector('.panel_reserve_date')&&c.querySelector('.panel_reserve_date').textContent.trim()||'');
+    var t=(c.querySelector('.panel_reserve_start')&&c.querySelector('.panel_reserve_start').textContent.trim()||'');
+    if(!d||!t)return null;
+    return{date:pd(d),time:pt(t),customerName:cust,reservationNo:resNo,stylist:sid===HANA?'ハナ':'指名なし',menu:'',duration:60,source:'salonboard'};
+  }).filter(Boolean);
+}
+var all=[],parser=new DOMParser(),today=new Date();
+for(var i=0;i<DAYS;i++){
+  var dd=new Date(today);dd.setDate(today.getDate()+i);
+  var ds=dd.toISOString().slice(0,10).replace(/-/g,'');
+  ui.innerHTML='🌸 同期中... '+Math.round(i/DAYS*100)+'%<br><small>'+ds.slice(0,4)+'/'+ds.slice(4,6)+'/'+ds.slice(6,8)+'</small>';
+  try{
+    var r=await fetch('/CLP/bt/schedule/salonSchedule/?date='+ds,{credentials:'include'});
+    if(!r.ok)continue;
+    var h=await r.text();
+    var d2=parser.parseFromString(h,'text/html');
+    all.push.apply(all,ext(d2));
+  }catch(e){}
+}
+all.sort(function(a,b){return(a.date+a.time).localeCompare(b.date+b.time);});
+var body=JSON.stringify({syncTime:new Date().toISOString(),reservations:all},null,2);
+var b64=btoa(unescape(encodeURIComponent(body)));
+ui.innerHTML='🌸 GitHub更新中...<br><small>'+all.length+'件取得</small>';
+try{
+  var gr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+FILE+'?ref='+BRANCH,{headers:{Authorization:'token '+TOKEN}});
+  var gj=await gr.json();
+  var pr=await fetch('https://api.github.com/repos/'+REPO+'/contents/'+FILE,{method:'PUT',headers:{Authorization:'token '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({message:'chore: SB自動同期 '+new Date().toLocaleString('ja-JP'),content:b64,sha:gj.sha,branch:BRANCH})});
+  if(pr.ok){
+    ui.style.background='#27ae60';
+    ui.innerHTML='✅ 同期完了！<br><small>'+all.length+'件 → GitHub更新済</small>';
+  }else{
+    var pe=await pr.json();
+    ui.style.background='#e74c3c';
+    ui.innerHTML='❌ GitHub失敗<br><small>'+(pe.message||pr.status)+'</small>';
+  }
+}catch(e){
+  ui.style.background='#e74c3c';
+  ui.innerHTML='❌ エラー<br><small>'+e.message+'</small>';
+}
+setTimeout(function(){ui.remove();},6000);
+})();`;
+
+  const link = document.getElementById('bm-link');
+  link.href = 'javascript:' + encodeURIComponent(code);
+
+  document.getElementById('bm-box').classList.add('ready');
+  document.getElementById('bm-locked').style.display = 'none';
+}
+</script>
+</body>
+</html>

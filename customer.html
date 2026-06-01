@@ -699,9 +699,21 @@ function darken(hex, amt) {
 }
 
 // ─── Session ──────────────────────────────────────────────────────────────────
+// 名前・電話番号を正規化（スペース・ハイフン・全角スペースを除去して比較）
+function normalizeName(s) {
+  if (!s) return '';
+  // 全角スペース・半角スペースをすべて除去してから比較（「マエダ タカシ」=「マエダタカシ」）
+  return s.trim().replace(/[\s　]+/g, '');
+}
+function normalizePhone(s) {
+  if (!s) return '';
+  return s.replace(/[\s\-ー－―]/g, '');           // スペース・ハイフン類除去
+}
+
 function isOwnReservation(res) {
   if (!currentUser) return false;
-  return res.customerName === currentUser.name && res.phone === currentUser.phone;
+  return normalizeName(res.customerName) === normalizeName(currentUser.name)
+      && normalizePhone(res.phone)       === normalizePhone(currentUser.phone);
 }
 
 function restoreSession() {
@@ -712,7 +724,8 @@ function restoreSession() {
 }
 
 function startSession(name, phone) {
-  currentUser = { name, phone };
+  // 保存時も正規化しておく
+  currentUser = { name: normalizeName(name), phone: normalizePhone(phone) };
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
 }
 

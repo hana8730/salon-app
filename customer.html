@@ -378,6 +378,8 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -508,6 +510,22 @@
 
 <script>
 'use strict';
+
+// ─── EmailJS 初期化 ───────────────────────────────────────────────────────────
+emailjs.init('JBfpsbse34tP3lsdi');
+
+// 予約通知メールを送信
+function sendReservationEmail(r) {
+  const menu  = getMenu(r.menuId);
+  const staff = getStaff(r.staffId);
+  emailjs.send('service_8gqr39v', 'template_4lq4gfv', {
+    title:   '新規予約',
+    name:    r.customerName,
+    time:    r.date + ' ' + r.time,
+    message: `日付: ${r.date}\n時間: ${r.time}\nメニュー: ${menu?.name || ''}\nスタッフ: ${staff?.name || ''}\n電話番号: ${r.phone}${r.notes ? '\nメモ: ' + r.notes : ''}`,
+    email:   ''
+  }).catch(() => {}); // 送信失敗しても予約は通す
+}
 
 // ─── Firebase 初期化 ──────────────────────────────────────────────────────────
 const firebaseConfig = {
@@ -1254,7 +1272,8 @@ function saveRes(e) {
     db.reservations.push(r);
   }
   saveDB();
-  saveResToFirebase(r);   // ← Firebase にも保存
+  saveResToFirebase(r);      // ← Firebase にも保存
+  sendReservationEmail(r);   // ← はなさんにメール通知
   closeModal('res-modal');
   render();
 }

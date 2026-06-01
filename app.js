@@ -72,7 +72,7 @@ function startAdminFirebaseListener() {
       duration:     60,
       source:       'customer'
     }));
-    renderAll();
+    render();
   });
 }
 

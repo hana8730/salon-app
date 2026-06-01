@@ -7,152 +7,221 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans JP',sans-serif;background:#F7F3FB;padding:24px 16px 56px;color:#1E1830}
-.wrap{max-width:340px;margin:0 auto}
+body{font-family:'Noto Sans JP',sans-serif;background:#0F0A18;color:#F0EBF7;padding:24px 16px 60px;min-height:100vh}
+.wrap{max-width:360px;margin:0 auto}
 
 /* header */
-.hdr{text-align:center;margin-bottom:28px}
-.hdr h1{font-size:1.15rem;font-weight:900;color:#8B2B5E;margin-bottom:3px}
-.hdr p{font-size:.72rem;color:#9A8FAA;font-weight:300}
-.bar{width:36px;height:3px;background:#C75B8A;border-radius:99px;margin:8px auto 0}
+.hdr{text-align:center;margin-bottom:32px;padding-top:8px}
+.hdr-badge{
+  display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.12em;
+  color:#C75B8A;border:1px solid rgba(199,91,138,.4);border-radius:99px;
+  padding:3px 12px;margin-bottom:12px;
+  background:rgba(199,91,138,.08);
+}
+.hdr h1{font-size:1.25rem;font-weight:900;color:#F0EBF7;margin-bottom:3px;letter-spacing:-.01em}
+.hdr p{font-size:.72rem;color:#7A6B8A;font-weight:300}
+.bar{width:40px;height:2px;background:linear-gradient(90deg,#C75B8A,#8B5FD4);border-radius:99px;margin:10px auto 0}
 
 /* section label */
-.lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#9A8FAA;margin-bottom:7px}
+.lbl{font-size:.6rem;font-weight:700;letter-spacing:.12em;color:#5A4A6A;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
 
-/* flow row = horizontal cards */
-.flow-row{display:flex;gap:7px;justify-content:center;margin-bottom:0}
-
-/* single card */
-.card{
-  background:#fff;border-radius:13px;border:1.5px solid #EEE;
-  padding:11px 8px;text-align:center;flex:1;
-  box-shadow:0 2px 12px rgba(199,91,138,.07);
+/* node card */
+.node{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:10px 8px;text-align:center;flex:1;
+  backdrop-filter:blur(4px);
 }
-.em{font-size:1.5rem;line-height:1;margin-bottom:4px}
-.nm{font-size:.7rem;font-weight:700;line-height:1.3}
-.sb{font-size:.6rem;color:#9A8FAA;font-weight:300;margin-top:2px;line-height:1.3}
+.node .em{font-size:1.4rem;line-height:1;margin-bottom:4px}
+.node .nm{font-size:.7rem;font-weight:700;color:#E8D8F0;line-height:1.3}
+.node .sb{font-size:.58rem;color:#6A5A7A;font-weight:300;margin-top:2px;line-height:1.4}
+.flow-row{display:flex;gap:7px}
 
-/* card colors */
-.c-hpb {border-color:#F9CABA;background:#FEF5EB}
-.c-tel {border-color:#DDE0EA;background:#F8F9FC}
-.c-cust{border-color:#F2C4D8;background:#FDF0F6}
-.c-sbrd{border-color:#DDE0EA;background:#F8F9FC}
-.c-json{border-color:#C4BEF0;background:#F3F4FF}
-.c-fb  {border-color:#F9CABA;background:#FFF8F0}
-.c-ejs {border-color:#BFE8E3;background:#E8F7F5}
-.c-gml {border-color:#F2C4D8;background:#FDF0F6}
-.c-adm {
-  border-color:#C75B8A;border-width:2px;
-  background:linear-gradient(135deg,#FDF0F6,#F5E5F0);
-  box-shadow:0 5px 24px rgba(199,91,138,.18);
+/* color tints */
+.n-hpb{border-color:rgba(249,157,108,.3);background:rgba(249,157,108,.08)}
+.n-tel{border-color:rgba(160,160,200,.25);background:rgba(160,160,200,.06)}
+.n-cust{border-color:rgba(199,91,138,.4);background:rgba(199,91,138,.1)}
+.n-hana{border-color:rgba(139,95,212,.4);background:rgba(139,95,212,.1)}
+.n-sb{border-color:rgba(160,160,200,.25);background:rgba(160,160,200,.06)}
+.n-fb{border-color:rgba(249,157,108,.3);background:rgba(249,157,108,.08)}
+.n-ejs{border-color:rgba(95,212,139,.3);background:rgba(95,212,139,.06)}
+.n-json{border-color:rgba(139,95,212,.4);background:rgba(139,95,212,.1)}
+.n-gml{border-color:rgba(199,91,138,.4);background:rgba(199,91,138,.1)}
+
+/* ── SYNC BOX ─────────────────── */
+.sync-box{
+  background:rgba(199,91,138,.07);
+  border:1.5px solid rgba(199,91,138,.35);
+  border-radius:14px;padding:14px 12px;
+  position:relative;overflow:hidden;
+}
+.sync-box::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(199,91,138,.15) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sync-title{
+  font-size:.65rem;font-weight:700;letter-spacing:.1em;color:#C75B8A;
+  text-align:center;margin-bottom:12px;
+}
+.sync-methods{display:flex;gap:8px;align-items:stretch}
+.sync-method{
+  flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:10px 8px;text-align:center;
+}
+.sm-icon{font-size:1.4rem;margin-bottom:4px}
+.sm-name{font-size:.72rem;font-weight:700;color:#F0C8DC;line-height:1.3;margin-bottom:3px}
+.sm-sub{font-size:.6rem;color:#7A5A72;line-height:1.4}
+.sync-or{
+  display:flex;align-items:center;justify-content:center;
+  font-size:.6rem;color:#5A4A6A;font-weight:700;
+  padding:0 2px;white-space:nowrap;
+}
+.sync-note{
+  margin-top:10px;font-size:.62rem;color:#7A6A82;text-align:center;
+  background:rgba(255,255,255,.04);border-radius:7px;padding:6px 10px;
+  border:1px solid rgba(255,255,255,.07);
+  font-family:'DM Mono',monospace;
 }
 
-/* arrow */
-.arr{display:flex;flex-direction:column;align-items:center;padding:3px 0}
-.aline{width:2px;background:#DDD0E4;position:relative}
-.aline::after{
+/* ── ARROW ─────────────────────── */
+.arr-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0}
+.arr-line{width:1.5px;background:rgba(199,91,138,.35);position:relative}
+.arr-line::after{
   content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
   border-left:4px solid transparent;border-right:4px solid transparent;
-  border-top:6px solid #DDD0E4;
+  border-top:6px solid rgba(199,91,138,.5);
 }
-.aline.g{background:#BFE8E3}
-.aline.g::after{border-top-color:#BFE8E3}
-.aline.gr{background:#CDD0DC}
-.aline.gr::after{border-top-color:#CDD0DC}
-.albl{
-  font-size:.58rem;color:#B090A8;background:#F7F3FB;
-  padding:1px 5px;border-radius:99px;border:1px solid #DDD0E4;
+.arr-line.gr{background:rgba(160,160,200,.35)}
+.arr-line.gr::after{border-top-color:rgba(160,160,200,.5)}
+.arr-line.grn{background:rgba(95,212,139,.4)}
+.arr-line.grn::after{border-top-color:rgba(95,212,139,.5)}
+.arr-lbl{
+  font-size:.55rem;color:#5A4A7A;background:#0F0A18;
+  padding:1px 6px;border-radius:99px;border:1px solid rgba(255,255,255,.08);
   white-space:nowrap;margin:2px 0;
 }
-.albl.g{border-color:#BFE8E3;color:#5A9A8A}
-.albl.gr{border-color:#CDD0DC;color:#888}
+.marr{display:flex;justify-content:center;gap:7px}
+.marr-col{flex:1;display:flex;flex-direction:column;align-items:center}
 
-/* multi-arrow row */
-.marr{display:flex;gap:7px;justify-content:center}
-.marr-col{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center}
-
-/* wide card (full width) */
-.card-wide{border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;border:1.5px solid #EEE;background:#fff;box-shadow:0 2px 12px rgba(199,91,138,.07)}
-
-/* admin block */
-.adm-block{
-  background:linear-gradient(135deg,#FDF0F6,#F5E5F0);
-  border:2px solid #C75B8A;border-radius:16px;
-  padding:14px 13px;
-  box-shadow:0 5px 24px rgba(199,91,138,.18);
-  margin-bottom:0;
+/* ── ADMIN BLOCK ────────────────── */
+.adm{
+  background:rgba(199,91,138,.1);
+  border:2px solid rgba(199,91,138,.6);
+  border-radius:16px;padding:14px 13px;
+  box-shadow:0 0 40px rgba(199,91,138,.15),inset 0 1px 0 rgba(255,255,255,.08);
 }
-.adm-top{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.adm-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .adm-ic{font-size:1.8rem}
-.adm-title{font-size:.88rem;font-weight:900;color:#8B2B5E}
-.adm-url{font-size:.6rem;color:#B070A0;font-family:'DM Mono',monospace}
-.tags{display:flex;gap:5px;flex-wrap:wrap}
-.tag{display:inline-flex;align-items:center;gap:3px;padding:4px 8px;border-radius:99px;font-size:.66rem;font-weight:700}
-.t-sb {background:#EBEBEB;color:#555;border:1.5px solid #CCC}
-.t-cu {background:#FCE7F3;color:#9E3D6B;border:1.5px solid #F2C4D8}
-.t-di {background:#EAE8F9;color:#6B5FCC;border:1.5px solid #C4BEF0}
+.adm-title{font-size:.9rem;font-weight:900;color:#F0C8DC;letter-spacing:-.01em}
+.adm-url{font-size:.58rem;color:#8A6A82;font-family:'DM Mono',monospace;margin-top:1px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:5px 10px;border-radius:99px;font-size:.65rem;font-weight:700}
+.t-sb{background:rgba(255,255,255,.08);color:#AAA;border:1.5px solid rgba(255,255,255,.15)}
+.t-cu{background:rgba(199,91,138,.2);color:#F0A0C8;border:1.5px solid rgba(199,91,138,.4)}
+.t-di{background:rgba(139,95,212,.2);color:#C0A0F0;border:1.5px solid rgba(139,95,212,.4)}
 
-/* legend */
-.leg{margin-top:22px}
-.li{display:flex;align-items:flex-start;gap:9px;background:#fff;border-radius:11px;padding:9px 11px;margin-bottom:7px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.ld{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px}
-.lt strong{font-size:.76rem;display:block;margin-bottom:1px}
-.lt span{font-size:.66rem;color:#9A8FAA;line-height:1.4}
-.nb{background:#E8F7F5;border:1px solid #BFE8E3;border-radius:11px;padding:11px 12px;display:flex;gap:8px;align-items:flex-start;margin-top:8px}
-.nb strong{font-size:.76rem;color:#2A7A6A;display:block;margin-bottom:2px}
-.nb span{font-size:.66rem;color:#4A9A8A;line-height:1.4}
+/* ── LEGEND ─────────────────────── */
+.leg{margin-top:24px}
+.li{
+  display:flex;align-items:flex-start;gap:10px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:11px;padding:10px 12px;margin-bottom:7px;
+}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.lt strong{font-size:.75rem;color:#E0D0EE;display:block;margin-bottom:2px}
+.lt span{font-size:.64rem;color:#6A5A7A;line-height:1.5}
+.nb{
+  background:rgba(95,212,139,.06);border:1px solid rgba(95,212,139,.25);
+  border-radius:11px;padding:11px 12px;display:flex;gap:8px;align-items:flex-start;margin-top:8px;
+}
+.nb strong{font-size:.74rem;color:#70D0A0;display:block;margin-bottom:2px}
+.nb span{font-size:.63rem;color:#5A9A78;line-height:1.5}
+.sync-li{
+  background:rgba(199,91,138,.08);border:1px solid rgba(199,91,138,.25);
+  border-radius:11px;padding:11px 12px;display:flex;gap:8px;align-items:flex-start;margin-top:8px;
+}
+.sync-li strong{font-size:.74rem;color:#F0A0C8;display:block;margin-bottom:2px}
+.sync-li span{font-size:.63rem;color:#8A5A72;line-height:1.5}
 
-/* animation */
-@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.card,.adm-block,.card-wide,.li,.nb{animation:fu .45s ease both}
+/* ── FLOWING DOT ANIMATION ──────── */
+.arr-dot{
+  width:5px;height:5px;border-radius:50%;background:#C75B8A;
+  animation:fall 1.4s ease-in-out infinite;
+  margin:1px 0;opacity:.7;
+}
+.arr-dot.gr{background:#9090B8;animation-delay:.3s}
+.arr-dot.grn{background:#5FD48B;animation-delay:.6s}
+@keyframes fall{
+  0%{opacity:0;transform:translateY(-4px)}
+  40%{opacity:.9}
+  100%{opacity:0;transform:translateY(10px)}
+}
+
+/* ── FADE IN ─────────────────────── */
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.node,.adm,.sync-box,.li,.nb,.sync-li{animation:fu .5s ease both}
 </style>
 </head>
 <body>
 <div class="wrap">
 
+<!-- HEADER -->
 <div class="hdr">
+  <div class="hdr-badge">SYSTEM DIAGRAM</div>
   <h1>✂ サロンアプリ 構成図</h1>
   <p>I sis hair studio — 予約データフロー</p>
   <div class="bar"></div>
 </div>
 
-<!-- ① 入口3つ -->
+<!-- ① 入口4つ -->
 <div class="lbl">📥 予約の入り口</div>
 <div class="flow-row" style="margin-bottom:3px">
-  <div class="card c-hpb" style="animation-delay:.05s">
+  <div class="node n-hpb" style="animation-delay:.04s">
     <div class="em">💄</div>
-    <div class="nm">ホットペッパー<br>ビューティー</div>
+    <div class="nm">ホットペッパー</div>
     <div class="sb">オンライン予約</div>
   </div>
-  <div class="card c-tel" style="animation-delay:.08s">
+  <div class="node n-tel" style="animation-delay:.07s">
     <div class="em">📞</div>
     <div class="nm">電話予約</div>
     <div class="sb">直接連絡</div>
   </div>
-  <div class="card c-cust" style="animation-delay:.11s">
+  <div class="node n-cust" style="animation-delay:.1s">
     <div class="em">📱</div>
     <div class="nm">顧客アプリ</div>
     <div class="sb">customer.html</div>
   </div>
+  <div class="node n-hana" style="animation-delay:.13s">
+    <div class="em">✏️</div>
+    <div class="nm">はなさん<br>直接入力</div>
+    <div class="sb">管理アプリ</div>
+  </div>
 </div>
 
 <!-- ② 矢印 -->
-<div class="marr" style="padding:4px 0 2px">
-  <!-- HPB + 電話 合流 → SB -->
-  <div class="marr-col" style="max-width:210px">
-    <div class="arr"><div class="aline gr" style="height:16px"></div></div>
+<div class="marr" style="padding:3px 0">
+  <div class="marr-col" style="flex:2">
+    <div class="arr-wrap">
+      <div class="arr-line gr" style="height:10px"></div>
+      <div class="arr-dot gr"></div>
+      <div class="arr-line gr" style="height:10px"></div>
+    </div>
   </div>
-  <!-- 顧客アプリ → 分岐 -->
-  <div class="marr-col" style="max-width:96px">
-    <div class="arr"><div class="aline" style="height:16px"></div></div>
+  <div class="marr-col">
+    <div class="arr-wrap">
+      <div class="arr-line" style="height:10px"></div>
+      <div class="arr-dot"></div>
+      <div class="arr-line" style="height:10px"></div>
+    </div>
   </div>
+  <div class="marr-col" style="visibility:hidden"><div class="arr-wrap"><div class="arr-line" style="height:30px"></div></div></div>
 </div>
 
 <!-- ③ サロンボード ＋ Firebase/EmailJS -->
-<div class="flow-row" style="margin-bottom:3px">
-  <!-- サロンボード（2/3幅） -->
-  <div class="card c-sbrd" style="animation-delay:.15s; flex:2">
-    <div style="display:flex;align-items:center;gap:7px;justify-content:center">
+<div class="flow-row" style="margin-bottom:3px;align-items:stretch">
+  <div class="node n-sb" style="animation-delay:.16s; flex:2">
+    <div style="display:flex;align-items:center;gap:7px;justify-content:center;height:100%">
       <span style="font-size:1.4rem">🏢</span>
       <div>
         <div class="nm">サロンボード</div>
@@ -160,48 +229,91 @@ body{font-family:'Noto Sans JP',sans-serif;background:#F7F3FB;padding:24px 16px 
       </div>
     </div>
   </div>
-  <!-- Firebase + EmailJS (1/3幅、縦に2つ) -->
   <div style="flex:1;display:flex;flex-direction:column;gap:5px">
-    <div class="card c-fb" style="animation-delay:.18s;padding:8px 5px">
+    <div class="node n-fb" style="animation-delay:.19s;padding:8px 5px">
       <div class="em" style="font-size:1.1rem">🔥</div>
-      <div class="nm" style="font-size:.64rem">Firebase</div>
-      <div class="sb" style="font-size:.56rem">Realtime DB</div>
+      <div class="nm" style="font-size:.63rem">Firebase</div>
+      <div class="sb" style="font-size:.55rem">Realtime DB</div>
     </div>
-    <div class="card c-ejs" style="animation-delay:.21s;padding:8px 5px">
+    <div class="node n-ejs" style="animation-delay:.22s;padding:8px 5px">
       <div class="em" style="font-size:1.1rem">📧</div>
-      <div class="nm" style="font-size:.64rem">EmailJS</div>
-      <div class="sb" style="font-size:.56rem">メール通知</div>
+      <div class="nm" style="font-size:.63rem">EmailJS</div>
+      <div class="sb" style="font-size:.55rem">メール通知</div>
     </div>
   </div>
 </div>
 
 <!-- ④ 矢印 -->
-<div class="marr" style="padding:3px 0 2px">
-  <div class="marr-col" style="max-width:210px">
-    <div class="arr">
-      <div class="aline gr" style="height:10px"></div>
-      <div class="albl gr">同期</div>
-      <div class="aline gr" style="height:10px"></div>
+<div class="marr" style="padding:3px 0">
+  <div class="marr-col" style="flex:2">
+    <div class="arr-wrap">
+      <div class="arr-line gr" style="height:8px"></div>
+      <div class="arr-dot gr"></div>
+      <div class="arr-line gr" style="height:8px"></div>
     </div>
   </div>
-  <div style="flex:1;max-width:96px;display:flex;flex-direction:column;gap:3px">
-    <div class="arr">
-      <div class="aline" style="height:10px"></div>
-      <div class="albl" style="font-size:.55rem">保存</div>
-      <div class="aline" style="height:8px"></div>
+  <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+    <div class="arr-wrap">
+      <div class="arr-line" style="height:8px"></div>
+      <div class="arr-dot"></div>
+      <div class="arr-line" style="height:8px"></div>
     </div>
-    <div class="arr">
-      <div class="aline g" style="height:10px"></div>
-      <div class="albl g" style="font-size:.55rem">通知</div>
-      <div class="aline g" style="height:8px"></div>
+    <div class="arr-wrap">
+      <div class="arr-line grn" style="height:8px"></div>
+      <div class="arr-dot grn"></div>
+      <div class="arr-line grn" style="height:8px"></div>
     </div>
   </div>
 </div>
 
-<!-- ⑤ sb-sync.json ＋ Gmail -->
+<!-- ⑤ SB同期の仕組み（NEW） ＋ Gmail -->
+<div class="flow-row" style="margin-bottom:3px;align-items:stretch;gap:7px">
+  <!-- 同期ボックス（2/3幅） -->
+  <div style="flex:2">
+    <div class="sync-box" style="animation-delay:.25s;height:100%">
+      <div class="sync-title">🔄 SB同期の仕組み</div>
+      <div class="sync-methods">
+        <div class="sync-method">
+          <div class="sm-icon">💬</div>
+          <div class="sm-name">「同期して」</div>
+          <div class="sm-sub">Claude Code<br>/syncコマンド</div>
+        </div>
+        <div class="sync-or">or</div>
+        <div class="sync-method">
+          <div class="sm-icon">🔖</div>
+          <div class="sm-name">🌸 SB同期</div>
+          <div class="sm-sub">ブックマーク<br>レット</div>
+        </div>
+      </div>
+      <div class="sync-note">Chrome拡張でSalonBoardを自動巡回</div>
+    </div>
+  </div>
+  <!-- Gmail（1/3幅） -->
+  <div class="node n-gml" style="animation-delay:.28s; flex:1">
+    <div class="em" style="font-size:1.2rem">📬</div>
+    <div class="nm" style="font-size:.65rem">Gmail</div>
+    <div class="sb" style="font-size:.57rem">はなさんへ<br>通知</div>
+  </div>
+</div>
+
+<!-- ⑥ 矢印 -->
+<div class="marr" style="padding:3px 0">
+  <div class="marr-col" style="flex:2">
+    <div class="arr-wrap">
+      <div class="arr-line" style="height:8px"></div>
+      <div class="arr-dot"></div>
+      <div class="arr-line" style="height:8px"></div>
+    </div>
+  </div>
+  <div class="marr-col" style="visibility:hidden;flex:1">
+    <div class="arr-wrap"><div class="arr-line" style="height:24px"></div></div>
+  </div>
+</div>
+
+<!-- ⑦ sb-sync.json -->
 <div class="flow-row" style="margin-bottom:3px">
-  <div class="card c-json" style="animation-delay:.25s; flex:2">
-    <div style="display:flex;align-items:center;gap:7px;justify-content:center">
+  <div class="node n-json" style="animation-delay:.31s;flex:2">
+    <div style="display:flex;align-items:center;gap:8px;justify-content:center">
       <span style="font-size:1.2rem">📄</span>
       <div>
         <div class="nm" style="font-family:'DM Mono',monospace;font-size:.68rem">sb-sync.json</div>
@@ -209,25 +321,18 @@ body{font-family:'Noto Sans JP',sans-serif;background:#F7F3FB;padding:24px 16px 
       </div>
     </div>
   </div>
-  <div class="card c-gml" style="animation-delay:.28s; flex:1">
-    <div class="em" style="font-size:1.2rem">📬</div>
-    <div class="nm" style="font-size:.65rem">Gmail</div>
-    <div class="sb" style="font-size:.58rem">はなさんへ</div>
-  </div>
+  <div style="flex:1"></div>
 </div>
 
-<!-- ⑥ 矢印 -->
-<div class="marr" style="padding:3px 0 3px">
-  <div class="marr-col">
-    <div class="arr"><div class="aline gr" style="height:18px"></div></div>
-  </div>
-  <div class="marr-col" style="visibility:hidden">
-    <div class="arr"><div class="aline" style="height:18px"></div></div>
-  </div>
+<!-- ⑧ 矢印 -->
+<div class="arr-wrap" style="padding:3px 0">
+  <div class="arr-line" style="height:8px"></div>
+  <div class="arr-dot"></div>
+  <div class="arr-line" style="height:8px"></div>
 </div>
 
-<!-- ⑦ 管理アプリ -->
-<div class="adm-block" style="animation-delay:.32s">
+<!-- ⑨ 管理アプリ -->
+<div class="adm" style="animation-delay:.35s">
   <div class="adm-top">
     <div class="adm-ic">🖥️</div>
     <div>
@@ -243,36 +348,53 @@ body{font-family:'Noto Sans JP',sans-serif;background:#F7F3FB;padding:24px 16px 
 </div>
 
 <!-- 凡例 -->
-<div class="leg" style="margin-top:22px">
-  <div class="lbl">凡例</div>
-  <div class="li" style="animation-delay:.35s">
-    <div class="ld" style="background:#999;border:2px solid #CCC"></div>
+<div class="leg">
+  <div class="lbl" style="margin-top:24px">凡例</div>
+
+  <div class="li" style="animation-delay:.38s">
+    <div class="ld" style="background:#888;border:2px solid rgba(255,255,255,.2)"></div>
     <div class="lt">
       <strong>⬜ グレー「SB」タグ</strong>
-      <span>ホットペッパー・電話 → サロンボード → 自動同期</span>
+      <span>ホットペッパー・電話 → サロンボード → 同期 → sb-sync.json 経由</span>
     </div>
   </div>
-  <div class="li" style="animation-delay:.38s">
+
+  <div class="li" style="animation-delay:.41s">
     <div class="ld" style="background:#C75B8A"></div>
     <div class="lt">
       <strong>🌸 ピンク「顧客」タグ</strong>
-      <span>お客様がcustomer.htmlから予約 → Firebase経由</span>
+      <span>お客様がcustomer.htmlから予約 → Firebase Realtime Database 経由</span>
     </div>
   </div>
-  <div class="li" style="animation-delay:.41s">
-    <div class="ld" style="background:#7B6FD4"></div>
+
+  <div class="li" style="animation-delay:.44s">
+    <div class="ld" style="background:#8B5FD4"></div>
     <div class="lt">
       <strong>🟪 カラーブロック（直接入力）</strong>
-      <span>はなさんが管理アプリで手動入力・編集できる予約</span>
+      <span>はなさんが管理アプリで手動入力・編集する予約</span>
     </div>
   </div>
-  <div class="nb" style="animation-delay:.44s">
-    <span style="font-size:1.2rem">📧</span>
+
+  <div class="sync-li" style="animation-delay:.47s">
+    <span style="font-size:1.1rem;flex-shrink:0">🔄</span>
+    <div>
+      <strong>SB同期の2つの方法</strong>
+      <span>
+        ① Claude Codeで<b style="color:#F0A0C8">「同期して」</b>と話しかける<br>
+        ② SalonBoard上で<b style="color:#F0A0C8">🌸 SB同期</b>ブックマークをクリック<br>
+        → 直近60日分を自動取得してGitHubに反映
+      </span>
+    </div>
+  </div>
+
+  <div class="nb" style="animation-delay:.5s">
+    <span style="font-size:1.1rem;flex-shrink:0">📧</span>
     <div>
       <strong>自動メール通知（EmailJS）</strong>
-      <span>顧客アプリから予約が入ると<br>h8730521@gmail.com に即時通知が届きます</span>
+      <span>顧客アプリから予約が入ると h8730521@gmail.com に即時通知</span>
     </div>
   </div>
+
 </div>
 
 </div><!-- wrap -->

@@ -541,10 +541,14 @@ firebase.initializeApp(firebaseConfig);
 const fbDB = firebase.database();
 
 // Firebase に予約を保存
+// 新規予約は push() でユニークキーを生成し衝突を防ぐ。更新は既存の fbKey を使う。
 function saveResToFirebase(r) {
-  const key = 'res_' + r.id;
-  fbDB.ref('reservations/' + key).set({
+  if (!r.fbKey) {
+    r.fbKey = fbDB.ref('reservations').push().key;
+  }
+  fbDB.ref('reservations/' + r.fbKey).set({
     localId:      r.id,
+    fbKey:        r.fbKey,
     customerName: r.customerName,
     phone:        r.phone,
     date:         r.date,
@@ -557,9 +561,11 @@ function saveResToFirebase(r) {
   });
 }
 
-// Firebase から予約を削除
+// Firebase から予約を削除（fbKey がある場合は優先使用）
 function deleteResFromFirebase(id) {
-  fbDB.ref('reservations/res_' + id).remove();
+  const r = db.reservations.find(x => x.id === id);
+  const key = r?.fbKey || ('res_' + id);
+  fbDB.ref('reservations/' + key).remove();
 }
 
 // Firebase のリアルタイムリスナーを開始
@@ -567,10 +573,10 @@ function deleteResFromFirebase(id) {
 function startFirebaseListener() {
   fbDB.ref('reservations').on('value', snapshot => {
     const fbData = snapshot.val() || {};
-    // Firebase から取得した予約を db.reservations に反映
-    // （localStorageのスタッフ/メニューデータはそのまま保持）
-    const fbList = Object.values(fbData).map(v => ({
+    // Object.entries で fbKey も取得してローカルに保持
+    const fbList = Object.entries(fbData).map(([fbKey, v]) => ({
       id:           v.localId,
+      fbKey:        fbKey,
       customerName: v.customerName,
       phone:        v.phone,
       date:         v.date,
@@ -1223,6 +1229,7 @@ function saveRes(e) {
   e.preventDefault();
   const r = {
     id:           editResId || nextId(db.reservations),
+    fbKey:        editResId ? (db.reservations.find(x => x.id === editResId)?.fbKey || null) : null,
     customerName: currentUser.name,
     phone:        currentUser.phone,
     date:         document.getElementById('res-date').value,
@@ -1271,8 +1278,8 @@ function saveRes(e) {
   } else {
     db.reservations.push(r);
   }
-  saveDB();
-  saveResToFirebase(r);      // ← Firebase にも保存
+  saveResToFirebase(r);      // ← Firebase にも保存（新規は r.fbKey が設定される）
+  saveDB();                  // ← fbKey を永続化（Firebase保存後に実行）
   sendReservationEmail(r);   // ← はなさんにメール通知
   closeModal('res-modal');
   render();

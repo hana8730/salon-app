@@ -142,7 +142,7 @@ function overlaps(aStart, aEnd, bStart, bEnd) {
 
 function checkConflicts(newRes) {
   const menu = getMenu(newRes.menuId);
-  if (!menu) return { local: [], sb: [] };
+  if (!menu) return { local: [], sb: [], fb: [] };
 
   const nStart = timeToMin(newRes.time);
   const nEnd   = nStart + menu.duration;
@@ -166,7 +166,15 @@ function checkConflicts(newRes) {
     return overlaps(nStart, nEnd, rStart, rEnd);
   });
 
-  return { local, sb };
+  // ─ Firebase 顧客予約 (同日同時間帯 → soft warning)
+  const fb = getFBCustomerReservations().filter(r => {
+    if (r.date !== newRes.date) return false;
+    const rStart = timeToMin(r.time);
+    const rEnd   = rStart + (r.duration || 60);
+    return overlaps(nStart, nEnd, rStart, rEnd);
+  });
+
+  return { local, sb, fb };
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -703,15 +711,15 @@ function updateEndTimeHint() {
   }
 }
 
-function showConflictWarning({ local, sb }) {
+function showConflictWarning({ local, sb, fb = [] }) {
   const warn = document.getElementById('conflict-warning');
-  if (!local.length && !sb.length) { warn.style.display = 'none'; return; }
+  if (!local.length && !sb.length && !fb.length) { warn.style.display = 'none'; return; }
 
   const isHard = local.length > 0;
   warn.className = `conflict-warning${isHard ? ' hard' : ''}`;
   warn.style.display = 'block';
 
-  let html = `<div class="cw-title">${isHard ? '🚫' : '⚠️'} ${isHard ? '予約が重複しています' : 'サロンボードに近い時間帯の予約があります'}</div>`;
+  let html = `<div class="cw-title">${isHard ? '🚫' : '⚠️'} ${isHard ? '予約が重複しています' : 'この時間帯に予約があります'}</div>`;
 
   local.forEach(r => {
     const menu = getMenu(r.menuId);
@@ -721,6 +729,10 @@ function showConflictWarning({ local, sb }) {
   sb.forEach(r => {
     const endT = addMinutes(r.time, r.duration || SB_DEFAULT_DURATION);
     html += `<div class="cw-item">● [SalonBoard] ${r.customerName} ${r.time}〜${endT}（${r.menu || ''}）</div>`;
+  });
+  fb.forEach(r => {
+    const endT = addMinutes(r.time, r.duration || 60);
+    html += `<div class="cw-item">● [顧客予約] ${r.customerName} ${r.time}〜${endT}</div>`;
   });
 
   warn.innerHTML = html;
@@ -797,9 +809,11 @@ function saveRes(e) {
     alert('同じスタッフに重複する予約があります。時間またはスタッフを変更してください。');
     return;
   }
-  if (conflicts.sb.length > 0) {
-    const names = conflicts.sb.map(x => `${x.customerName} ${x.time}`).join('、');
-    const ok = confirm(`サロンボードに同時間帯の予約があります：\n${names}\n\nこのまま保存しますか？`);
+  if (conflicts.sb.length > 0 || conflicts.fb.length > 0) {
+    const sbNames = conflicts.sb.map(x => `[SB] ${x.customerName} ${x.time}`);
+    const fbNames = conflicts.fb.map(x => `[顧客] ${x.customerName} ${x.time}`);
+    const names = [...sbNames, ...fbNames].join('、');
+    const ok = confirm(`同時間帯に予約があります：\n${names}\n\nこのまま保存しますか？`);
     if (!ok) return;
   }
 

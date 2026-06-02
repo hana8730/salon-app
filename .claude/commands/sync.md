@@ -9,46 +9,88 @@ SalonBoardの予約データを取得してsb-sync.jsonを更新し、GitHubに�
 SalonBoardのタブ（salonboard.com）がなければ、以下のURLに遷移する：
 `https://salonboard.com/CLP/bt/schedule/salonSchedule/`
 
-### 2. 今日から30日分のデータを取得
+### 2. 今日から30日分のデータを取得（詳細ページから正確な施術時間も取得）
 
-以下のJavaScriptを各日付ページで実行して予約データを収集する。
-日付URLパターン：`https://salonboard.com/CLP/bt/schedule/salonSchedule/?date=YYYYMMDD`
+SalonBoardのスケジュールタブで以下のJSを**1回だけ**実行する。
+スケジュールページを30日分フェッチし、各予約の詳細ページから `施術時間` とメニューも取得する。
 
-各ページで実行するJS：
 ```javascript
-Array.from(document.querySelectorAll('div[id^="reserve_item_"]')).map(card => {
-  const resNo     = card.querySelector('.panel_reserve_id')?.textContent.trim() || card.id.replace('reserve_item_','');
-  const custName  = card.querySelector('.reserveItemCustomer')?.textContent.trim() || '';
-  const stylistId = card.querySelector('.panel_reserve_stylistId')?.textContent.trim() || '';
-  const dateRaw   = card.querySelector('.panel_reserve_date')?.textContent.trim() || '';
-  const timeRaw   = card.querySelector('.panel_reserve_start')?.textContent.trim() || '';
-  const endRaw    = card.querySelector('.panel_reserve_end')?.textContent.trim() || '';
-  if (!dateRaw || !timeRaw) return null;
-  // 実際の所要時間を計算（終了時刻がある場合）、なければ60分デフォルト
-  let duration = 60;
-  if (endRaw && endRaw.length >= 4) {
-    const startMin = parseInt(timeRaw.slice(0,2))*60 + parseInt(timeRaw.slice(2,4));
-    const endMin   = parseInt(endRaw.slice(0,2))*60  + parseInt(endRaw.slice(2,4));
-    if (endMin > startMin) duration = endMin - startMin;
+(async () => {
+  const DAYS = 30;
+  const today = new Date();
+  const allRes = [], seen = new Set();
+
+  // --- スケジュールページから予約カードを収集 ---
+  for (let d = 0; d < DAYS; d++) {
+    const dt = new Date(today); dt.setDate(today.getDate() + d);
+    const dateStr = dt.toISOString().slice(0,10).replace(/-/g,'');
+    try {
+      const res = await fetch('/CLP/bt/schedule/salonSchedule/?date='+dateStr, {credentials:'same-origin'});
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html,'text/html');
+      for (const card of doc.querySelectorAll('div[id^="reserve_item_"]')) {
+        const resNo = card.querySelector('.panel_reserve_id')?.textContent.trim() || card.id.replace('reserve_item_','');
+        if (seen.has(resNo)) continue; seen.add(resNo);
+        const custName  = card.querySelector('.reserveItemCustomer')?.textContent.trim() || '';
+        const stylistId = card.querySelector('.panel_reserve_stylistId')?.textContent.trim() || '';
+        const dateRaw   = card.querySelector('.panel_reserve_date')?.textContent.trim() || '';
+        const timeRaw   = card.querySelector('.panel_reserve_start')?.textContent.trim() || '';
+        if (!dateRaw || !timeRaw) continue;
+        allRes.push({
+          date: dateRaw.slice(0,4)+'-'+dateRaw.slice(4,6)+'-'+dateRaw.slice(6,8),
+          time: timeRaw.slice(0,2)+':'+timeRaw.slice(2,4),
+          customerName: custName,
+          reservationNo: resNo,
+          stylist: stylistId === 'T000997646' ? 'ハナ' : '指名なし',
+          menu: '', duration: 60, source: 'salonboard'
+        });
+      }
+    } catch(e) {}
+    await new Promise(r=>setTimeout(r,200));
   }
-  return {
-    date:          dateRaw.slice(0,4)+'-'+dateRaw.slice(4,6)+'-'+dateRaw.slice(6,8),
-    time:          timeRaw.slice(0,2)+':'+timeRaw.slice(2,4),
-    customerName:  custName,
-    reservationNo: resNo,
-    stylist:       stylistId === 'T000997646' ? 'ハナ' : '指名なし',
-    menu:          '',
-    duration:      duration,
-    source:        'salonboard'
-  };
-}).filter(Boolean)
+
+  // --- 各予約の詳細ページから施術時間・メニューを取得 ---
+  // BF（ホットペッパー）→ /net/reserveDetail/
+  // YG（外部/直接）     → /ext/extReserveDetail/
+  for (const rsv of allRes) {
+    try {
+      const url = rsv.reservationNo.startsWith('BF')
+        ? '/CLP/bt/reserve/net/reserveDetail/?reserveId='+rsv.reservationNo
+        : '/CLP/bt/reserve/ext/extReserveDetail/?reserveId='+rsv.reservationNo;
+      const res = await fetch(url, {credentials:'same-origin'});
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html,'text/html');
+      // 施術時間[ HH:MM ] から分数を計算
+      const timeTd = Array.from(doc.querySelectorAll('td')).find(td=>td.textContent.includes('施術時間'));
+      const m = (timeTd?.textContent||'').match(/施術時間\[\s*(\d+):(\d+)\s*\]/);
+      if (m) rsv.duration = parseInt(m[1])*60 + parseInt(m[2]);
+      // メニュー名（BFのみ取得できる）
+      const menuTh = Array.from(doc.querySelectorAll('th')).find(th=>th.textContent.trim()==='メニュー');
+      rsv.menu = menuTh?.nextElementSibling?.textContent.trim() || '';
+      // 施術時間が取得できなかった場合のメニュー名フォールバック（カット=30分）
+      if (!m && rsv.menu.includes('カット')) rsv.duration = 30;
+    } catch(e) {}
+    await new Promise(r=>setTimeout(r,300));
+  }
+
+  allRes.sort((a,b)=>a.date+a.time < b.date+b.time ? -1 : 1);
+  sessionStorage.setItem('_sb', JSON.stringify(allRes));
+  return allRes.length + '件収集完了（' + DAYS + '日分）';
+})()
 ```
+
+完了メッセージ（例：「27件収集完了（30日分）」）が返ったら次へ進む。
 
 ### 3. sb-sync.json を更新
 
-収集した全予約を日付・時刻順にソートして `/Users/hana/salon-app/sb-sync.json` に書き込む。
+sessionStorageから取得して `/Users/hana/salon-app/sb-sync.json` に書き込む。
 
-フォーマット：
+```javascript
+JSON.parse(sessionStorage.getItem('_sb') || '[]')
+```
+
+上記JSの結果（予約配列）を使って以下のフォーマットで書き込む：
+
 ```json
 {
   "syncTime": "取得時刻のISO文字列",

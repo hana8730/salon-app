@@ -41,3 +41,11 @@ GitHub Pages（https://hana8730.github.io/salon-app/）でホスト。
 - 時刻: `.panel_reserve_start`（HHMM形式）
 - お客様名: `.reserveItemCustomer`
 - 予約番号: `.panel_reserve_id`
+- ※スケジュールカードに終了時刻・メニュー・施術時間は含まれない
+
+## 予約詳細ページ（施術時間・メニュー取得）
+- BF（ホットペッパー）: `/CLP/bt/reserve/net/reserveDetail/?reserveId=BF...`
+- YG（外部/直接登録）: `/CLP/bt/reserve/ext/extReserveDetail/?reserveId=YG...`
+- 施術時間: `td:contains('施術時間')` → `施術時間[ HH:MM ]` をパース
+- メニュー: `th:text='メニュー'` の次の `td`（BFのみ。YGは空）
+- カット系メニュー = 30分、その他 = 60分（施術時間が取れない場合のフォールバック）

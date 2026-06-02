@@ -3,400 +3,695 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>サロンアプリ システム構成図</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<title>I sis hair studio — 3SB 連携図</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans JP',sans-serif;background:#0F0A18;color:#F0EBF7;padding:24px 16px 60px;min-height:100vh}
-.wrap{max-width:360px;margin:0 auto}
 
-/* header */
-.hdr{text-align:center;margin-bottom:32px;padding-top:8px}
-.hdr-badge{
-  display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.12em;
-  color:#C75B8A;border:1px solid rgba(199,91,138,.4);border-radius:99px;
-  padding:3px 12px;margin-bottom:12px;
-  background:rgba(199,91,138,.08);
+:root{
+  --pink:#C75B8A;
+  --pink-d:#a8426f;
+  --pink-glow:rgba(199,91,138,.45);
+  --gold:#F5C842;
+  --gold-glow:rgba(245,200,66,.55);
+  --blue:#82AADF;
+  --blue-glow:rgba(130,170,223,.4);
+  --fb:#FF9500;
+  --bg:#080612;
+  --bg2:#110D1E;
+  --card:rgba(255,255,255,.04);
+  --border:rgba(255,255,255,.09);
+  --t:#EEE8F6;
+  --td:rgba(238,232,246,.55);
 }
-.hdr h1{font-size:1.25rem;font-weight:900;color:#F0EBF7;margin-bottom:3px;letter-spacing:-.01em}
-.hdr p{font-size:.72rem;color:#7A6B8A;font-weight:300}
-.bar{width:40px;height:2px;background:linear-gradient(90deg,#C75B8A,#8B5FD4);border-radius:99px;margin:10px auto 0}
 
-/* section label */
-.lbl{font-size:.6rem;font-weight:700;letter-spacing:.12em;color:#5A4A6A;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+body{
+  font-family:'Zen Kaku Gothic New','Hiragino Kaku Gothic ProN',sans-serif;
+  background:var(--bg);
+  color:var(--t);
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-/* node card */
+/* Ambient background glow */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 25%, rgba(199,91,138,.07) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 85% 20%, rgba(130,170,223,.06) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 50% 85%, rgba(199,91,138,.05) 0%, transparent 65%);
+}
+
+.page{
+  position:relative;z-index:1;
+  max-width:920px;margin:0 auto;
+  padding:44px 20px 72px;
+}
+
+/* ─── HEADER ─────────────────────────── */
+.hdr{text-align:center;margin-bottom:52px}
+.hdr-eye{
+  font-size:10px;font-weight:700;letter-spacing:.35em;
+  color:var(--pink);text-transform:uppercase;margin-bottom:14px;
+}
+.hdr-title{
+  font-size:clamp(18px,4.5vw,30px);
+  font-weight:900;letter-spacing:.07em;line-height:1.3;
+  margin-bottom:8px;
+}
+.hdr-title em{font-style:normal;color:var(--pink)}
+.hdr-sub{font-size:12px;color:var(--td);letter-spacing:.03em}
+
+/* NEW badge */
+.new-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  background:linear-gradient(120deg,var(--gold),#FFAB35);
+  color:#1C0E00;padding:5px 14px;border-radius:99px;
+  font-size:11px;font-weight:900;letter-spacing:.12em;
+  margin-top:16px;
+  animation:badge-pulse 2.5s ease-in-out infinite;
+}
+@keyframes badge-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,200,66,.55)}
+  50%{box-shadow:0 0 0 10px rgba(245,200,66,0)}
+}
+
+/* ─── THREE SBs — TRIANGLE ───────────── */
+.triangle-wrap{
+  position:relative;
+  width:100%;max-width:760px;
+  margin:0 auto 40px;
+  aspect-ratio:16/10;
+}
+
+/* SVG canvas */
+.svg-layer{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  overflow:visible;pointer-events:none;
+}
+
+/* Node base */
 .node{
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  border-radius:12px;padding:10px 8px;text-align:center;flex:1;
-  backdrop-filter:blur(4px);
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+  transform:translate(-50%,-50%);
+  z-index:5;
 }
-.node .em{font-size:1.4rem;line-height:1;margin-bottom:4px}
-.node .nm{font-size:.7rem;font-weight:700;color:#E8D8F0;line-height:1.3}
-.node .sb{font-size:.58rem;color:#6A5A7A;font-weight:300;margin-top:2px;line-height:1.4}
-.flow-row{display:flex;gap:7px}
+.node-ring{
+  width:88px;height:88px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;transition:transform .3s;cursor:default;
+}
+.node-ring:hover{transform:scale(1.07)}
 
-/* color tints */
-.n-hpb{border-color:rgba(249,157,108,.3);background:rgba(249,157,108,.08)}
-.n-tel{border-color:rgba(160,160,200,.25);background:rgba(160,160,200,.06)}
-.n-cust{border-color:rgba(199,91,138,.4);background:rgba(199,91,138,.1)}
-.n-hana{border-color:rgba(139,95,212,.4);background:rgba(139,95,212,.1)}
-.n-sb{border-color:rgba(160,160,200,.25);background:rgba(160,160,200,.06)}
-.n-fb{border-color:rgba(249,157,108,.3);background:rgba(249,157,108,.08)}
-.n-ejs{border-color:rgba(95,212,139,.3);background:rgba(95,212,139,.06)}
-.n-json{border-color:rgba(139,95,212,.4);background:rgba(139,95,212,.1)}
-.n-gml{border-color:rgba(199,91,138,.4);background:rgba(199,91,138,.1)}
+.node-icon{font-size:28px;line-height:1;margin-bottom:2px}
+.node-label{font-size:9px;font-weight:700;letter-spacing:.08em;opacity:.9}
+.node-name{
+  font-size:12px;font-weight:700;
+  margin-top:8px;white-space:nowrap;letter-spacing:.02em;
+}
+.node-sub{font-size:9px;color:var(--td);margin-top:2px;white-space:nowrap}
 
-/* ── SYNC BOX ─────────────────── */
-.sync-box{
-  background:rgba(199,91,138,.07);
-  border:1.5px solid rgba(199,91,138,.35);
-  border-radius:14px;padding:14px 12px;
-  position:relative;overflow:hidden;
+/* Recruit SB — blue-gray */
+.node-recruit .node-ring{
+  background:radial-gradient(135deg,rgba(130,170,223,.25),rgba(80,110,160,.15));
+  border:2px solid rgba(130,170,223,.5);
+  box-shadow:0 0 28px rgba(130,170,223,.25),inset 0 1px 0 rgba(255,255,255,.1);
 }
-.sync-box::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(199,91,138,.15) 0%,transparent 70%);
-  pointer-events:none;
+.node-recruit .node-name{color:var(--blue)}
+
+/* Customer SB — pink */
+.node-customer .node-ring{
+  background:radial-gradient(135deg,rgba(199,91,138,.25),rgba(160,60,100,.15));
+  border:2px solid rgba(199,91,138,.5);
+  box-shadow:0 0 28px var(--pink-glow),inset 0 1px 0 rgba(255,255,255,.1);
 }
-.sync-title{
-  font-size:.65rem;font-weight:700;letter-spacing:.1em;color:#C75B8A;
-  text-align:center;margin-bottom:12px;
+.node-customer .node-name{color:var(--pink)}
+
+/* My SB — pink, larger (hub) */
+.node-my .node-ring{
+  width:108px;height:108px;
+  background:radial-gradient(135deg,rgba(199,91,138,.35),rgba(160,60,100,.2));
+  border:2.5px solid rgba(199,91,138,.7);
+  box-shadow:0 0 40px var(--pink-glow),0 0 80px rgba(199,91,138,.2),inset 0 1px 0 rgba(255,255,255,.15);
 }
-.sync-methods{display:flex;gap:8px;align-items:stretch}
-.sync-method{
-  flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-  border-radius:10px;padding:10px 8px;text-align:center;
+.node-my .node-icon{font-size:32px}
+.node-my .node-name{font-size:14px;color:var(--pink)}
+
+/* Hub pulse */
+.node-my .node-ring::after{
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  border:2px solid rgba(199,91,138,.2);
+  animation:hub-pulse 2.8s ease-in-out infinite;
 }
-.sm-icon{font-size:1.4rem;margin-bottom:4px}
-.sm-name{font-size:.72rem;font-weight:700;color:#F0C8DC;line-height:1.3;margin-bottom:3px}
-.sm-sub{font-size:.6rem;color:#7A5A72;line-height:1.4}
-.sync-or{
+@keyframes hub-pulse{
+  0%,100%{transform:scale(1);opacity:.6}
+  50%{transform:scale(1.12);opacity:0}
+}
+
+/* ─── SOURCE NODES (smaller) ─────────── */
+.src-node{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+  transform:translate(-50%,-50%);
+  z-index:5;
+}
+.src-ring{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--card);border:1.5px solid var(--border);
+  font-size:18px;
+  box-shadow:0 2px 12px rgba(0,0,0,.4);
+  transition:transform .3s;
+}
+.src-ring:hover{transform:scale(1.1)}
+.src-name{
+  font-size:9px;font-weight:700;color:var(--td);
+  margin-top:6px;white-space:nowrap;letter-spacing:.04em;
+  max-width:72px;line-height:1.3;text-align:center;
+}
+
+/* Firebase node */
+.node-firebase .node-ring{
+  width:68px;height:68px;
+  background:radial-gradient(135deg,rgba(255,149,0,.2),rgba(255,100,0,.1));
+  border:1.5px solid rgba(255,149,0,.5);
+  box-shadow:0 0 18px rgba(255,149,0,.25);
+}
+.node-firebase .node-name{color:var(--fb);font-size:11px}
+
+/* ─── LEGEND ─────────────────────────── */
+.legend{
+  display:flex;flex-wrap:wrap;gap:12px;
+  justify-content:center;margin-bottom:48px;
+}
+.leg-item{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:99px;padding:6px 14px;
+  font-size:11px;color:var(--td);
+}
+.leg-line{
+  width:28px;height:3px;border-radius:2px;flex-shrink:0;
+}
+
+/* ─── FLOW CARDS (mobile-friendly detail) */
+.flows{display:flex;flex-direction:column;gap:14px;max-width:560px;margin:0 auto}
+.flow-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px 18px;
+  display:flex;align-items:flex-start;gap:14px;
+  transition:transform .2s,border-color .2s;
+}
+.flow-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.15)}
+.flow-card.flow-new{
+  border-color:rgba(245,200,66,.45);
+  background:linear-gradient(135deg,rgba(245,200,66,.07),rgba(255,171,53,.04));
+  box-shadow:0 0 20px rgba(245,200,66,.12);
+}
+.flow-num{
+  width:26px;height:26px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:.6rem;color:#5A4A6A;font-weight:700;
-  padding:0 2px;white-space:nowrap;
+  font-size:11px;font-weight:900;flex-shrink:0;margin-top:1px;
 }
-.sync-note{
-  margin-top:10px;font-size:.62rem;color:#7A6A82;text-align:center;
-  background:rgba(255,255,255,.04);border-radius:7px;padding:6px 10px;
-  border:1px solid rgba(255,255,255,.07);
-  font-family:'DM Mono',monospace;
+.flow-card:not(.flow-new) .flow-num{background:rgba(255,255,255,.1);color:var(--td)}
+.flow-card.flow-new .flow-num{background:var(--gold);color:#1C0E00}
+.flow-body{}
+.flow-title{font-size:13px;font-weight:700;margin-bottom:4px;line-height:1.4}
+.flow-card.flow-new .flow-title{color:var(--gold)}
+.flow-path{
+  font-size:11px;color:var(--td);
+  display:flex;flex-wrap:wrap;align-items:center;gap:4px;
+  line-height:1.6;
+}
+.flow-arrow{opacity:.5;font-size:10px}
+.flow-tag{
+  display:inline-block;border-radius:4px;padding:1px 6px;
+  font-size:10px;font-weight:700;vertical-align:middle;
+}
+.tag-sb{background:rgba(130,170,223,.2);color:var(--blue);border:1px solid rgba(130,170,223,.3)}
+.tag-cust{background:rgba(199,91,138,.2);color:var(--pink);border:1px solid rgba(199,91,138,.3)}
+.tag-gold{background:rgba(245,200,66,.2);color:var(--gold);border:1px solid rgba(245,200,66,.35)}
+.tag-fb{background:rgba(255,149,0,.15);color:var(--fb);border:1px solid rgba(255,149,0,.3)}
+
+/* Section title */
+.sec-title{
+  text-align:center;font-size:11px;font-weight:700;
+  letter-spacing:.2em;color:var(--pink);
+  text-transform:uppercase;margin-bottom:20px;
 }
 
-/* ── ARROW ─────────────────────── */
-.arr-wrap{display:flex;flex-direction:column;align-items:center;padding:4px 0}
-.arr-line{width:1.5px;background:rgba(199,91,138,.35);position:relative}
-.arr-line::after{
-  content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
-  border-left:4px solid transparent;border-right:4px solid transparent;
-  border-top:6px solid rgba(199,91,138,.5);
+/* ─── SVG animated paths ─────────────── */
+@keyframes dash-move{to{stroke-dashoffset:-24}}
+@keyframes dash-move-fast{to{stroke-dashoffset:-16}}
+@keyframes dot-travel{
+  0%{stroke-dashoffset:var(--path-len)}
+  100%{stroke-dashoffset:0}
 }
-.arr-line.gr{background:rgba(160,160,200,.35)}
-.arr-line.gr::after{border-top-color:rgba(160,160,200,.5)}
-.arr-line.grn{background:rgba(95,212,139,.4)}
-.arr-line.grn::after{border-top-color:rgba(95,212,139,.5)}
-.arr-lbl{
-  font-size:.55rem;color:#5A4A7A;background:#0F0A18;
-  padding:1px 6px;border-radius:99px;border:1px solid rgba(255,255,255,.08);
-  white-space:nowrap;margin:2px 0;
-}
-.marr{display:flex;justify-content:center;gap:7px}
-.marr-col{flex:1;display:flex;flex-direction:column;align-items:center}
-
-/* ── ADMIN BLOCK ────────────────── */
-.adm{
-  background:rgba(199,91,138,.1);
-  border:2px solid rgba(199,91,138,.6);
-  border-radius:16px;padding:14px 13px;
-  box-shadow:0 0 40px rgba(199,91,138,.15),inset 0 1px 0 rgba(255,255,255,.08);
-}
-.adm-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.adm-ic{font-size:1.8rem}
-.adm-title{font-size:.9rem;font-weight:900;color:#F0C8DC;letter-spacing:-.01em}
-.adm-url{font-size:.58rem;color:#8A6A82;font-family:'DM Mono',monospace;margin-top:1px}
-.tags{display:flex;gap:6px;flex-wrap:wrap}
-.tag{display:inline-flex;align-items:center;gap:3px;padding:5px 10px;border-radius:99px;font-size:.65rem;font-weight:700}
-.t-sb{background:rgba(255,255,255,.08);color:#AAA;border:1.5px solid rgba(255,255,255,.15)}
-.t-cu{background:rgba(199,91,138,.2);color:#F0A0C8;border:1.5px solid rgba(199,91,138,.4)}
-.t-di{background:rgba(139,95,212,.2);color:#C0A0F0;border:1.5px solid rgba(139,95,212,.4)}
-
-/* ── LEGEND ─────────────────────── */
-.leg{margin-top:24px}
-.li{
-  display:flex;align-items:flex-start;gap:10px;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
-  border-radius:11px;padding:10px 12px;margin-bottom:7px;
-}
-.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
-.lt strong{font-size:.75rem;color:#E0D0EE;display:block;margin-bottom:2px}
-.lt span{font-size:.64rem;color:#6A5A7A;line-height:1.5}
-.nb{
-  background:rgba(95,212,139,.06);border:1px solid rgba(95,212,139,.25);
-  border-radius:11px;padding:11px 12px;display:flex;gap:8px;align-items:flex-start;margin-top:8px;
-}
-.nb strong{font-size:.74rem;color:#70D0A0;display:block;margin-bottom:2px}
-.nb span{font-size:.63rem;color:#5A9A78;line-height:1.5}
-.sync-li{
-  background:rgba(199,91,138,.08);border:1px solid rgba(199,91,138,.25);
-  border-radius:11px;padding:11px 12px;display:flex;gap:8px;align-items:flex-start;margin-top:8px;
-}
-.sync-li strong{font-size:.74rem;color:#F0A0C8;display:block;margin-bottom:2px}
-.sync-li span{font-size:.63rem;color:#8A5A72;line-height:1.5}
-
-/* ── FLOWING DOT ANIMATION ──────── */
-.arr-dot{
-  width:5px;height:5px;border-radius:50%;background:#C75B8A;
-  animation:fall 1.4s ease-in-out infinite;
-  margin:1px 0;opacity:.7;
-}
-.arr-dot.gr{background:#9090B8;animation-delay:.3s}
-.arr-dot.grn{background:#5FD48B;animation-delay:.6s}
-@keyframes fall{
-  0%{opacity:0;transform:translateY(-4px)}
-  40%{opacity:.9}
-  100%{opacity:0;transform:translateY(10px)}
+@keyframes glow-pulse{
+  0%,100%{filter:drop-shadow(0 0 3px var(--gold))}
+  50%{filter:drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 20px rgba(245,200,66,.5))}
 }
 
-/* ── FADE IN ─────────────────────── */
-@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.node,.adm,.sync-box,.li,.nb,.sync-li{animation:fu .5s ease both}
+.line-existing{
+  stroke:rgba(130,170,223,.35);stroke-width:2;fill:none;
+  stroke-dasharray:6 5;
+  animation:dash-move 1.2s linear infinite;
+}
+.line-pink{
+  stroke:rgba(199,91,138,.45);stroke-width:2;fill:none;
+  stroke-dasharray:6 5;
+  animation:dash-move 1s linear infinite;
+}
+.line-new{
+  stroke:var(--gold);stroke-width:3;fill:none;
+  stroke-dasharray:8 4;
+  animation:dash-move-fast .7s linear infinite;
+  filter:drop-shadow(0 0 5px var(--gold));
+  animation:dash-move-fast .7s linear infinite, glow-pulse 2s ease-in-out infinite;
+}
+.line-notif{
+  stroke:rgba(255,149,0,.35);stroke-width:1.5;fill:none;
+  stroke-dasharray:4 4;
+  animation:dash-move 1.5s linear infinite;
+}
+/* traveling dot */
+.travel-dot{
+  r:4;fill:var(--blue);
+  animation:dot-travel 3s linear infinite;
+}
+.travel-dot-pink{
+  r:4;fill:var(--pink);
+  animation:dot-travel 2.5s linear infinite;
+}
+.travel-dot-gold{
+  r:5;fill:var(--gold);filter:drop-shadow(0 0 4px var(--gold));
+  animation:dot-travel 1.8s linear infinite;
+}
+
+/* Arrow markers */
+/* Done via SVG defs */
+
+@media(max-width:600px){
+  .triangle-wrap{aspect-ratio:unset;min-height:340px}
+  .legend{gap:8px}
+  .leg-item{font-size:10px;padding:5px 10px}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="page">
 
-<!-- HEADER -->
-<div class="hdr">
-  <div class="hdr-badge">SYSTEM DIAGRAM</div>
-  <h1>✂ サロンアプリ 構成図</h1>
-  <p>I sis hair studio — 予約データフロー</p>
-  <div class="bar"></div>
-</div>
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-eye">I sis hair studio</div>
+    <h1 class="hdr-title">3つの<em>SB</em>が、つながった</h1>
+    <div class="hdr-sub">SalonBoard × 顧客アプリ × 管理アプリ 連携システム図</div>
+    <div class="new-tag">✦ NEW &nbsp;顧客アプリ → リクルートSB 自動登録が完成！</div>
+  </div>
 
-<!-- ① 入口4つ -->
-<div class="lbl">📥 予約の入り口</div>
-<div class="flow-row" style="margin-bottom:3px">
-  <div class="node n-hpb" style="animation-delay:.04s">
-    <div class="em">💄</div>
-    <div class="nm">ホットペッパー</div>
-    <div class="sb">オンライン予約</div>
-  </div>
-  <div class="node n-tel" style="animation-delay:.07s">
-    <div class="em">📞</div>
-    <div class="nm">電話予約</div>
-    <div class="sb">直接連絡</div>
-  </div>
-  <div class="node n-cust" style="animation-delay:.1s">
-    <div class="em">📱</div>
-    <div class="nm">顧客アプリ</div>
-    <div class="sb">customer.html</div>
-  </div>
-  <div class="node n-hana" style="animation-delay:.13s">
-    <div class="em">✏️</div>
-    <div class="nm">はなさん<br>直接入力</div>
-    <div class="sb">管理アプリ</div>
-  </div>
-</div>
+  <!-- ─── Triangle diagram ─── -->
+  <div class="triangle-wrap" id="triWrap">
+    <!-- SVG connections drawn by JS -->
+    <svg class="svg-layer" id="svgLayer" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="rgba(130,170,223,.6)"/>
+        </marker>
+        <marker id="arr-pink" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="rgba(199,91,138,.7)"/>
+        </marker>
+        <marker id="arr-gold" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L0,8 L9,4 z" fill="var(--gold)"/>
+        </marker>
+        <marker id="arr-orange" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="rgba(255,149,0,.5)"/>
+        </marker>
+      </defs>
+      <!-- paths injected by JS -->
+      <g id="pathsGroup"></g>
+      <g id="dotsGroup"></g>
+      <g id="labelsGroup"></g>
+    </svg>
 
-<!-- ② 矢印 -->
-<div class="marr" style="padding:3px 0">
-  <div class="marr-col" style="flex:2">
-    <div class="arr-wrap">
-      <div class="arr-line gr" style="height:10px"></div>
-      <div class="arr-dot gr"></div>
-      <div class="arr-line gr" style="height:10px"></div>
-    </div>
-  </div>
-  <div class="marr-col">
-    <div class="arr-wrap">
-      <div class="arr-line" style="height:10px"></div>
-      <div class="arr-dot"></div>
-      <div class="arr-line" style="height:10px"></div>
-    </div>
-  </div>
-  <div class="marr-col" style="visibility:hidden"><div class="arr-wrap"><div class="arr-line" style="height:30px"></div></div></div>
-</div>
-
-<!-- ③ サロンボード ＋ Firebase/EmailJS -->
-<div class="flow-row" style="margin-bottom:3px;align-items:stretch">
-  <div class="node n-sb" style="animation-delay:.16s; flex:2">
-    <div style="display:flex;align-items:center;gap:7px;justify-content:center;height:100%">
-      <span style="font-size:1.4rem">🏢</span>
-      <div>
-        <div class="nm">サロンボード</div>
-        <div class="sb">SB管理システム</div>
+    <!-- ① リクルートSB -->
+    <div class="node node-recruit" id="nRecruit" style="left:22%;top:28%">
+      <div class="node-ring">
+        <div class="node-icon">🏢</div>
+        <div class="node-label">RECRUIT</div>
       </div>
+      <div class="node-name">① リクルートSB</div>
+      <div class="node-sub">SalonBoard</div>
     </div>
-  </div>
-  <div style="flex:1;display:flex;flex-direction:column;gap:5px">
-    <div class="node n-fb" style="animation-delay:.19s;padding:8px 5px">
-      <div class="em" style="font-size:1.1rem">🔥</div>
-      <div class="nm" style="font-size:.63rem">Firebase</div>
-      <div class="sb" style="font-size:.55rem">Realtime DB</div>
-    </div>
-    <div class="node n-ejs" style="animation-delay:.22s;padding:8px 5px">
-      <div class="em" style="font-size:1.1rem">📧</div>
-      <div class="nm" style="font-size:.63rem">EmailJS</div>
-      <div class="sb" style="font-size:.55rem">メール通知</div>
-    </div>
-  </div>
-</div>
 
-<!-- ④ 矢印 -->
-<div class="marr" style="padding:3px 0">
-  <div class="marr-col" style="flex:2">
-    <div class="arr-wrap">
-      <div class="arr-line gr" style="height:8px"></div>
-      <div class="arr-dot gr"></div>
-      <div class="arr-line gr" style="height:8px"></div>
+    <!-- ② 顧客SB -->
+    <div class="node node-customer" id="nCustomer" style="left:78%;top:28%">
+      <div class="node-ring">
+        <div class="node-icon">📱</div>
+        <div class="node-label">CUSTOMER</div>
+      </div>
+      <div class="node-name">② 顧客SB</div>
+      <div class="node-sub">customer.html</div>
     </div>
-  </div>
-  <div style="flex:1;display:flex;flex-direction:column;gap:2px">
-    <div class="arr-wrap">
-      <div class="arr-line" style="height:8px"></div>
-      <div class="arr-dot"></div>
-      <div class="arr-line" style="height:8px"></div>
-    </div>
-    <div class="arr-wrap">
-      <div class="arr-line grn" style="height:8px"></div>
-      <div class="arr-dot grn"></div>
-      <div class="arr-line grn" style="height:8px"></div>
-    </div>
-  </div>
-</div>
 
-<!-- ⑤ SB同期の仕組み（NEW） ＋ Gmail -->
-<div class="flow-row" style="margin-bottom:3px;align-items:stretch;gap:7px">
-  <!-- 同期ボックス（2/3幅） -->
-  <div style="flex:2">
-    <div class="sync-box" style="animation-delay:.25s;height:100%">
-      <div class="sync-title">🔄 SB同期の仕組み</div>
-      <div class="sync-methods">
-        <div class="sync-method">
-          <div class="sm-icon">💬</div>
-          <div class="sm-name">「同期して」</div>
-          <div class="sm-sub">Claude Code<br>/syncコマンド</div>
+    <!-- ③ 管理アプリ (hub) -->
+    <div class="node node-my" id="nMy" style="left:50%;top:75%">
+      <div class="node-ring">
+        <div class="node-icon">✂️</div>
+      </div>
+      <div class="node-name">③ 私のSB</div>
+      <div class="node-sub">管理アプリ（はなさん）</div>
+    </div>
+
+    <!-- Firebase -->
+    <div class="node node-firebase" id="nFirebase" style="left:64%;top:55%">
+      <div class="node-ring">
+        <div class="node-icon" style="font-size:20px">🔥</div>
+      </div>
+      <div class="node-name">Firebase</div>
+    </div>
+
+    <!-- Source: ホットペッパー -->
+    <div class="src-node" id="nHP" style="left:6%;top:12%">
+      <div class="src-ring">🌶️</div>
+      <div class="src-name">ホットペッパー<br>/ 電話</div>
+    </div>
+
+    <!-- Source: お客様 -->
+    <div class="src-node" id="nGuest" style="left:92%;top:12%">
+      <div class="src-ring">🧑‍🦱</div>
+      <div class="src-name">お客様<br>スマホ</div>
+    </div>
+
+    <!-- Source: はなさん -->
+    <div class="src-node" id="nHana" style="left:50%;top:96%">
+      <div class="src-ring">🌸</div>
+      <div class="src-name">はなさん<br>直接入力</div>
+    </div>
+
+    <!-- Notification chain -->
+    <div class="src-node" id="nEmail" style="left:90%;top:58%">
+      <div class="src-ring" style="font-size:16px">📧</div>
+      <div class="src-name">Gmail<br>通知</div>
+    </div>
+
+  </div><!-- /triangle-wrap -->
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="leg-item">
+      <div class="leg-line" style="background:rgba(130,170,223,.6);border-top:2px dashed rgba(130,170,223,.6);background:none"></div>
+      既存の連携
+    </div>
+    <div class="leg-item" style="border-color:rgba(245,200,66,.4);background:rgba(245,200,66,.06)">
+      <div class="leg-line" style="background:var(--gold);box-shadow:0 0 6px var(--gold)"></div>
+      <span style="color:var(--gold)">✦ NEW 自動登録</span>
+    </div>
+  </div>
+
+  <!-- ─── Flow list ─── -->
+  <div class="sec-title">連携フロー詳細</div>
+  <div class="flows">
+
+    <div class="flow-card">
+      <div class="flow-num">1</div>
+      <div class="flow-body">
+        <div class="flow-title">ホットペッパー / 電話予約 → 管理アプリ</div>
+        <div class="flow-path">
+          🌶️ ホットペッパー / 📞 電話
+          <span class="flow-arrow">→</span>
+          🏢 リクルートSB
+          <span class="flow-arrow">→ 同期して →</span>
+          ✂️ 管理アプリ
+          <span class="flow-tag tag-sb">🔲 SBタグ</span>
         </div>
-        <div class="sync-or">or</div>
-        <div class="sync-method">
-          <div class="sm-icon">🔖</div>
-          <div class="sm-name">🌸 SB同期</div>
-          <div class="sm-sub">ブックマーク<br>レット</div>
+      </div>
+    </div>
+
+    <div class="flow-card">
+      <div class="flow-num">2</div>
+      <div class="flow-body">
+        <div class="flow-title">顧客アプリ予約 → 管理アプリ（リアルタイム）</div>
+        <div class="flow-path">
+          📱 顧客アプリ
+          <span class="flow-arrow">→</span>
+          <span class="flow-tag tag-fb">🔥 Firebase</span>
+          <span class="flow-arrow">→ リアルタイム →</span>
+          ✂️ 管理アプリ
+          <span class="flow-tag tag-cust">🌸 顧客タグ</span>
         </div>
       </div>
-      <div class="sync-note">Chrome拡張でSalonBoardを自動巡回</div>
     </div>
-  </div>
-  <!-- Gmail（1/3幅） -->
-  <div class="node n-gml" style="animation-delay:.28s; flex:1">
-    <div class="em" style="font-size:1.2rem">📬</div>
-    <div class="nm" style="font-size:.65rem">Gmail</div>
-    <div class="sb" style="font-size:.57rem">はなさんへ<br>通知</div>
-  </div>
-</div>
 
-<!-- ⑥ 矢印 -->
-<div class="marr" style="padding:3px 0">
-  <div class="marr-col" style="flex:2">
-    <div class="arr-wrap">
-      <div class="arr-line" style="height:8px"></div>
-      <div class="arr-dot"></div>
-      <div class="arr-line" style="height:8px"></div>
-    </div>
-  </div>
-  <div class="marr-col" style="visibility:hidden;flex:1">
-    <div class="arr-wrap"><div class="arr-line" style="height:24px"></div></div>
-  </div>
-</div>
-
-<!-- ⑦ sb-sync.json -->
-<div class="flow-row" style="margin-bottom:3px">
-  <div class="node n-json" style="animation-delay:.31s;flex:2">
-    <div style="display:flex;align-items:center;gap:8px;justify-content:center">
-      <span style="font-size:1.2rem">📄</span>
-      <div>
-        <div class="nm" style="font-family:'DM Mono',monospace;font-size:.68rem">sb-sync.json</div>
-        <div class="sb">GitHub Pages</div>
+    <div class="flow-card">
+      <div class="flow-num">3</div>
+      <div class="flow-body">
+        <div class="flow-title">顧客予約 → はなさんへ通知</div>
+        <div class="flow-path">
+          📱 顧客アプリ
+          <span class="flow-arrow">→</span>
+          <span class="flow-tag tag-fb">🔥 Firebase</span>
+          <span class="flow-arrow">→ EmailJS →</span>
+          📧 Gmail通知
+        </div>
       </div>
     </div>
-  </div>
-  <div style="flex:1"></div>
-</div>
 
-<!-- ⑧ 矢印 -->
-<div class="arr-wrap" style="padding:3px 0">
-  <div class="arr-line" style="height:8px"></div>
-  <div class="arr-dot"></div>
-  <div class="arr-line" style="height:8px"></div>
-</div>
-
-<!-- ⑨ 管理アプリ -->
-<div class="adm" style="animation-delay:.35s">
-  <div class="adm-top">
-    <div class="adm-ic">🖥️</div>
-    <div>
-      <div class="adm-title">管理アプリ</div>
-      <div class="adm-url">hana8730.github.io/salon-app/</div>
+    <div class="flow-card">
+      <div class="flow-num">4</div>
+      <div class="flow-body">
+        <div class="flow-title">はなさんが直接入力</div>
+        <div class="flow-path">
+          🌸 はなさん直接入力
+          <span class="flow-arrow">→</span>
+          ✂️ 管理アプリ
+          <span class="flow-tag tag-cust">🟪 カラーブロック</span>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="tags">
-    <span class="tag t-sb">⬜ SBタグ</span>
-    <span class="tag t-cu">🌸 顧客タグ</span>
-    <span class="tag t-di">🟪 直接入力</span>
-  </div>
-</div>
 
-<!-- 凡例 -->
-<div class="leg">
-  <div class="lbl" style="margin-top:24px">凡例</div>
-
-  <div class="li" style="animation-delay:.38s">
-    <div class="ld" style="background:#888;border:2px solid rgba(255,255,255,.2)"></div>
-    <div class="lt">
-      <strong>⬜ グレー「SB」タグ</strong>
-      <span>ホットペッパー・電話 → サロンボード → 同期 → sb-sync.json 経由</span>
+    <div class="flow-card flow-new">
+      <div class="flow-num">✦</div>
+      <div class="flow-body">
+        <div class="flow-title">【NEW】顧客予約 → リクルートSB 自動登録</div>
+        <div class="flow-path">
+          📱 顧客アプリ
+          <span class="flow-arrow">→</span>
+          <span class="flow-tag tag-fb">🔥 Firebase</span>
+          <span class="flow-arrow">→ 同期時に自動登録 →</span>
+          🏢 リクルートSB
+          <span class="flow-tag tag-gold">✦ ダブルブッキング防止！</span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="li" style="animation-delay:.41s">
-    <div class="ld" style="background:#C75B8A"></div>
-    <div class="lt">
-      <strong>🌸 ピンク「顧客」タグ</strong>
-      <span>お客様がcustomer.htmlから予約 → Firebase Realtime Database 経由</span>
-    </div>
-  </div>
+  </div><!-- /flows -->
 
-  <div class="li" style="animation-delay:.44s">
-    <div class="ld" style="background:#8B5FD4"></div>
-    <div class="lt">
-      <strong>🟪 カラーブロック（直接入力）</strong>
-      <span>はなさんが管理アプリで手動入力・編集する予約</span>
-    </div>
-  </div>
+</div><!-- /page -->
 
-  <div class="sync-li" style="animation-delay:.47s">
-    <span style="font-size:1.1rem;flex-shrink:0">🔄</span>
-    <div>
-      <strong>SB同期の2つの方法</strong>
-      <span>
-        ① Claude Codeで<b style="color:#F0A0C8">「同期して」</b>と話しかける<br>
-        ② SalonBoard上で<b style="color:#F0A0C8">🌸 SB同期</b>ブックマークをクリック<br>
-        → 直近60日分を自動取得してGitHubに反映
-      </span>
-    </div>
-  </div>
+<script>
+// Draw SVG paths between nodes
+function getCenter(el, wrap) {
+  const wr = wrap.getBoundingClientRect();
+  const er = el.getBoundingClientRect();
+  return {
+    x: er.left - wr.left + er.width / 2,
+    y: er.top  - wr.top  + er.height / 2
+  };
+}
 
-  <div class="nb" style="animation-delay:.5s">
-    <span style="font-size:1.1rem;flex-shrink:0">📧</span>
-    <div>
-      <strong>自動メール通知（EmailJS）</strong>
-      <span>顧客アプリから予約が入ると h8730521@gmail.com に即時通知</span>
-    </div>
-  </div>
+function makePath(x1,y1,x2,y2,cls,markerId,offset){
+  const dx = x2-x1, dy = y2-y1;
+  const mx = x1+dx*.5, my = y1+dy*.5;
+  // slight curve
+  const cx = mx - dy*.15, cy = my + dx*.15;
+  const d = `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+  const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d', d);
+  p.setAttribute('class', cls);
+  if(markerId) p.setAttribute('marker-end', `url(#${markerId})`);
+  if(offset) p.style.animationDelay = offset+'s';
+  return {el:p, d};
+}
 
-</div>
+function makeTravelDot(d, cls, delay, dur) {
+  const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('class', cls);
+  // animate along path via motion
+  const anim = document.createElementNS('http://www.w3.org/2000/svg','animateMotion');
+  anim.setAttribute('dur', dur+'s');
+  anim.setAttribute('repeatCount','indefinite');
+  anim.setAttribute('begin', delay+'s');
+  const mp = document.createElementNS('http://www.w3.org/2000/svg','mpath');
+  // Use the path as href
+  const pathId = 'p_'+Math.random().toString(36).slice(2);
+  // We'll handle this differently - just add the dot to animate along the path
+  anim.setAttribute('path', d);
+  c.appendChild(anim);
+  return c;
+}
 
-</div><!-- wrap -->
+function makeTravelDot2(pathEl, cls, delay, dur, size, color, glowColor) {
+  const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('r', size||4);
+  dot.setAttribute('fill', color||'white');
+  if(glowColor) dot.setAttribute('filter', 'url(#glow'+color.replace('#','')+')');
+
+  const anim = document.createElementNS('http://www.w3.org/2000/svg','animateMotion');
+  anim.setAttribute('dur', dur+'s');
+  anim.setAttribute('repeatCount','indefinite');
+  anim.setAttribute('begin', delay+'s');
+
+  const mpath = document.createElementNS('http://www.w3.org/2000/svg','mpath');
+  pathEl.setAttribute('id', 'pth_'+delay.toString().replace('.','_'));
+  mpath.setAttributeNS('http://www.w3.org/1999/xlink','href','#pth_'+delay.toString().replace('.','_'));
+  anim.appendChild(mpath);
+  dot.appendChild(anim);
+  return dot;
+}
+
+function drawDiagram() {
+  const wrap = document.getElementById('triWrap');
+  const svg  = document.getElementById('svgLayer');
+  const pg   = document.getElementById('pathsGroup');
+  const dg   = document.getElementById('dotsGroup');
+  const lg   = document.getElementById('labelsGroup');
+  pg.innerHTML=''; dg.innerHTML=''; lg.innerHTML='';
+
+  const nodes = {
+    recruit:  document.getElementById('nRecruit'),
+    customer: document.getElementById('nCustomer'),
+    my:       document.getElementById('nMy'),
+    firebase: document.getElementById('nFirebase'),
+    hp:       document.getElementById('nHP'),
+    guest:    document.getElementById('nGuest'),
+    hana:     document.getElementById('nHana'),
+    email:    document.getElementById('nEmail'),
+  };
+
+  const c = {};
+  for(const [k,el] of Object.entries(nodes)) c[k] = getCenter(el, wrap);
+
+  function edge(x1,y1,x2,y2,cls,marker,delay){
+    const dx=x2-x1,dy=y2-y1;
+    const cx=x1+dx*.5-dy*.12, cy=y1+dy*.5+dx*.12;
+    const d=`M${x1},${y1} Q${cx},${cy} ${x2},${y2}`;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',d); p.setAttribute('class',cls);
+    if(marker) p.setAttribute('marker-end',`url(#${marker})`);
+    if(delay) p.style.animationDelay=delay+'s';
+    pg.appendChild(p);
+    return {p,d};
+  }
+
+  function dot(pathEl, color, glow, size, delay, dur) {
+    const id='p'+Math.floor(Math.random()*1e9);
+    pathEl.setAttribute('id',id);
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r',size);c.setAttribute('fill',color);
+    if(glow) c.style.filter=`drop-shadow(0 0 ${size+1}px ${glow})`;
+    const a=document.createElementNS('http://www.w3.org/2000/svg','animateMotion');
+    a.setAttribute('dur',dur+'s');a.setAttribute('repeatCount','indefinite');a.setAttribute('begin',delay+'s');
+    const m=document.createElementNS('http://www.w3.org/2000/svg','mpath');
+    m.setAttributeNS('http://www.w3.org/1999/xlink','href','#'+id);
+    a.appendChild(m);c.appendChild(a);
+    dg.appendChild(c);
+  }
+
+  function label(x,y,text,color) {
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',x);t.setAttribute('y',y);
+    t.setAttribute('text-anchor','middle');t.setAttribute('font-size','9');
+    t.setAttribute('font-family',"'Zen Kaku Gothic New',sans-serif");
+    t.setAttribute('font-weight','700');t.setAttribute('fill',color||'rgba(255,255,255,0.6)');
+    t.textContent=text;
+    g.appendChild(t);
+    lg.appendChild(g);
+  }
+
+  // ── draw edges ──
+  // HP → Recruit
+  const {p:e1} = edge(c.hp.x,c.hp.y, c.recruit.x,c.recruit.y, 'line-existing','arr-blue');
+  dot(e1,'rgba(130,170,223,.9)','rgba(130,170,223,.6)',3,0,4);
+
+  // Recruit → My (sync)
+  const {p:e2} = edge(c.recruit.x,c.recruit.y, c.my.x,c.my.y, 'line-existing','arr-blue',-.3);
+  dot(e2,'rgba(130,170,223,.9)','rgba(130,170,223,.6)',3,.8,3.5);
+  dot(e2,'rgba(130,170,223,.7)',null,2,1.8,3.5);
+
+  // Guest → Customer
+  const {p:e3} = edge(c.guest.x,c.guest.y, c.customer.x,c.customer.y, 'line-pink','arr-pink');
+  dot(e3,'rgba(199,91,138,.9)','rgba(199,91,138,.6)',3,0,3);
+
+  // Customer → Firebase
+  const {p:e4} = edge(c.customer.x,c.customer.y, c.firebase.x,c.firebase.y, 'line-pink','arr-pink',.2);
+  dot(e4,'rgba(199,91,138,.9)','rgba(199,91,138,.6)',3,.5,2.5);
+
+  // Firebase → My
+  const {p:e5} = edge(c.firebase.x,c.firebase.y, c.my.x,c.my.y, 'line-pink','arr-pink',.4);
+  dot(e5,'rgba(199,91,138,.9)','rgba(199,91,138,.6)',3,0,2.5);
+  dot(e5,'rgba(255,180,210,.7)',null,2,1.2,2.5);
+
+  // Firebase → Email (notification)
+  const {p:e6} = edge(c.firebase.x,c.firebase.y, c.email.x,c.email.y, 'line-notif','arr-orange',.6);
+  dot(e6,'rgba(255,149,0,.8)','rgba(255,149,0,.5)',2.5,.3,4);
+
+  // Hana → My
+  const {p:e7} = edge(c.hana.x,c.hana.y, c.my.x,c.my.y, 'line-pink','arr-pink',.8);
+  dot(e7,'rgba(199,91,138,.8)',null,2.5,0,3.5);
+
+  // ── NEW: Customer → Recruit (gold, emphasized) ──
+  const dx=c.recruit.x-c.customer.x, dy=c.recruit.y-c.customer.y;
+  const midX=(c.recruit.x+c.customer.x)/2;
+  const midY=(c.recruit.y+c.customer.y)/2 - 55; // arc upward
+  const dNew=`M${c.customer.x},${c.customer.y} Q${midX},${midY} ${c.recruit.x},${c.recruit.y}`;
+  const pNew=document.createElementNS('http://www.w3.org/2000/svg','path');
+  pNew.setAttribute('d',dNew);
+  pNew.setAttribute('class','line-new');
+  pNew.setAttribute('marker-end','url(#arr-gold)');
+  pNew.setAttribute('id','newPath');
+  pg.appendChild(pNew);
+
+  // Multiple gold dots along new path
+  for(let i=0;i<3;i++){
+    const dc=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dc.setAttribute('r',i===1?5:3.5);
+    dc.setAttribute('fill','var(--gold)');
+    dc.style.filter='drop-shadow(0 0 5px var(--gold)) drop-shadow(0 0 10px rgba(245,200,66,.6))';
+    const am=document.createElementNS('http://www.w3.org/2000/svg','animateMotion');
+    am.setAttribute('dur','2s');am.setAttribute('repeatCount','indefinite');
+    am.setAttribute('begin',(i*0.65)+'s');
+    const mp=document.createElementNS('http://www.w3.org/2000/svg','mpath');
+    mp.setAttributeNS('http://www.w3.org/1999/xlink','href','#newPath');
+    am.appendChild(mp);dc.appendChild(am);dg.appendChild(dc);
+  }
+
+  // ── Labels ──
+  const lbx=(c.recruit.x+c.my.x)/2-20, lby=(c.recruit.y+c.my.y)/2;
+  label(lbx,lby,'同期して','rgba(130,170,223,.75)');
+
+  const fbx=(c.firebase.x+c.my.x)/2+18, fby=(c.firebase.y+c.my.y)/2;
+  label(fbx,fby,'リアルタイム','rgba(199,91,138,.75)');
+
+  // NEW label on arc
+  label(midX, midY-14, '✦ NEW 自動登録', 'var(--gold)');
+}
+
+// Run after layout
+function init(){
+  drawDiagram();
+}
+window.addEventListener('load', ()=>{
+  init();
+  window.addEventListener('resize', drawDiagram);
+});
+</script>
 </body>
 </html>

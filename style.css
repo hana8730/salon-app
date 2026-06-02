@@ -451,6 +451,34 @@ body {
 .sb-block .sb-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sb-block .sb-menu { opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 9px; }
 
+/* SBへ送るボタン（カレンダー内顧客ブロック用） */
+.fb-sb-btn {
+  display: inline-flex; align-items: center; gap: 2px;
+  margin-top: 3px; padding: 1px 5px;
+  background: #C75B8A; color: #fff; border: none;
+  border-radius: 3px; font-size: 9px; font-weight: 700;
+  cursor: pointer; line-height: 1.4; align-self: flex-start;
+  white-space: nowrap;
+}
+.fb-sb-btn:hover { background: #a84875; }
+
+/* SBへ送るボタン（予約一覧カード用） */
+.rc-sb-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 6px; padding: 4px 10px;
+  background: #C75B8A; color: #fff; border: none;
+  border-radius: 6px; font-size: 11px; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+}
+.rc-sb-btn:hover { background: #a84875; }
+
+/* 顧客アプリソースバッジ（予約一覧） */
+.rc-source-tag {
+  display: inline-block; background: #C75B8A; color: #fff;
+  border-radius: 4px; padding: 1px 6px; font-size: 10px;
+  font-weight: 700; margin-left: 6px; vertical-align: middle;
+}
+
 /* Conflict warning in modal */
 .conflict-warning {
   background: #FFF3CD; border: 1.5px solid #FFC107;

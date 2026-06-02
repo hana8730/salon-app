@@ -81,6 +81,24 @@ function getFBCustomerReservations() {
   return fbCustomerReservations;
 }
 
+// ─── SalonBoard 連携：顧客予約をSBの予約登録フォームで開く ───────────────────
+
+const SB_STYLIST_ID = 'T000997646'; // ハナのスタイリストID
+
+function sendToSB(res) {
+  const sbDate = res.date.replace(/-/g, '');
+  const sbTime = res.time.replace(':', '');
+  const ts = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
+  const url = `https://salonboard.com/CLP/bt/reserve/ext/extReserveRegist/?date=${sbDate}&time=${sbTime}&stylistId=${SB_STYLIST_ID}&rlastupdate=${ts}`;
+  window.open(url, '_blank');
+}
+
+// 予約一覧のonclickから呼ばれる（IDで引き当て）
+window.sendToSBById = function(id) {
+  const res = getFBCustomerReservations().find(r => r.id === id);
+  if (res) sendToSB(res);
+};
+
 // ─── SalonBoard Integration ────────────────────────────────────────────────────
 
 const SB_KEY      = 'salonboard_sync_v1';
@@ -558,7 +576,10 @@ function renderCalendar() {
         <span class="sb-tag" style="background:#C75B8A;">顧客</span>
         <div class="sb-name">${res.customerName}</div>
         ${heightPx > 40 ? `<div class="sb-menu">${menu?.name || ''}</div>` : ''}
+        ${heightPx > 54 ? `<button class="fb-sb-btn">📤 SBへ</button>` : ''}
       `;
+      const fbSbBtn = block.querySelector('.fb-sb-btn');
+      if (fbSbBtn) fbSbBtn.addEventListener('click', e => { e.stopPropagation(); sendToSB(res); });
       slots.appendChild(block);
     });
 
@@ -592,22 +613,29 @@ function renderResList(q = '') {
   }
 
   container.innerHTML = list.map(r => {
-    const staff = getStaff(r.staffId);
-    const menu  = getMenu(r.menuId);
-    const endT  = menu ? addMinutes(r.time, menu.duration) : '?';
+    const staff  = getStaff(r.staffId);
+    const menu   = getMenu(r.menuId);
+    const endT   = menu ? addMinutes(r.time, menu.duration) : '?';
+    const isFB   = r.source === 'customer';
+    const srcTag = isFB ? `<span class="rc-source-tag">顧客アプリ</span>` : '';
+    const sbBtn  = isFB
+      ? `<button class="rc-sb-btn" onclick="event.stopPropagation();sendToSBById('${r.id}')">📤 SBへ送る</button>`
+      : '';
+    const onclick = isFB ? '' : `onclick="openEditRes(${r.id})"`;
     return `
-      <div class="res-card" onclick="openEditRes(${r.id})">
-        <div class="rc-dot" style="background:${staff?.color||'#ccc'}"></div>
+      <div class="res-card" ${onclick}>
+        <div class="rc-dot" style="background:${isFB ? '#C75B8A' : (staff?.color||'#ccc')}"></div>
         <div class="rc-body">
-          <div class="rc-name">${r.customerName}</div>
+          <div class="rc-name">${r.customerName}${srcTag}</div>
           <div class="rc-sub">
-            ${menu?.name||'—'} &nbsp;·&nbsp; ${staff?.name||'—'}
+            ${menu?.name||'—'} &nbsp;·&nbsp; ${isFB ? 'ハナ' : (staff?.name||'—')}
             ${r.phone ? `&nbsp;·&nbsp; ${r.phone}` : ''}
           </div>
         </div>
         <div class="rc-time">
           <div class="rc-date">${displayDate(r.date)}</div>
           <div class="rc-dur">${r.time}〜${endT}（${menu?.duration||'?'}分）</div>
+          ${sbBtn}
         </div>
       </div>`;
   }).join('');

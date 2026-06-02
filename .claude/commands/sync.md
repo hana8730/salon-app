@@ -9,7 +9,7 @@ SalonBoardの予約データを取得してsb-sync.jsonを更新し、GitHubに�
 SalonBoardのタブ（salonboard.com）がなければ、以下のURLに遷移する：
 `https://salonboard.com/CLP/bt/schedule/salonSchedule/`
 
-### 2. 今日から60日分のデータを取得
+### 2. 今日から30日分のデータを取得
 
 以下のJavaScriptを各日付ページで実行して予約データを収集する。
 日付URLパターン：`https://salonboard.com/CLP/bt/schedule/salonSchedule/?date=YYYYMMDD`

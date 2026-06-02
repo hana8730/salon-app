@@ -1019,7 +1019,7 @@ function renderCalendar() {
       const [h,m] = res.time.split(':').map(Number);
       const startMin = h*60+m;
       const topPx    = ((startMin - HOUR_START*60) / 60) * SLOT_PX;
-      const heightPx = SLOT_PX / 2 - 1; // 1スロット（30分）分の高さ
+      const heightPx = ((res.duration || 60) / 60) * SLOT_PX - 1; // 実際の予約時間分の高さ
 
       const block = document.createElement('div');
       block.className = 'sb-block';

@@ -22,7 +22,15 @@ Array.from(document.querySelectorAll('div[id^="reserve_item_"]')).map(card => {
   const stylistId = card.querySelector('.panel_reserve_stylistId')?.textContent.trim() || '';
   const dateRaw   = card.querySelector('.panel_reserve_date')?.textContent.trim() || '';
   const timeRaw   = card.querySelector('.panel_reserve_start')?.textContent.trim() || '';
+  const endRaw    = card.querySelector('.panel_reserve_end')?.textContent.trim() || '';
   if (!dateRaw || !timeRaw) return null;
+  // 実際の所要時間を計算（終了時刻がある場合）、なければ60分デフォルト
+  let duration = 60;
+  if (endRaw && endRaw.length >= 4) {
+    const startMin = parseInt(timeRaw.slice(0,2))*60 + parseInt(timeRaw.slice(2,4));
+    const endMin   = parseInt(endRaw.slice(0,2))*60  + parseInt(endRaw.slice(2,4));
+    if (endMin > startMin) duration = endMin - startMin;
+  }
   return {
     date:          dateRaw.slice(0,4)+'-'+dateRaw.slice(4,6)+'-'+dateRaw.slice(6,8),
     time:          timeRaw.slice(0,2)+':'+timeRaw.slice(2,4),
@@ -30,7 +38,7 @@ Array.from(document.querySelectorAll('div[id^="reserve_item_"]')).map(card => {
     reservationNo: resNo,
     stylist:       stylistId === 'T000997646' ? 'ハナ' : '指名なし',
     menu:          '',
-    duration:      60,
+    duration:      duration,
     source:        'salonboard'
   };
 }).filter(Boolean)

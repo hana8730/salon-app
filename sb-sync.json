@@ -11,7 +11,7 @@
     {"date":"2026-06-11","time":"18:00","customerName":"大方 晃爾 様","reservationNo":"YG65395080","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-06-16","time":"10:00","customerName":"マツダ 様","reservationNo":"YG64761373","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"},
     {"date":"2026-06-23","time":"10:00","customerName":"マエダ 様","reservationNo":"YG64639921","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
-    {"date":"2026-06-29","time":"17:00","customerName":"ア 様","reservationNo":"YG57004816","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"},
-    {"date":"2026-06-30","time":"10:00","customerName":"ア 様","reservationNo":"YG57004943","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"}
+    {"date":"2026-06-29","time":"17:00","customerName":"ア 様","reservationNo":"YG57004816","stylist":"ハナ","menu":"","duration":150,"source":"salonboard"},
+    {"date":"2026-06-30","time":"10:00","customerName":"ア 様","reservationNo":"YG57004943","stylist":"ハナ","menu":"","duration":570,"source":"salonboard"}
   ]
 }

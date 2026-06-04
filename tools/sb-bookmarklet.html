@@ -98,15 +98,38 @@
       transition: .2s;
     }
     .btn-primary { background: var(--pink); color: white; }
-    .btn-primary:hover { background: var(--pink-dark); }
+    .btn-primary:hover, .btn-primary:active { background: var(--pink-dark); }
     .btn-sm { padding: 6px 14px; font-size: .8rem; }
     #token-status { margin-top: 8px; font-size: .85rem; min-height: 20px; }
     .ok  { color: var(--green); }
     .err { color: var(--red);   }
 
-    /* Bookmarklet box */
+    /* Device tabs */
+    .tab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab {
+      flex: 1;
+      padding: 9px 0;
+      border: 2px solid #E6DEF0;
+      border-radius: 10px;
+      background: white;
+      color: #7A6B82;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .tab.active {
+      border-color: var(--pink);
+      background: var(--pink);
+      color: white;
+    }
+
+    /* Bookmarklet box (PC) */
     .bm-box {
-      margin-top: 16px;
       background: #fef9fb;
       border: 2px dashed #e0c8d8;
       border-radius: 12px;
@@ -137,6 +160,85 @@
     .bm-link:active { cursor: grabbing; transform: scale(.97); }
     .bm-hint { font-size: .8rem; color: #7A6B82; margin-top: 10px; }
     .bm-locked { font-size: .85rem; color: #7A6B82; }
+
+    /* Mobile copy box */
+    .copy-box {
+      background: #fef9fb;
+      border: 2px dashed #e0c8d8;
+      border-radius: 12px;
+      padding: 24px 20px;
+      text-align: center;
+      opacity: .4;
+      transition: .3s;
+      pointer-events: none;
+    }
+    .copy-box.ready {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .copy-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: var(--pink);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(199,91,138,.4);
+      transition: .2s;
+    }
+    .copy-btn:active { transform: scale(.97); background: var(--pink-dark); }
+    .copy-btn.copied { background: var(--green); }
+    #copy-status { margin-top: 10px; font-size: .85rem; min-height: 18px; color: var(--green); font-weight: 600; }
+
+    /* SP steps */
+    .sp-steps { margin-top: 16px; }
+    .sp-steps .os-label {
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--pink);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin: 16px 0 8px;
+    }
+    .sp-step-list { list-style: none; padding: 0; }
+    .sp-step-list li {
+      padding: 9px 0 9px 32px;
+      position: relative;
+      font-size: .88rem;
+      color: #444;
+      line-height: 1.5;
+      border-bottom: 1px solid #f0eaf4;
+    }
+    .sp-step-list li:last-child { border-bottom: none; }
+    .sp-step-list li::before {
+      content: attr(data-n);
+      position: absolute;
+      left: 0;
+      background: #f0eaf4;
+      color: var(--pink);
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      font-size: .72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 10px;
+    }
+    .sp-step-list li strong { color: #2D1F33; }
+    .sp-note {
+      background: #fff8e1;
+      border-left: 3px solid #f0b429;
+      padding: 9px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: .82rem;
+      margin-top: 12px;
+      color: #555;
+    }
 
     /* Usage steps */
     .usage-steps { list-style: none; padding: 0; }
@@ -179,7 +281,7 @@
 <div class="container">
 
   <div class="logo">🌸 SalonBoard 同期ツール</div>
-  <p class="subtitle">SalonBoardの予約データをワンクリックで管理アプリに同期します</p>
+  <p class="subtitle">SalonBoardの予約データをワンタップで管理アプリに同期します</p>
 
   <!-- Step 1: GitHub Token -->
   <div class="card">
@@ -192,33 +294,82 @@
     <div class="token-area">
       <label>GitHubトークン（ghp_... または github_pat_...）</label>
       <div class="token-row">
-        <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxx">
+        <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
         <button class="btn btn-primary btn-sm" onclick="verifyToken()">確認</button>
       </div>
       <div id="token-status"></div>
     </div>
   </div>
 
-  <!-- Step 2: Bookmarklet -->
+  <!-- Step 2: Setup -->
   <div class="card">
-    <h2><span class="step-badge">2</span> ブックマークレットを登録</h2>
-    <p>下のボタンをブラウザの<strong>ブックマークバー</strong>にドラッグして追加してください。</p>
+    <h2><span class="step-badge">2</span> ブックマークに登録</h2>
 
-    <div class="bm-box" id="bm-box">
-      <a id="bm-link" class="bm-link" href="#">🌸 SB同期</a>
-      <div class="bm-hint" id="bm-hint">← ブックマークバーにドラッグ</div>
+    <div class="tab-row">
+      <button class="tab active" id="tab-pc" onclick="setTab('pc')">💻 PC・Mac</button>
+      <button class="tab" id="tab-sp" onclick="setTab('sp')">📱 スマートフォン</button>
     </div>
-    <div id="bm-locked" class="note" style="margin-top:12px;">
-      ⬆ ステップ1でトークンを確認すると有効になります
+
+    <!-- PC panel -->
+    <div id="panel-pc">
+      <p>下のボタンをブラウザの<strong>ブックマークバー</strong>にドラッグして追加してください。</p>
+      <div class="bm-box" id="bm-box">
+        <a id="bm-link" class="bm-link" href="#">🌸 SB同期</a>
+        <div class="bm-hint" id="bm-hint">← ブックマークバーにドラッグ</div>
+      </div>
+      <div id="bm-locked" class="note" style="margin-top:12px;">
+        ⬆ ステップ1でトークンを確認すると有効になります
+      </div>
+    </div>
+
+    <!-- Mobile panel -->
+    <div id="panel-sp" style="display:none">
+      <p>ボタンをタップしてコードをコピーし、下の手順でブックマークに登録してください。<br>（登録は最初の1回だけです）</p>
+
+      <div class="copy-box" id="copy-box" style="margin-top:14px;">
+        <button class="copy-btn" id="copy-btn" onclick="copyCode()">📋 コードをコピー</button>
+        <div id="copy-status"></div>
+      </div>
+      <div id="copy-locked" class="note" style="margin-top:12px;">
+        ⬆ ステップ1でトークンを確認すると有効になります
+      </div>
+
+      <!-- iOS Safari steps -->
+      <div class="sp-steps">
+        <div class="os-label">📱 iOS Safari の場合</div>
+        <ul class="sp-step-list">
+          <li data-n="1">上の「コードをコピー」をタップ</li>
+          <li data-n="2">Safariで <strong>salonboard.com</strong> を開く</li>
+          <li data-n="3">画面下の <strong>共有ボタン（□↑）</strong> をタップ →「ブックマークを追加」→ 名前を <strong>SB同期</strong> にして保存</li>
+          <li data-n="4">Safariのアドレスバー左の<strong>ブック型アイコン</strong>をタップ → 「SB同期」を<strong>長押し</strong> →「編集」</li>
+          <li data-n="5">URLをすべて選択して<strong>削除</strong> → コピーしたコードを<strong>ペースト</strong> → 完了</li>
+          <li data-n="6">次回からはSalonBoard上でブックマーク「SB同期」をタップするだけ！</li>
+        </ul>
+
+        <!-- Android Chrome steps -->
+        <div class="os-label" style="margin-top:20px;">🤖 Android Chrome の場合</div>
+        <ul class="sp-step-list">
+          <li data-n="1">上の「コードをコピー」をタップ</li>
+          <li data-n="2">Chromeで <strong>salonboard.com</strong> を開く</li>
+          <li data-n="3">右上の <strong>⋮ メニュー</strong> →「☆ブックマークに追加」→ 名前を <strong>SB同期</strong> にして保存</li>
+          <li data-n="4">⋮メニュー →「ブックマーク」→「SB同期」を<strong>長押し</strong> →「編集」</li>
+          <li data-n="5">URLをすべて選択して<strong>削除</strong> → コピーしたコードを<strong>ペースト</strong> → 保存</li>
+          <li data-n="6">次回からはSalonBoard上でブックマーク「SB同期」をタップするだけ！</li>
+        </ul>
+
+        <div class="sp-note">
+          💡 コードが長くてペーストできない場合は、テキストエリアに長押し→「すべて選択」→「ペースト」の順で試してください。
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Step 3: Usage -->
   <div class="card">
-    <h2><span class="step-badge">3</span> 使い方</h2>
+    <h2><span class="step-badge">3</span> 使い方（登録後）</h2>
     <ul class="usage-steps">
-      <li data-n="1">サロンボードをChrome で開いてログインする</li>
-      <li data-n="2">ブックマークバーの <strong>🌸 SB同期</strong> をクリック</li>
+      <li data-n="1">SalonBoardをブラウザで開いてログインする</li>
+      <li data-n="2">ブックマークの <strong>🌸 SB同期</strong> をタップ（またはクリック）</li>
       <li data-n="3">ピンクのバーが表示されて自動で取得開始（約30秒）</li>
       <li data-n="4">「✅ 同期完了！」が表示されたら完了</li>
       <li data-n="5">管理アプリを開くと最新の予約が反映されている</li>
@@ -237,6 +388,8 @@ const HANA_ID       = 'T000997646';
 const LS_KEY        = 'sb_sync_github_token';
 const DAYS          = 30;
 
+let _bookmarkletHref = '';
+
 // ── Restore saved token ────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem(LS_KEY);
@@ -245,7 +398,19 @@ window.addEventListener('DOMContentLoaded', () => {
     setStatus('ok', '✅ 保存済みのトークンが読み込まれました');
     buildBookmarklet(saved);
   }
+  // Detect mobile and auto-switch tab
+  if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    setTab('sp');
+  }
 });
+
+// ── Tab toggle ─────────────────────────────────────────────
+function setTab(tab) {
+  document.getElementById('panel-pc').style.display = tab === 'pc' ? '' : 'none';
+  document.getElementById('panel-sp').style.display = tab === 'sp' ? '' : 'none';
+  document.getElementById('tab-pc').classList.toggle('active', tab === 'pc');
+  document.getElementById('tab-sp').classList.toggle('active', tab === 'sp');
+}
 
 // ── Verify token ───────────────────────────────────────────
 async function verifyToken() {
@@ -276,6 +441,27 @@ function setStatus(type, msg) {
   const el = document.getElementById('token-status');
   el.textContent = msg;
   el.className = type;
+}
+
+// ── Copy bookmarklet code (mobile) ─────────────────────────
+async function copyCode() {
+  if (!_bookmarkletHref) return;
+  const btn = document.getElementById('copy-btn');
+  const st  = document.getElementById('copy-status');
+  try {
+    await navigator.clipboard.writeText(_bookmarkletHref);
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    st.textContent = 'ブラウザでSalonBoardを開き、下の手順でブックマークに貼り付けてください';
+    setTimeout(() => {
+      btn.textContent = '📋 コードをコピー';
+      btn.classList.remove('copied');
+      st.textContent = '';
+    }, 4000);
+  } catch(e) {
+    // Fallback: show a textarea for manual copy
+    st.innerHTML = 'コピーできませんでした。下を長押しして「すべて選択→コピー」してください：<br><textarea style="width:100%;height:60px;font-size:.7rem;margin-top:6px;border-radius:6px;padding:6px;" readonly>' + _bookmarkletHref + '</textarea>';
+  }
 }
 
 // ── Build bookmarklet ──────────────────────────────────────
@@ -320,7 +506,7 @@ function loadSBPage(ds){
   });
 }
 
-// ── Phase 1: SalonBoard 60日スクレイピング ──
+// ── Phase 1: SalonBoard スクレイピング ──
 var all=[],today=new Date();
 for(var i=0;i<DAYS;i+=5){
   var batch=[];
@@ -351,7 +537,6 @@ try{
   if(fbData){
     toReg=Object.values(fbData).filter(function(fb){
       if(!fb.date||!fb.time)return false;
-      // 同日同時刻にSB予約があり名前が似ていれば登録済みとみなす
       var sbT=all.filter(function(s){return s.date===fb.date&&s.time===fb.time;});
       if(!sbT.length)return true;
       var fn=normN(fb.customerName);
@@ -360,7 +545,6 @@ try{
   }
 }catch(e){}
 
-// iframeで予約登録フォームを開き自動入力・送信
 function regFB(fb){
   return new Promise(function(resolve){
     var iframe=document.createElement('iframe');
@@ -373,7 +557,6 @@ function regFB(fb){
       try{
         var doc=iframe.contentDocument,path=iframe.contentWindow.location.pathname;
         if(step===0){
-          // フォームに入力して送信
           step=1;
           var form=doc.querySelector('form');
           if(!form){clearTimeout(timer);iframe.remove();resolve(false);return;}
@@ -387,13 +570,10 @@ function regFB(fb){
           var rs=doc.querySelector('[name="rsvRouteId"]');if(rs)rs.value='K000000001';
           iframe.onload=onLoad;form.submit();
         }else if(step===1){
-          // 確認画面 or 完了 or エラー判定
           step=2;
           if(path.indexOf('Regist')>=0&&path.indexOf('Confirm')<0&&path.indexOf('Complete')<0){
-            // バリデーションエラー（同じ登録画面に留まっている）
             clearTimeout(timer);iframe.remove();resolve(false);
           }else if(path.indexOf('Confirm')>=0){
-            // 確認画面→もう一度送信して完了
             var cf=doc.querySelector('form');
             if(cf){iframe.onload=onLoad;cf.submit();}
             else{clearTimeout(timer);iframe.remove();resolve(true);}
@@ -429,11 +609,16 @@ ui.innerHTML='✅ 同期完了！<br><small>'+msg+'</small>';
 setTimeout(function(){ui.remove();},8000);
 })();`;
 
+  _bookmarkletHref = 'javascript:' + encodeURIComponent(code);
+
   const link = document.getElementById('bm-link');
-  link.href = 'javascript:' + encodeURIComponent(code);
+  link.href = _bookmarkletHref;
 
   document.getElementById('bm-box').classList.add('ready');
   document.getElementById('bm-locked').style.display = 'none';
+
+  document.getElementById('copy-box').classList.add('ready');
+  document.getElementById('copy-locked').style.display = 'none';
 }
 </script>
 </body>

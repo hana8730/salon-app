@@ -21,7 +21,7 @@ GitHub Pages（https://hana8730.github.io/salon-app/）でホスト。
 | `customer.html` | お客様向け予約ページ |
 | `sb-sync.json` | SalonBoard予約データ（自動同期対象） |
 | `system-diagram.html` | システム構成図 |
-| `tools/sb-bookmarklet.html` | SalonBoard同期ブックマークレット設定ページ |
+| `tools/sb-bookmark.html` | SalonBoard同期ブックマークレット設定ページ |
 
 ## データフロー
 1. SalonBoard → sb-sync.json（/syncコマンドで同期） → 管理アプリ（グレー「SB」タグ）

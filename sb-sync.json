@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-08T13:45:00.000Z",
+  "syncTime": "2026-06-09T04:30:00.000Z",
   "reservations": [
     {"date":"2026-06-08","time":"17:00","customerName":"相田 麻紀 様","reservationNo":"BF08464580","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-06-08","time":"17:30","customerName":"長橋 朋美 様","reservationNo":"BF07872415","stylist":"指名なし","menu":"シルエットカット","duration":30,"source":"salonboard"},
@@ -11,6 +11,7 @@
     {"date":"2026-06-09","time":"11:00","customerName":"名嘉眞 朝尚 様","reservationNo":"BF09534487","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-06-09","time":"11:30","customerName":"櫻井 眞悠 様","reservationNo":"BF09527862","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-06-09","time":"12:00","customerName":"前田 安寿華 様","reservationNo":"BF09762395","stylist":"指名なし","menu":"","duration":90,"source":"salonboard"},
+    {"date":"2026-06-09","time":"13:30","customerName":"佐々木 久美 様","reservationNo":"BF09890352","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-06-09","time":"15:00","customerName":"カザマツリ 様","reservationNo":"YG69176865","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-06-09","time":"15:30","customerName":"宮崎 葵 様","reservationNo":"BF02091554","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-06-09","time":"16:00","customerName":"シミズ 様","reservationNo":"YG67834815","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},

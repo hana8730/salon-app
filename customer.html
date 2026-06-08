@@ -1262,8 +1262,8 @@ function saveRes(e) {
     return;
   }
   if (sb.length > 0) {
-    const ok = confirm('この時間帯に別の予約があります。このまま保存しますか？');
-    if (!ok) return;
+    alert('あいにくこの時間帯はすでにご予約が入っております。別の時間帯をお選びください。');
+    return;
   }
 
   if (editResId) {

@@ -63,20 +63,22 @@
     .c-header {
       background: var(--surface); border-bottom: 1px solid var(--border);
       padding: 0 16px; height: 56px;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
       position: sticky; top: 0; z-index: 100;
     }
-    .c-header-left { display: flex; align-items: center; gap: 14px; }
-    .c-logo { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+    .c-header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; overflow: hidden; }
+    .c-logo { font-size: 1.15rem; font-weight: 700; color: var(--primary); white-space: nowrap; flex-shrink: 0; }
     .c-user-badge {
       font-size: .8rem; background: #F9EEF5;
       border: 1px solid var(--border); border-radius: 20px;
       padding: 4px 12px; color: var(--primary); font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
     }
     .btn-logout {
       font-size: .8rem; padding: 6px 14px; border-radius: 20px;
       border: 1.5px solid var(--border); background: transparent;
       color: var(--sub); cursor: pointer; transition: all .2s;
+      white-space: nowrap; flex-shrink: 0;
     }
     .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
 
@@ -93,6 +95,16 @@
       background: #ccc; flex: 0 0 7px;
     }
     .sb-dot.synced { background: #4CAF50; }
+
+    /* スマホ: ヘッダーの折り返し対策（SBバッジは内部用なので非表示にして余白確保） */
+    @media (max-width: 520px) {
+      .c-header { padding: 0 10px; gap: 6px; }
+      .c-header-left { gap: 8px; }
+      .c-logo { font-size: 1rem; }
+      .c-user-badge { font-size: .72rem; padding: 4px 8px; max-width: 40vw; }
+      .sb-sync-badge { display: none; }
+      .btn-logout { font-size: .75rem; padding: 6px 10px; }
+    }
 
     /* ── Nav Tabs ─────────────────────────────────── */
     .c-nav {
@@ -187,6 +199,9 @@
     .hour-slot.closed:hover { background: repeating-linear-gradient(
         -45deg, rgba(180,165,200,.14), rgba(180,165,200,.14) 3px,
         transparent 3px, transparent 9px); }
+    /* 予約済みのスロット — タップ不可（新規予約を防止） */
+    .hour-slot.occupied { cursor: default; }
+    .hour-slot.occupied:hover { background: #ffffff; }
     .day-col-header.is-closed { background: #F5F0F8; }
     .day-col-header.is-closed .day-weekname,
     .day-col-header.is-closed .day-daynum { color: #BBA8CC; }
@@ -384,6 +399,22 @@
     .conflict-warning.hard { background: #FDECEA; border-color: var(--danger); }
     .cw-title { font-weight: 700; margin-bottom: 4px; }
     .cw-item  { margin-top: 2px; padding-left: 4px; }
+
+    /* ── Confirm Modal ────────────────────────────── */
+    .confirm-body { padding: 20px 24px 4px; }
+    .confirm-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: .92rem;
+    }
+    .confirm-row:last-of-type { border-bottom: none; }
+    .confirm-label { color: var(--sub); font-size: .8rem; font-weight: 600; flex: 0 0 auto; }
+    .confirm-value { font-weight: 700; text-align: right; }
+    .confirm-question {
+      margin-top: 18px; font-size: .92rem; color: var(--text);
+      text-align: center; font-weight: 600; line-height: 1.6;
+    }
+    .confirm-actions { padding: 18px 24px 24px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
   </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -518,6 +549,28 @@
   </div>
 </div>
 
+<!-- ===== Modal: Reservation Confirm ===== -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>予約内容の確認</h3>
+      <button class="modal-close" id="confirm-modal-close">×</button>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-row"><span class="confirm-label">日付</span><span class="confirm-value" id="confirm-date"></span></div>
+      <div class="confirm-row"><span class="confirm-label">時間</span><span class="confirm-value" id="confirm-time"></span></div>
+      <div class="confirm-row"><span class="confirm-label">スタッフ</span><span class="confirm-value" id="confirm-staff"></span></div>
+      <div class="confirm-row"><span class="confirm-label">メニュー</span><span class="confirm-value" id="confirm-menu"></span></div>
+      <div class="confirm-row" id="confirm-notes-row"><span class="confirm-label">備考</span><span class="confirm-value" id="confirm-notes"></span></div>
+      <p class="confirm-question" id="confirm-question"></p>
+    </div>
+    <div class="confirm-actions">
+      <button type="button" class="btn-secondary" id="confirm-back-btn">戻る</button>
+      <button type="button" class="btn-primary" id="confirm-submit-btn">この内容で予約する</button>
+    </div>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -627,6 +680,26 @@ function isOpenSlot(ds, hourStr) {
   if (!bh) return false;
   const t = timeToMin(hourStr);
   return t >= timeToMin(bh.open) && t < timeToMin(bh.close);
+}
+// この30分枠がすでに予約（自社アプリ・SalonBoard問わず）で埋まっているか
+function isSlotOccupied(ds, hourStr) {
+  const slotStart = timeToMin(hourStr);
+  const slotEnd   = slotStart + 30;
+
+  const localHit = db.reservations.some(r => {
+    if (r.date !== ds) return false;
+    const menu = getMenu(r.menuId);
+    if (!menu) return false;
+    const rS = timeToMin(r.time);
+    return overlaps(slotStart, slotEnd, rS, rS + menu.duration);
+  });
+  if (localHit) return true;
+
+  return getSBReservations().some(r => {
+    if (r.date !== ds) return false;
+    const rS = timeToMin(r.time);
+    return overlaps(slotStart, slotEnd, rS, rS + (r.duration || SB_DEFAULT_DURATION));
+  });
 }
 const DB_KEY     = 'salonboard_v3';
 const SB_KEY     = 'salonboard_sync_v1';
@@ -843,6 +916,7 @@ let currentView = 'calendar';
 let calView     = 'week';
 let cursorDate  = new Date();
 let editResId   = null;
+let pendingRes  = null; // 確認モーダル表示中の予約内容
 
 // ─── View switching ───────────────────────────────────────────────────────────
 function switchView(name) {
@@ -934,13 +1008,14 @@ function renderCalendar() {
     // Background cells — 30分単位で独立したクリック枠
     for (let h = HOUR_START; h < HOUR_END; h++) {
       for (const m of [0, 30]) {
-        const cell  = document.createElement('div');
-        const tv    = `${pad(h)}:${pad(m)}`;
-        const open  = isOpenSlot(ds, tv);
-        const topPx = ((h - HOUR_START) * 60 + m) / 60 * SLOT_PX;
-        cell.className = 'hour-slot' + (open ? '' : ' closed');
+        const cell     = document.createElement('div');
+        const tv       = `${pad(h)}:${pad(m)}`;
+        const open     = isOpenSlot(ds, tv);
+        const occupied = open && isSlotOccupied(ds, tv);
+        const topPx    = ((h - HOUR_START) * 60 + m) / 60 * SLOT_PX;
+        cell.className = 'hour-slot' + (!open ? ' closed' : occupied ? ' occupied' : '');
         cell.style.cssText = `position:absolute;top:${topPx}px;left:0;right:0;height:${SLOT_PX/2}px`;
-        if (open) cell.addEventListener('click', () => openNewRes(ds, tv));
+        if (open && !occupied) cell.addEventListener('click', () => openNewRes(ds, tv));
         slots.appendChild(cell);
       }
     }
@@ -1269,6 +1344,49 @@ function saveRes(e) {
       alert('他のお客様の予約は編集できません。');
       return;
     }
+  }
+
+  pendingRes = r;
+  openConfirmModal();
+}
+
+// 予約内容の確認モーダルを表示
+function openConfirmModal() {
+  const r     = pendingRes;
+  const staff = getStaff(r.staffId);
+  const menu  = getMenu(r.menuId);
+  const endT  = menu ? addMinutes(r.time, menu.duration) : '';
+  const dow   = DAY_NAMES[new Date(r.date + 'T00:00:00').getDay()];
+
+  document.getElementById('confirm-date').textContent  = `${displayDate(r.date)}（${dow}）`;
+  document.getElementById('confirm-time').textContent  = `${r.time}〜${endT}`;
+  document.getElementById('confirm-staff').textContent = staff?.name || '';
+  document.getElementById('confirm-menu').textContent  = menu?.name || '';
+
+  const notesRow = document.getElementById('confirm-notes-row');
+  if (r.notes) {
+    notesRow.style.display = '';
+    document.getElementById('confirm-notes').textContent = r.notes;
+  } else {
+    notesRow.style.display = 'none';
+  }
+
+  const isEdit = !!editResId;
+  document.getElementById('confirm-question').textContent =
+    isEdit ? 'この内容に変更します。よろしいですか？' : 'この内容で予約します。よろしいですか？';
+  document.getElementById('confirm-submit-btn').textContent =
+    isEdit ? 'この内容で変更する' : 'この内容で予約する';
+
+  closeModal('res-modal');
+  openModal('confirm-modal');
+}
+
+// 確認モーダルで「この内容で予約する」を押した時の本登録処理
+function commitReservation() {
+  const r = pendingRes;
+  if (!r) return;
+
+  if (editResId) {
     const i = db.reservations.findIndex(x => x.id === editResId);
     db.reservations[i] = r;
   } else {
@@ -1277,7 +1395,8 @@ function saveRes(e) {
   saveResToFirebase(r);      // ← Firebase にも保存（新規は r.fbKey が設定される）
   saveDB();                  // ← fbKey を永続化（Firebase保存後に実行）
   sendReservationEmail(r, editResId ? '予約変更' : '新規予約');   // ← はなさんにメール通知
-  closeModal('res-modal');
+  pendingRes = null;
+  closeModal('confirm-modal');
   render();
 }
 
@@ -1383,6 +1502,23 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('res-modal').addEventListener('click', e => {
     if (e.target === document.getElementById('res-modal'))
       closeModal('res-modal');
+  });
+
+  // ── 予約内容の確認モーダル
+  document.getElementById('confirm-submit-btn').addEventListener('click', commitReservation);
+  document.getElementById('confirm-back-btn').addEventListener('click', () => {
+    closeModal('confirm-modal');
+    openModal('res-modal');
+  });
+  document.getElementById('confirm-modal-close').addEventListener('click', () => {
+    pendingRes = null;
+    closeModal('confirm-modal');
+  });
+  document.getElementById('confirm-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('confirm-modal')) {
+      pendingRes = null;
+      closeModal('confirm-modal');
+    }
   });
 
   // ── Auto-refresh when admin syncs SalonBoard (cross-tab localStorage event)

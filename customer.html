@@ -16,7 +16,8 @@
       --text:      #2D1F33;
       --sub:       #7A6B82;
       --danger:    #D9534F;
-      --own-color: #C75B8A;
+      --own-color: #FF3B30;
+      --own-color-dark: #D6291F;
       --slot-h:    60px;
       --hour-start: 9;
     }
@@ -212,11 +213,20 @@
     .res-block:hover { filter: brightness(.92); }
     .rb-label { font-weight: 700; line-height: 1.3; }
     .rb-time  { color: inherit; opacity: .75; font-size: .68rem; margin-top: 2px; }
-    .rb-own-badge {
-      display: inline-block; font-size: .62rem;
-      background: var(--primary); color: #fff;
-      border-radius: 4px; padding: 0 4px; margin-bottom: 2px;
+    /* 自分の予約 — 真っ赤＋白文字で目立たせる */
+    .res-block.is-own {
+      background: var(--own-color);
+      border-left-color: var(--own-color-dark);
+      color: #fff;
     }
+    .res-block.is-own .rb-own-label {
+      font-weight: 800; font-size: .74rem; line-height: 1.25;
+      letter-spacing: .02em;
+    }
+    .res-block.is-own .rb-label {
+      font-weight: 600; opacity: .92; margin-top: 1px;
+    }
+    .res-block.is-own .rb-time { color: #fff; opacity: .85; }
 
     /* "Booked" block (others) */
     .booked-block {
@@ -514,12 +524,12 @@
 // ─── EmailJS 初期化 ───────────────────────────────────────────────────────────
 emailjs.init('JBfpsbse34tP3lsdi');
 
-// 予約通知メールを送信
-function sendReservationEmail(r) {
+// 予約通知メールを送信（新規予約・予約変更・予約キャンセルで件名を切り替え）
+function sendReservationEmail(r, title = '新規予約') {
   const menu  = getMenu(r.menuId);
   const staff = getStaff(r.staffId);
   emailjs.send('service_8gqr39v', 'template_4lq4gfv', {
-    title:   '新規予約',
+    title:   title,
     name:    r.customerName,
     time:    r.date + ' ' + r.time,
     message: `日付: ${r.date}\n時間: ${r.time}\nメニュー: ${menu?.name || ''}\nスタッフ: ${staff?.name || ''}\n電話番号: ${r.phone}${r.notes ? '\nメモ: ' + r.notes : ''}`,
@@ -772,17 +782,6 @@ function timeToMin(t) {
   return h*60+m;
 }
 function overlaps(aS,aE,bS,bE) { return aS < bE && aE > bS; }
-function hexToRgba(hex, a) {
-  const n = parseInt(hex.replace('#',''),16);
-  return `rgba(${n>>16},${(n>>8)&0xff},${n&0xff},${a})`;
-}
-function darken(hex, amt) {
-  const n = parseInt(hex.replace('#',''),16);
-  const r = Math.max(0,(n>>16)-amt);
-  const g = Math.max(0,((n>>8)&0xff)-amt);
-  const b = Math.max(0,(n&0xff)-amt);
-  return `#${((r<<16)|(g<<8)|b).toString(16).padStart(6,'0')}`;
-}
 
 // ─── Session ──────────────────────────────────────────────────────────────────
 // 名前・電話番号を正規化（スペース・ハイフン・全角スペースを除去して比較）
@@ -982,22 +981,19 @@ function renderCalendar() {
       const isOwn = isOwnReservation(res);
 
       if (isOwn) {
-        // Own reservation — clickable, shows menu name
+        // Own reservation — clickable, highlighted in red so the customer can find it at a glance
         const block = document.createElement('div');
-        block.className = 'res-block';
+        block.className = 'res-block is-own';
         block.style.cssText = `
           top:${topPx}px; height:${heightPx}px;
           left:calc(${laneL}% + 3px); width:calc(${laneW}% - 6px);
-          background:${hexToRgba(staff.color, .22)};
-          border-left-color:${staff.color};
-          color:${darken(staff.color, 50)};
           z-index:2;
         `;
         const endT = addMinutes(res.time, menu.duration);
         block.innerHTML = `
-          <div class="rb-own-badge">自分</div>
-          <div class="rb-label">${menu.name}</div>
-          ${heightPx > 50 ? `<div class="rb-time">${res.time}〜${endT}</div>` : ''}
+          <div class="rb-own-label">自分</div>
+          ${heightPx > 36 ? `<div class="rb-label">${menu.name}</div>` : ''}
+          ${heightPx > 52 ? `<div class="rb-time">${res.time}〜${endT}</div>` : ''}
         `;
         block.addEventListener('click', e => { e.stopPropagation(); openEditRes(res.id); });
         slots.appendChild(block);
@@ -1280,7 +1276,7 @@ function saveRes(e) {
   }
   saveResToFirebase(r);      // ← Firebase にも保存（新規は r.fbKey が設定される）
   saveDB();                  // ← fbKey を永続化（Firebase保存後に実行）
-  sendReservationEmail(r);   // ← はなさんにメール通知
+  sendReservationEmail(r, editResId ? '予約変更' : '新規予約');   // ← はなさんにメール通知
   closeModal('res-modal');
   render();
 }
@@ -1296,6 +1292,7 @@ function deleteRes() {
   db.reservations = db.reservations.filter(r => r.id !== editResId);
   saveDB();
   deleteResFromFirebase(editResId);   // ← Firebase からも削除
+  sendReservationEmail(existing, '予約キャンセル');   // ← はなさんにメール通知
   closeModal('res-modal');
   render();
 }

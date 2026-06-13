@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-13T01:30:00.000Z",
+  "syncTime": "2026-06-13T14:38:01.000Z",
   "reservations": [
     {
       "date": "2026-06-15",
@@ -62,6 +62,16 @@
       "stylist": "ハナ",
       "menu": "",
       "duration": 60,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-06-16",
+      "time": "11:00",
+      "customerName": "早乙女 美惠 様",
+      "reservationNo": "BF12817113",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
       "source": "salonboard"
     },
     {

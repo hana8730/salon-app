@@ -671,7 +671,10 @@ const BUSINESS_HOURS = [
   null,
   null,
 ];
+// RSB側で7月以降のスケジュールが未公開のため、当面この日付以降は予約受付を停止
+const BOOKING_CLOSED_FROM = '2026-07-01';
 function getBusinessHours(ds) {
+  if (ds >= BOOKING_CLOSED_FROM) return null;
   const dow = new Date(ds + 'T00:00:00').getDay();
   return BUSINESS_HOURS[dow] ?? null;
 }

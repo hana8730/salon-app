@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-14T10:13:22.000Z",
+  "syncTime": "2026-06-14T11:23:45.000Z",
   "reservations": [
     {
       "date": "2026-06-15",
@@ -336,14 +336,15 @@
       "source": "salonboard"
     },
     {
-      "date": "2026-06-24",
-      "time": "17:00",
-      "customerName": "田代 大介 様",
-      "reservationNo": "BF10620889",
-      "stylist": "指名なし",
+      "date": "2026-06-23",
+      "time": "17:30",
+      "customerName": "松元 里美 様",
+      "reservationNo": "YG73124807",
+      "stylist": "ハナ",
       "menu": "",
       "duration": 30,
-      "source": "salonboard"
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
     },
     {
       "date": "2026-06-25",

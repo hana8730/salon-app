@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-14T03:29:56.000Z",
+  "syncTime": "2026-06-14T06:04:08.000Z",
   "reservations": [
     {
       "date": "2026-06-15",
@@ -294,6 +294,16 @@
       "duration": 30,
       "source": "salonboard",
       "rsvEtc": "顧客アプリ予約"
+    },
+    {
+      "date": "2026-06-23",
+      "time": "12:30",
+      "customerName": "望月 智子 様",
+      "reservationNo": "BF13135193",
+      "stylist": "指名なし",
+      "menu": "シルエットカット",
+      "duration": 30,
+      "source": "salonboard"
     },
     {
       "date": "2026-06-24",

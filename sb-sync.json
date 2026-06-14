@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-13T14:38:01.000Z",
+  "syncTime": "2026-06-13T23:52:38.000Z",
   "reservations": [
     {
       "date": "2026-06-15",
@@ -79,6 +79,16 @@
       "time": "11:30",
       "customerName": "市岡 まゆみ 様",
       "reservationNo": "BF09501297",
+      "stylist": "指名なし",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-06-16",
+      "time": "12:00",
+      "customerName": "山口 量子 様",
+      "reservationNo": "BF12916245",
       "stylist": "指名なし",
       "menu": "",
       "duration": 30,

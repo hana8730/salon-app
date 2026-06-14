@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-14T01:30:54.000Z",
+  "syncTime": "2026-06-14T03:29:56.000Z",
   "reservations": [
     {
       "date": "2026-06-15",
@@ -135,6 +135,17 @@
       "menu": "シルエットカット",
       "duration": 30,
       "source": "salonboard"
+    },
+    {
+      "date": "2026-06-16",
+      "time": "14:30",
+      "customerName": "赤津 未来 様",
+      "reservationNo": "YG72697790",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
     },
     {
       "date": "2026-06-16",

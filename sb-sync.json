@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-13T23:52:38.000Z",
+  "syncTime": "2026-06-14T01:00:22.000Z",
   "reservations": [
     {
       "date": "2026-06-15",
@@ -73,6 +73,17 @@
       "menu": "",
       "duration": 30,
       "source": "salonboard"
+    },
+    {
+      "date": "2026-06-16",
+      "time": "11:00",
+      "customerName": "高梨 美奈子 様",
+      "reservationNo": "YG72647436",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
     },
     {
       "date": "2026-06-16",

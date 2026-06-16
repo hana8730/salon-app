@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-16T08:22:01.903Z",
+  "syncTime": "2026-06-16T08:58:00.000Z",
   "reservations": [
     {
       "date": "2026-06-16",
@@ -357,6 +357,17 @@
     },
     {
       "date": "2026-06-23",
+      "time": "13:30",
+      "customerName": "ヤマウチ サトミ 様",
+      "reservationNo": "YG74124133",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
+    },
+    {
+      "date": "2026-06-23",
       "time": "13:00",
       "customerName": "ネギシ 様",
       "reservationNo": "YG73701774",
@@ -386,6 +397,17 @@
       "menu": "",
       "duration": 30,
       "source": "salonboard"
+    },
+    {
+      "date": "2026-06-24",
+      "time": "17:00",
+      "customerName": "ハナ ハナ 様",
+      "reservationNo": "YG74124298",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
     },
     {
       "date": "2026-06-25",

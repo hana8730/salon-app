@@ -1325,7 +1325,7 @@ function cancelResFromCard(id, e) {
   db.reservations = db.reservations.filter(x => x.id !== id);
   saveDB();
   deleteResFromFirebase(id);
-  sendReservationEmail(r, '予約キャンセル');
+  sendReservationEmail(r, 'キャンセルが入りました');
   render();
 }
 window.cancelResFromCard = cancelResFromCard;
@@ -1445,7 +1445,7 @@ function deleteRes() {
   db.reservations = db.reservations.filter(r => r.id !== editResId);
   saveDB();
   deleteResFromFirebase(editResId);   // ← Firebase からも削除
-  sendReservationEmail(existing, '予約キャンセル');   // ← はなさんにメール通知
+  sendReservationEmail(existing, 'キャンセルが入りました');   // ← はなさんにメール通知
   closeModal('res-modal');
   render();
 }

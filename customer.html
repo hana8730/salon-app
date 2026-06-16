@@ -252,17 +252,12 @@
     }
     .booked-label { font-weight: 600; }
 
-    /* SalonBoard block */
+    /* SalonBoard block — same solid style as booked-block */
     .sb-block {
       position: absolute; border-radius: 5px; padding: 3px 6px;
-      background: repeating-linear-gradient(45deg,rgba(120,120,140,.08),rgba(120,120,140,.08) 4px,transparent 4px,transparent 10px);
-      border: 1.5px dashed #9E9EBB; font-size: .7rem; color: #6B6B8A;
-      overflow: hidden; pointer-events: none;
-    }
-    .sb-tag {
-      display: inline-block; font-size: .6rem; font-weight: 700;
-      background: #9E9EBB; color: #fff; border-radius: 3px;
-      padding: 0 4px; margin-right: 3px;
+      background: #F0EAF6; border-left: 3px solid #D0B8E0;
+      font-size: .7rem; color: #8B6FA8; overflow: hidden;
+      pointer-events: none;
     }
 
     /* ── My Reservations ──────────────────────────── */
@@ -1110,7 +1105,7 @@ function renderCalendar() {
       const block = document.createElement('div');
       block.className = 'sb-block';
       block.style.cssText = `top:${topPx}px;height:${heightPx}px;left:3px;right:3px;pointer-events:none;`;
-      block.innerHTML = `<span class="sb-tag">SB</span> 予約済み`;
+      block.innerHTML = `<div class="booked-label">予約済み</div>`;
       slots.appendChild(block);
     });
 

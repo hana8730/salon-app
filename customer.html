@@ -679,8 +679,20 @@ const BUSINESS_HOURS = [
   null,
 ];
 // RSB側で7月以降のスケジュールが未公開のため、当面この日付以降は予約受付を停止
-const BOOKING_CLOSED_FROM = '2026-07-01';
+const BOOKING_CLOSED_FROM = '2026-07-07';
+// 特別休業日（日付 → 表示ラベル）
+const SPECIAL_CLOSED = {
+  '2026-06-29': '上海',
+  '2026-06-30': '上海',
+  '2026-07-01': '上海',
+  '2026-07-02': '上海',
+  '2026-07-03': '上海',
+  '2026-07-04': '上海',
+  '2026-07-05': '上海',
+  '2026-07-06': '上海',
+};
 function getBusinessHours(ds) {
+  if (SPECIAL_CLOSED[ds]) return null;
   if (ds >= BOOKING_CLOSED_FROM) return null;
   const dow = new Date(ds + 'T00:00:00').getDay();
   return BUSINESS_HOURS[dow] ?? null;
@@ -1011,7 +1023,7 @@ function renderCalendar() {
     if (!bh) {
       const overlay = document.createElement('div');
       overlay.className = 'holiday-overlay';
-      overlay.innerHTML = '<span>休業日</span>';
+      overlay.innerHTML = '<span>' + (SPECIAL_CLOSED[ds] || '休業日') + '</span>';
       slots.appendChild(overlay);
     }
 

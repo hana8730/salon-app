@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-17T04:03:00.000Z",
+  "syncTime": "2026-06-17T11:53:00.000Z",
   "reservations": [
     {
       "date": "2026-06-17",
@@ -246,6 +246,17 @@
     },
     {
       "date": "2026-06-23",
+      "time": "17:00",
+      "customerName": "ツリガ エリコ 様",
+      "reservationNo": "YG74896456",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
+    },
+    {
+      "date": "2026-06-23",
       "time": "17:30",
       "customerName": "松元 里美 様",
       "reservationNo": "YG73124807",
@@ -287,6 +298,17 @@
       "rsvEtc": "顧客アプリ予約"
     },
     {
+      "date": "2026-06-24",
+      "time": "19:00",
+      "customerName": "フクハラ チカ 様",
+      "reservationNo": "YG74896595",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
+    },
+    {
       "date": "2026-06-25",
       "time": "17:00",
       "customerName": "小山内 真弓 様",
@@ -316,6 +338,17 @@
       "menu": "",
       "duration": 30,
       "source": "salonboard"
+    },
+    {
+      "date": "2026-06-25",
+      "time": "18:30",
+      "customerName": "イイトシ アヤカ 様",
+      "reservationNo": "YG74896533",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard",
+      "rsvEtc": "顧客アプリ予約"
     },
     {
       "date": "2026-06-29",

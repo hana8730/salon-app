@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-21T00:00:00.000Z",
+  "syncTime": "2026-06-22T00:00:00.000Z",
   "reservations": [
     {
       "date": "2026-06-22",
@@ -149,6 +149,16 @@
       "stylist": "ハナ",
       "menu": "シルエットカット",
       "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-06-23",
+      "time": "15:00",
+      "customerName": "フジタ ユウ 様",
+      "reservationNo": "YG77650688",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 60,
       "source": "salonboard"
     },
     {

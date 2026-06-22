@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-22T00:00:00.000Z",
+  "syncTime": "2026-06-22T07:40:59.440Z",
   "reservations": [
     {
       "date": "2026-06-22",
@@ -147,18 +147,38 @@
       "customerName": "菊 地 様",
       "reservationNo": "BF16568757",
       "stylist": "ハナ",
-      "menu": "シルエットカット",
-      "duration": 30,
+      "menu": "",
+      "duration": 60,
       "source": "salonboard"
     },
     {
       "date": "2026-06-23",
       "time": "15:00",
-      "customerName": "フジタ ユウ 様",
+      "customerName": "藤田 佑 様",
       "reservationNo": "YG77650688",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 30,
+      "duration": 60,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-06-23",
+      "time": "15:30",
+      "customerName": "ニス 様",
+      "reservationNo": "YG77935685",
+      "stylist": "指名なし",
+      "menu": "",
+      "duration": 60,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-06-23",
+      "time": "16:30",
+      "customerName": "藤倉 延江 様",
+      "reservationNo": "BF17605879",
+      "stylist": "指名なし",
+      "menu": "",
+      "duration": 60,
       "source": "salonboard"
     },
     {
@@ -183,16 +203,6 @@
     },
     {
       "date": "2026-06-23",
-      "time": "18:00",
-      "customerName": "竹越 由真 様",
-      "reservationNo": "BF13964140",
-      "stylist": "指名なし",
-      "menu": "",
-      "duration": 60,
-      "source": "salonboard"
-    },
-    {
-      "date": "2026-06-23",
       "time": "18:30",
       "customerName": "高宮 麻紀子 様",
       "reservationNo": "BF14788305",
@@ -208,7 +218,7 @@
       "reservationNo": "BF17053679",
       "stylist": "指名なし",
       "menu": "",
-      "duration": 30,
+      "duration": 60,
       "source": "salonboard"
     },
     {
@@ -217,8 +227,8 @@
       "customerName": "福田 芙憂 様",
       "reservationNo": "BF15808870",
       "stylist": "指名なし",
-      "menu": "シルエットカット",
-      "duration": 30,
+      "menu": "",
+      "duration": 60,
       "source": "salonboard"
     },
     {
@@ -237,8 +247,8 @@
       "customerName": "福田 芙憂 様",
       "reservationNo": "BF16338887",
       "stylist": "指名なし",
-      "menu": "シルエットカット",
-      "duration": 30,
+      "menu": "",
+      "duration": 60,
       "source": "salonboard"
     },
     {
@@ -308,7 +318,7 @@
       "reservationNo": "BF16284399",
       "stylist": "指名なし",
       "menu": "",
-      "duration": 30,
+      "duration": 60,
       "source": "salonboard"
     },
     {
@@ -338,7 +348,7 @@
       "reservationNo": "YG75555130",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 30,
+      "duration": 60,
       "source": "salonboard"
     },
     {

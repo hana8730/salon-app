@@ -590,6 +590,7 @@ function sendReservationEmail(r, title = '新規予約') {
   const staff = getStaff(r.staffId);
   emailjs.send('service_8gqr39v', 'template_4lq4gfv', {
     title:   title,
+    subject: title,
     name:    r.customerName,
     time:    r.date + ' ' + r.time,
     message: `日付: ${r.date}\n時間: ${r.time}\nメニュー: ${menu?.name || ''}\nスタッフ: ${staff?.name || ''}\n電話番号: ${r.phone}${r.notes ? '\nメモ: ' + r.notes : ''}`,

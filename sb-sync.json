@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-24T00:00:00.000Z",
+  "syncTime": "2026-06-24T09:30:00.000Z",
   "reservations": [
     {
       "date": "2026-06-24",
@@ -147,7 +147,7 @@
       "customerName": "浅野 雅子 様",
       "reservationNo": "BF18637342",
       "stylist": "指名なし",
-      "menu": "",
+      "menu": "シルエットカット",
       "duration": 30,
       "source": "salonboard"
     },

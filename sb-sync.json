@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-24T09:30:00.000Z",
+  "syncTime": "2026-06-24T10:00:00.000Z",
   "reservations": [
     {
       "date": "2026-06-24",
@@ -133,6 +133,16 @@
     },
     {
       "date": "2026-07-07",
+      "time": "10:30",
+      "customerName": "橋本 詠子 様",
+      "reservationNo": "BF18896212",
+      "stylist": "指名なし",
+      "menu": "シルエットカット",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-07",
       "time": "11:00",
       "customerName": "前田 安寿華 様",
       "reservationNo": "YG78762446",
@@ -153,9 +163,29 @@
     },
     {
       "date": "2026-07-07",
+      "time": "14:00",
+      "customerName": "コバヤシ ヒトミ 様",
+      "reservationNo": "YG79304173",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-07",
       "time": "15:00",
       "customerName": "安藤 葉子 様",
       "reservationNo": "YG76252527",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-07",
+      "time": "17:00",
+      "customerName": "モトイキ キヨコ 様",
+      "reservationNo": "YG79304185",
       "stylist": "ハナ",
       "menu": "",
       "duration": 30,

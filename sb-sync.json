@@ -133,6 +133,16 @@
     },
     {
       "date": "2026-07-07",
+      "time": "11:00",
+      "customerName": "前田 安寿華 様",
+      "reservationNo": "YG78762446",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 90,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-07",
       "time": "12:30",
       "customerName": "浅野 雅子 様",
       "reservationNo": "BF18637342",

@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-25T00:00:00.000Z",
+  "syncTime": "2026-06-27T00:00:00.000Z",
   "reservations": [
     {
       "date": "2026-06-29",
@@ -149,6 +149,36 @@
       "stylist": "ハナ",
       "menu": "",
       "duration": 90,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-14",
+      "time": "11:30",
+      "customerName": "マツダ ヒカリ 様",
+      "reservationNo": "YG81289317",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 90,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-20",
+      "time": "17:00",
+      "customerName": "タカハシ アユミ 様",
+      "reservationNo": "YG81289338",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-20",
+      "time": "17:30",
+      "customerName": "タカハシ アユミ 様",
+      "reservationNo": "YG81289360",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
       "source": "salonboard"
     },
     {

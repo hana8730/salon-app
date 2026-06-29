@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-06-29T12:09:36.031Z",
+  "syncTime": "2026-06-29T06:00:00.000Z",
   "reservations": [
     {
       "date": "2026-06-29",
@@ -8,7 +8,7 @@
       "reservationNo": "YG57004816",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 150,
       "source": "salonboard"
     },
     {
@@ -18,7 +18,7 @@
       "reservationNo": "YG57004943",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 570,
       "source": "salonboard"
     },
     {
@@ -28,7 +28,7 @@
       "reservationNo": "YG75555130",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -37,8 +37,8 @@
       "customerName": "橋本 詠子 様",
       "reservationNo": "BF18896212",
       "stylist": "指名なし",
-      "menu": "",
-      "duration": 60,
+      "menu": "シルエットカット",
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -48,7 +48,7 @@
       "reservationNo": "YG78762446",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 90,
       "source": "salonboard"
     },
     {
@@ -57,8 +57,8 @@
       "customerName": "浅野 雅子 様",
       "reservationNo": "BF18637342",
       "stylist": "指名なし",
-      "menu": "",
-      "duration": 60,
+      "menu": "シルエットカット",
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -68,7 +68,7 @@
       "reservationNo": "BF20271941",
       "stylist": "指名なし",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -78,7 +78,7 @@
       "reservationNo": "BF20370730",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -88,7 +88,7 @@
       "reservationNo": "YG79304173",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -98,7 +98,7 @@
       "reservationNo": "BF21715980",
       "stylist": "指名なし",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -108,7 +108,7 @@
       "reservationNo": "YG76252527",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -118,7 +118,7 @@
       "reservationNo": "BF19968470",
       "stylist": "指名なし",
       "menu": "",
-      "duration": 60,
+      "duration": 90,
       "source": "salonboard"
     },
     {
@@ -128,7 +128,7 @@
       "reservationNo": "YG79304185",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -138,7 +138,7 @@
       "reservationNo": "YG78489059",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -152,13 +152,33 @@
       "source": "salonboard"
     },
     {
+      "date": "2026-07-08",
+      "time": "19:00",
+      "customerName": "ア 様",
+      "reservationNo": "YG82561362",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-09",
+      "time": "19:00",
+      "customerName": "シミズ 様",
+      "reservationNo": "YG82564049",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
       "date": "2026-07-14",
       "time": "10:00",
       "customerName": "寺島 美栄 様",
       "reservationNo": "YG78573595",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 90,
       "source": "salonboard"
     },
     {
@@ -168,7 +188,17 @@
       "reservationNo": "YG81289317",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 90,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-14",
+      "time": "14:00",
+      "customerName": "コバヤシ 様",
+      "reservationNo": "YG82562713",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -178,7 +208,7 @@
       "reservationNo": "YG81289338",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -188,7 +218,7 @@
       "reservationNo": "YG81289360",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -198,7 +228,7 @@
       "reservationNo": "YG78753688",
       "stylist": "ハナ",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     },
     {
@@ -208,7 +238,7 @@
       "reservationNo": "BF21027782",
       "stylist": "指名なし",
       "menu": "",
-      "duration": 60,
+      "duration": 30,
       "source": "salonboard"
     }
   ]

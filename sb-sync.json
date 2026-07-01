@@ -1,26 +1,6 @@
 {
-  "syncTime": "2026-06-29T06:00:00.000Z",
+  "syncTime": "2026-07-01T10:00:00.000Z",
   "reservations": [
-    {
-      "date": "2026-06-29",
-      "time": "17:00",
-      "customerName": "ア 様",
-      "reservationNo": "YG57004816",
-      "stylist": "ハナ",
-      "menu": "",
-      "duration": 150,
-      "source": "salonboard"
-    },
-    {
-      "date": "2026-06-30",
-      "time": "10:00",
-      "customerName": "ア 様",
-      "reservationNo": "YG57004943",
-      "stylist": "ハナ",
-      "menu": "",
-      "duration": 570,
-      "source": "salonboard"
-    },
     {
       "date": "2026-07-07",
       "time": "10:00",
@@ -133,6 +113,16 @@
     },
     {
       "date": "2026-07-07",
+      "time": "17:30",
+      "customerName": "奥村 李奈 様",
+      "reservationNo": "BF22747163",
+      "stylist": "指名なし",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-07",
       "time": "18:00",
       "customerName": "カネタ 様",
       "reservationNo": "YG78489059",
@@ -156,6 +146,26 @@
       "time": "19:00",
       "customerName": "ア 様",
       "reservationNo": "YG82561362",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-09",
+      "time": "17:00",
+      "customerName": "澤野 陽子 様",
+      "reservationNo": "YG83394418",
+      "stylist": "ハナ",
+      "menu": "",
+      "duration": 30,
+      "source": "salonboard"
+    },
+    {
+      "date": "2026-07-09",
+      "time": "18:30",
+      "customerName": "福村 衛 様",
+      "reservationNo": "YG83395704",
       "stylist": "ハナ",
       "menu": "",
       "duration": 30,
@@ -189,16 +199,6 @@
       "stylist": "ハナ",
       "menu": "",
       "duration": 90,
-      "source": "salonboard"
-    },
-    {
-      "date": "2026-07-14",
-      "time": "14:00",
-      "customerName": "コバヤシ 様",
-      "reservationNo": "YG82562713",
-      "stylist": "ハナ",
-      "menu": "",
-      "duration": 30,
       "source": "salonboard"
     },
     {

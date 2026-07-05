@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-07-03T03:00:00.000Z",
+  "syncTime": "2026-07-05T03:00:00.000Z",
   "reservations": [
     {"date":"2026-07-07","time":"10:00","customerName":"ツルオカ レイコ 様","reservationNo":"YG75555130","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-07","time":"10:30","customerName":"橋本 詠子 様","reservationNo":"BF18896212","stylist":"指名なし","menu":"シルエットカット","duration":30,"source":"salonboard"},
@@ -13,7 +13,10 @@
     {"date":"2026-07-07","time":"15:30","customerName":"岡部 陽子 様","reservationNo":"BF19968470","stylist":"指名なし","menu":"","duration":90,"source":"salonboard"},
     {"date":"2026-07-07","time":"17:00","customerName":"元生 きよこ 様","reservationNo":"YG79304185","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-07","time":"17:30","customerName":"奥村 李奈 様","reservationNo":"BF22747163","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-07-07","time":"18:00","customerName":"カネタ 様","reservationNo":"YG84916024","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-07","time":"18:30","customerName":"本田 薫子 様","reservationNo":"BF19675730","stylist":"指名なし","menu":"","duration":60,"source":"salonboard"},
+    {"date":"2026-07-08","time":"17:00","customerName":"津山 理恵 様","reservationNo":"BF24676833","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
+    {"date":"2026-07-08","time":"17:30","customerName":"島野 広子 様","reservationNo":"BF25615065","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-08","time":"18:30","customerName":"西澤 亮子 様","reservationNo":"YG84910858","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-08","time":"19:00","customerName":"ア 様","reservationNo":"YG82561362","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-09","time":"17:00","customerName":"澤野 陽子 様","reservationNo":"YG83394418","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
@@ -23,11 +26,12 @@
     {"date":"2026-07-09","time":"19:00","customerName":"シミズ 様","reservationNo":"YG82564049","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-14","time":"10:00","customerName":"寺島 美栄 様","reservationNo":"YG78573595","stylist":"ハナ","menu":"","duration":90,"source":"salonboard"},
     {"date":"2026-07-14","time":"11:30","customerName":"松田 ひかり 様","reservationNo":"YG81289317","stylist":"ハナ","menu":"","duration":90,"source":"salonboard"},
-    {"date":"2026-07-14","time":"14:00","customerName":"小林 ひとみ 様","reservationNo":"YG84915063","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-07-14","time":"14:30","customerName":"小林 ひとみ 様","reservationNo":"YG86278572","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-07-14","time":"15:30","customerName":"岡本 紀子 様","reservationNo":"BF25529334","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-16","time":"17:00","customerName":"寺島 美栄 様","reservationNo":"YG84915290","stylist":"ハナ","menu":"","duration":90,"source":"salonboard"},
     {"date":"2026-07-20","time":"17:00","customerName":"高橋 歩美 様","reservationNo":"YG81289338","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-20","time":"17:30","customerName":"高橋 歩美 様","reservationNo":"YG81289360","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-21","time":"10:00","customerName":"前田 様 様","reservationNo":"YG78753688","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
-    {"date":"2026-07-23","time":"17:00","customerName":"青山 紀美子 様","reservationNo":"BF21027782","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"}
+    {"date":"2026-07-21","time":"12:30","customerName":"青山 紀美子 様","reservationNo":"BF24673953","stylist":"指名なし","menu":"シルエットカット","duration":30,"source":"salonboard"}
   ]
 }

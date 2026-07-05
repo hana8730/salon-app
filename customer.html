@@ -1334,9 +1334,14 @@ function cancelResFromCard(id, e) {
   const [ry,rm,rd] = r.date.split('-').map(Number);
   const wday = ['日','月','火','水','木','金','土'][new Date(ry,rm-1,rd).getDay()];
   if (!confirm(`${displayDate(r.date)}（${wday}） ${r.time} の予約をキャンセルしますか？`)) return;
+  const fbKey = r.fbKey;
   db.reservations = db.reservations.filter(x => x.id !== id);
   saveDB();
-  deleteResFromFirebase(id);
+  if (fbKey) {
+    fbDB.ref('reservations/' + fbKey).remove();
+  } else {
+    deleteResFromFirebase(id);
+  }
   sendReservationEmail(r, 'キャンセルが入りました');
   render();
 }

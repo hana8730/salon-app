@@ -34,6 +34,7 @@
     {"date":"2026-07-20","time":"17:00","customerName":"高橋 歩美 様","reservationNo":"YG81289338","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-20","time":"17:30","customerName":"高橋 歩美 様","reservationNo":"YG81289360","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-21","time":"10:00","customerName":"前田 様 様","reservationNo":"YG78753688","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
-    {"date":"2026-07-21","time":"12:30","customerName":"青山 紀美子 様","reservationNo":"BF24673953","stylist":"指名なし","menu":"シルエットカット","duration":30,"source":"salonboard"}
+    {"date":"2026-07-21","time":"12:30","customerName":"青山 紀美子 様","reservationNo":"BF24673953","stylist":"指名なし","menu":"シルエットカット","duration":30,"source":"salonboard"},
+    {"date":"2026-07-22","time":"19:00","customerName":"李 英宏 様","reservationNo":"BF26998461","stylist":"指名なし","menu":"","duration":60,"source":"salonboard"}
   ]
 }

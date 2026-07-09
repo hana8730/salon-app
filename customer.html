@@ -1342,7 +1342,7 @@ function cancelResFromCard(id, e) {
   if (fbKey) {
     fbDB.ref('reservations/' + fbKey).update({ status: 'cancelled', cancelledAt: Date.now() });
   } else {
-    deleteResFromFirebase(id);
+    fbDB.ref('reservations/res_' + id).remove();
   }
   sendReservationEmail(r, 'キャンセルが入りました');
   render();
@@ -1461,10 +1461,15 @@ function deleteRes() {
     return;
   }
   if (!confirm('この予約を削除しますか？')) return;
+  const fbKey = existing.fbKey; // ローカル削除前にfbKeyを保存
   db.reservations = db.reservations.filter(r => r.id !== editResId);
   saveDB();
-  deleteResFromFirebase(editResId);   // ← Firebase からも削除
-  sendReservationEmail(existing, 'キャンセルが入りました');   // ← はなさんにメール通知
+  if (fbKey) {
+    fbDB.ref('reservations/' + fbKey).update({ status: 'cancelled', cancelledAt: Date.now() });
+  } else {
+    fbDB.ref('reservations/res_' + editResId).remove();
+  }
+  sendReservationEmail(existing, 'キャンセルが入りました');
   closeModal('res-modal');
   render();
 }

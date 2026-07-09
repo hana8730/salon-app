@@ -58,6 +58,39 @@
       text-align: center; display: none;
     }
 
+    /* ── Quick-login block ─────────────────────────── */
+    #quick-login-block {
+      display: none; margin-bottom: 22px;
+      border: 2px solid var(--primary); border-radius: 12px;
+      overflow: hidden;
+    }
+    .ql-label {
+      background: var(--primary); color: #fff;
+      font-size: .7rem; font-weight: 700; letter-spacing: .07em;
+      padding: 5px 14px; text-align: center; text-transform: uppercase;
+    }
+    .ql-info { padding: 12px 16px 2px; }
+    .ql-name  { font-size: 1.08rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .ql-phone { font-size: .85rem; color: var(--sub); }
+    .ql-btn {
+      width: 100%; margin-top: 12px; padding: 13px;
+      background: var(--primary); color: #fff; border: none;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      transition: background .2s;
+    }
+    .ql-btn:hover { background: var(--primary-h); }
+    .ql-btn:active { opacity: .88; }
+    .manual-divider {
+      display: none; text-align: center; font-size: .75rem; color: var(--sub);
+      margin: 18px 0 4px; position: relative;
+    }
+    .manual-divider::before, .manual-divider::after {
+      content: ''; position: absolute; top: 50%; width: 36%; height: 1px;
+      background: var(--border);
+    }
+    .manual-divider::before { left: 0; }
+    .manual-divider::after  { right: 0; }
+
     /* ── App (post-login) ─────────────────────────── */
     #app-screen { display: none; flex-direction: column; min-height: 100vh; }
 
@@ -550,6 +583,19 @@
   <div class="login-card">
     <div class="login-logo">✂ サロン予約</div>
     <div class="login-sub">お名前と電話番号でログインしてください</div>
+
+    <!-- 前回情報のクイックログイン -->
+    <div id="quick-login-block">
+      <div class="ql-label">前回のご利用情報</div>
+      <div class="ql-info">
+        <div class="ql-name"  id="ql-name-display"></div>
+        <div class="ql-phone" id="ql-phone-display"></div>
+      </div>
+      <button class="ql-btn" id="ql-btn">この情報でログイン →</button>
+    </div>
+
+    <div class="manual-divider" id="manual-divider">初めての方 / 別のお名前で</div>
+
     <label>お名前 *</label>
     <input type="text" id="login-name" placeholder="田中 花子" autocomplete="name">
     <label>電話番号 *</label>
@@ -843,7 +889,8 @@ function isSlotOccupied(ds, hourStr) {
 const DB_KEY     = 'salonboard_v3';
 const SB_KEY     = 'salonboard_sync_v1';
 const SB_DEFAULT_DURATION = 60;
-const SESSION_KEY = 'salon_customer_session';
+const SESSION_KEY  = 'salon_customer_session';
+const LAST_USER_KEY = 'salon_last_user';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 let db = { staff: [], menus: [], reservations: [] };
@@ -1021,9 +1068,9 @@ function restoreSession() {
 }
 
 function startSession(name, phone) {
-  // 保存時も正規化しておく
   currentUser = { name: normalizeName(name), phone: normalizePhone(phone) };
   sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+  localStorage.setItem(LAST_USER_KEY, JSON.stringify(currentUser));
 }
 
 function endSession() {
@@ -1048,6 +1095,16 @@ function showApp() {
 function showLogin() {
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app-screen').style.display   = 'none';
+
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(LAST_USER_KEY)); } catch { return null; } })();
+  if (saved?.name && saved?.phone) {
+    document.getElementById('ql-name-display').textContent  = saved.name;
+    document.getElementById('ql-phone-display').textContent = saved.phone;
+    document.getElementById('quick-login-block').style.display = 'block';
+    document.getElementById('manual-divider').style.display    = 'block';
+    document.getElementById('login-name').value  = saved.name;
+    document.getElementById('login-phone').value = saved.phone;
+  }
 }
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -1597,6 +1654,14 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+
+  // ── Quick-login (前回情報)
+  document.getElementById('ql-btn').addEventListener('click', () => {
+    const saved = (() => { try { return JSON.parse(localStorage.getItem(LAST_USER_KEY)); } catch { return null; } })();
+    if (!saved?.name || !saved?.phone) return;
+    startSession(saved.name, saved.phone);
+    showApp();
+  });
 
   // ── Login
   document.getElementById('login-btn').addEventListener('click', () => {

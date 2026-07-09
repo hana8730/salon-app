@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ご予約 | サロン</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
   <style>
     /* ── Variables ────────────────────────────────── */
     :root {
@@ -422,6 +424,118 @@
       text-align: center; font-weight: 600; line-height: 1.6;
     }
     .confirm-actions { padding: 18px 24px 24px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+    /* ── Celebration Overlay ─────────────────────── */
+    #cel-overlay {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at 38% 28%, #2a0d6b 0%, #0b0420 45%, #050f1c 100%);
+      z-index: 600; display: none; align-items: center; justify-content: center;
+      overflow-y: auto; padding: 20px 0;
+    }
+    #cel-overlay.open { display: flex; }
+    #cel-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+    .cel-star {
+      position: fixed; pointer-events: none; z-index: 2;
+      animation: cel-star-float linear infinite; opacity: 0;
+    }
+    @keyframes cel-star-float {
+      0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      8%   { opacity: .9; }
+      92%  { opacity: .5; }
+      100% { transform: translateY(-15vh) rotate(540deg); opacity: 0; }
+    }
+    #cel-card {
+      position: relative; z-index: 3; margin: auto;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 28px; padding: 32px 26px 28px;
+      max-width: 360px; width: calc(100% - 40px);
+      text-align: center; color: #fff;
+      box-shadow: 0 0 0 1px rgba(199,91,138,.25), 0 12px 50px rgba(0,0,0,.5),
+                  inset 0 1px 0 rgba(255,255,255,.15);
+      animation: cel-card-in .65s cubic-bezier(.22,1,.36,1) .05s both, cel-glow 3.5s ease-in-out 1.2s infinite;
+    }
+    @keyframes cel-card-in {
+      from { transform: translateY(55px) scale(.92); opacity: 0; }
+      to   { transform: translateY(0) scale(1);     opacity: 1; }
+    }
+    @keyframes cel-glow {
+      0%,100% { box-shadow: 0 0 0 1px rgba(199,91,138,.25), 0 12px 50px rgba(0,0,0,.5), 0 0 25px rgba(199,91,138,.2); }
+      50%      { box-shadow: 0 0 0 1px rgba(255,183,77,.3),  0 12px 50px rgba(0,0,0,.5), 0 0 35px rgba(255,183,77,.25); }
+    }
+    .cel-emoji-wrap {
+      font-size: 3.2rem; margin-bottom: 4px; line-height: 1;
+      animation: cel-bounce .55s cubic-bezier(.36,1.56,.64,1) .55s both;
+    }
+    @keyframes cel-bounce {
+      from { transform: scale(0) rotate(-20deg); }
+      to   { transform: scale(1) rotate(0deg); }
+    }
+    .cel-heading {
+      font-family: 'Klee One', 'Hiragino Maru Gothic ProN', 'Meiryo', sans-serif;
+      font-size: 1.38rem; font-weight: 600; margin: 6px 0 10px;
+      background: linear-gradient(90deg, #FFD700 0%, #FF9ECD 50%, #87CEEB 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .cel-booking-info {
+      font-size: .86rem; line-height: 1.8; opacity: .8;
+      margin-bottom: 14px; white-space: pre-line;
+    }
+    .cel-divider { border: none; border-top: 1px solid rgba(255,255,255,.13); margin: 14px 0; }
+    .cel-fortune-label {
+      font-size: .62rem; letter-spacing: .16em; opacity: .5;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+    .cel-luck-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 2px 28px; border-radius: 40px;
+      background: linear-gradient(90deg, #FFD700, #FFAA33);
+      color: #1a0533;
+      font-family: 'Klee One', 'Hiragino Maru Gothic ProN', serif;
+      font-size: 2rem; font-weight: 600; letter-spacing: .06em;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 22px rgba(255,183,0,.45);
+      animation: cel-badge-pop .5s cubic-bezier(.36,1.56,.64,1) .8s both;
+    }
+    @keyframes cel-badge-pop {
+      from { transform: scale(0) rotate(8deg); }
+      to   { transform: scale(1) rotate(0deg); }
+    }
+    .cel-fortune-text {
+      font-family: 'Klee One', 'Hiragino Maru Gothic ProN', sans-serif;
+      font-size: .97rem; line-height: 1.65; margin: 8px 0 14px;
+      min-height: 3em;
+    }
+    .cel-lucky-box {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.11);
+      border-radius: 14px; padding: 10px 16px; margin-bottom: 16px;
+      animation: cel-card-in .5s cubic-bezier(.22,1,.36,1) 1s both;
+    }
+    .cel-lucky-label-sm {
+      display: block; font-size: .6rem; letter-spacing: .14em;
+      opacity: .5; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .cel-lucky-name {
+      font-family: 'Klee One', 'Hiragino Maru Gothic ProN', serif;
+      font-size: 1.05rem; font-weight: 600;
+    }
+    .cel-wait {
+      font-family: 'Klee One', 'Hiragino Maru Gothic ProN', sans-serif;
+      font-size: .94rem; opacity: .88; margin-bottom: 20px; line-height: 1.65;
+      animation: cel-card-in .5s cubic-bezier(.22,1,.36,1) 1.1s both;
+    }
+    .cel-close-btn {
+      background: rgba(255,255,255,.11); border: 1.5px solid rgba(255,255,255,.22);
+      color: #fff; border-radius: 40px; padding: 12px 44px;
+      font-size: .93rem; font-weight: 600; cursor: pointer;
+      transition: background .2s, transform .15s;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, 'Helvetica Neue', sans-serif;
+      animation: cel-card-in .5s cubic-bezier(.22,1,.36,1) 1.2s both;
+    }
+    .cel-close-btn:active { transform: scale(.96); }
+    .cel-close-btn:hover  { background: rgba(255,255,255,.2); }
   </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1439,6 +1553,7 @@ function openConfirmModal() {
 function commitReservation() {
   const r = pendingRes;
   if (!r) return;
+  const isNew = !editResId;
 
   if (editResId) {
     const i = db.reservations.findIndex(x => x.id === editResId);
@@ -1446,12 +1561,13 @@ function commitReservation() {
   } else {
     db.reservations.push(r);
   }
-  saveResToFirebase(r);      // ← Firebase にも保存（新規は r.fbKey が設定される）
-  saveDB();                  // ← fbKey を永続化（Firebase保存後に実行）
-  sendReservationEmail(r, editResId ? '予約変更' : '新規予約');   // ← はなさんにメール通知
+  saveResToFirebase(r);
+  saveDB();
+  sendReservationEmail(r, isNew ? '新規予約' : '予約変更');
   pendingRes = null;
   closeModal('confirm-modal');
   render();
+  if (isNew) showCelebration(r);
 }
 
 function deleteRes() {
@@ -1599,6 +1715,172 @@ document.addEventListener('DOMContentLoaded', () => {
     showLogin();
   }
 });
+
+// ─── Celebration ─────────────────────────────────────────────────────────────
+const CEL_FORTUNES = [
+  { luck: '大吉', emoji: '✨', text: 'その新しいヘアスタイルで、運命の出会いが舞い込みます！' },
+  { luck: '大吉', emoji: '🌟', text: '今日から新しい物語の始まり。なりたい自分へ一直線！' },
+  { luck: '大吉', emoji: '💎', text: '髪を変えるたびに、あなたはもっと輝きます！' },
+  { luck: '大吉', emoji: '🎊', text: 'この予約があなたの運気を大きく上げます！' },
+  { luck: '中吉', emoji: '🌸', text: '小さな変化が、大きな幸運を呼び込みます' },
+  { luck: '中吉', emoji: '🍀', text: 'ヘアスタイルが変わると、チャンスも変わる！' },
+  { luck: '中吉', emoji: '🌙', text: 'あなたの内側の美しさが、外にあふれてくる日です' },
+  { luck: '吉',   emoji: '⭐', text: '今日の一歩が、明日の大きな自信につながります' },
+  { luck: '吉',   emoji: '🪞', text: '鏡の中のあなたを、もっと好きになれる予感がします' },
+  { luck: '小吉', emoji: '🌷', text: '丁寧に過ごすと、素敵なことが起きそうです' },
+];
+const CEL_LUCKY_ITEMS = [
+  'ヘアピン', '手鏡', 'コーム', 'ヘアバンド', 'ピンク色のもの',
+  'お気に入りの手帳', 'お気に入りの靴', '緑色のもの', 'お財布',
+  'きれいな花', 'シルバーのアクセサリー', '香水', 'リップグロス',
+  'ヘアオイル', 'お気に入りのマグカップ', 'ぬいぐるみ',
+  '黄色いもの', 'チョコレート', 'お守り', 'キラキラしたもの',
+];
+
+function startCelFireworks(canvas) {
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COLORS = ['#C75B8A','#FF9ECD','#FFD700','#FF9944','#87CEEB','#B8E986','#DDA0DD','#40E0D0','#FFA07A'];
+  const particles = [];
+  let animId;
+  const timers = [];
+
+  function explode(x, y) {
+    const c = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const n = 55 + Math.floor(Math.random() * 30);
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + (Math.random() - .5) * .6;
+      const s = 1.6 + Math.random() * 4.8;
+      particles.push({
+        x, y,
+        vx: Math.cos(a) * s, vy: Math.sin(a) * s - .9,
+        alpha: 1, size: 1.4 + Math.random() * 2.8,
+        color: (i % 8 === 0) ? '#ffffff' : c,
+        decay: .012 + Math.random() * .012,
+        g: .04 + Math.random() * .03,
+      });
+    }
+  }
+
+  function launch() {
+    const sx = canvas.width * (.12 + Math.random() * .76);
+    const ty = canvas.height * (.06 + Math.random() * .38);
+    const steps = 22 + Math.floor(Math.random() * 14);
+    let step = 0, cx = sx, cy = canvas.height + 6;
+    const dx = ((sx + (Math.random() - .5) * 60) - sx) / steps;
+    const dy = (ty - cy) / steps;
+    function tick() {
+      cx += dx; cy += dy; step++;
+      ctx.beginPath(); ctx.arc(cx, cy, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,210,70,.88)'; ctx.fill();
+      if (step < steps) requestAnimationFrame(tick); else explode(cx, cy);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function draw() {
+    ctx.fillStyle = 'rgba(11,4,32,.15)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= .987;
+      p.alpha -= p.decay;
+      if (p.alpha <= 0) { particles.splice(i, 1); continue; }
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.shadowBlur = 5; ctx.shadowColor = p.color;
+      ctx.fill();
+      ctx.restore();
+    }
+    animId = requestAnimationFrame(draw);
+  }
+  draw();
+  [0,300,700,1150,1700,2350,3100,4000,5000,6100].forEach(d => timers.push(setTimeout(launch, d)));
+
+  return function stop() {
+    cancelAnimationFrame(animId);
+    timers.forEach(clearTimeout);
+    window.removeEventListener('resize', resize);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+}
+
+function spawnCelStars(overlay) {
+  const ICONS = ['✦','✧','⋆','·','✩','✿','❋','꩜'];
+  const COLORS = ['#FFD700','#FF9ECD','#87CEEB','#C75B8A','#B8E986','#DDA0DD'];
+  const stars = [];
+  for (let i = 0; i < 20; i++) {
+    const el = document.createElement('div');
+    el.className = 'cel-star';
+    el.textContent = ICONS[Math.floor(Math.random() * ICONS.length)];
+    el.style.cssText = `left:${Math.random()*100}vw;font-size:${8+Math.random()*18}px;`
+      + `color:${COLORS[Math.floor(Math.random()*COLORS.length)]};`
+      + `animation-duration:${5+Math.random()*9}s;animation-delay:${Math.random()*5}s`;
+    overlay.appendChild(el);
+    stars.push(el);
+  }
+  return () => stars.forEach(s => s.remove());
+}
+
+function showCelebration(res) {
+  const overlay = document.getElementById('cel-overlay');
+  const canvas  = document.getElementById('cel-canvas');
+  const fortune = CEL_FORTUNES[Math.floor(Math.random() * CEL_FORTUNES.length)];
+  const lucky   = CEL_LUCKY_ITEMS[Math.floor(Math.random() * CEL_LUCKY_ITEMS.length)];
+  const menu    = getMenu(res.menuId);
+  const endT    = menu ? addMinutes(res.time, menu.duration) : '';
+  const [y, m, d] = res.date.split('-');
+  const dow = ['日','月','火','水','木','金','土'][new Date(res.date + 'T00:00:00').getDay()];
+
+  document.getElementById('cel-booking-text').textContent =
+    `${parseInt(y)}年${parseInt(m)}月${parseInt(d)}日（${dow}）${res.time}〜${endT}\n${menu?.name || ''}`;
+  document.getElementById('cel-luck-badge').textContent     = fortune.luck;
+  document.getElementById('cel-fortune-emoji').textContent  = fortune.emoji + ' ';
+  document.getElementById('cel-fortune-msg').textContent    = '';
+  document.getElementById('cel-lucky-val').textContent      = lucky;
+
+  overlay.classList.add('open');
+  const stopFW    = startCelFireworks(canvas);
+  const stopStars = spawnCelStars(overlay);
+
+  let ci = 0;
+  const typer = setInterval(() => {
+    document.getElementById('cel-fortune-msg').textContent = fortune.text.slice(0, ++ci);
+    if (ci >= fortune.text.length) clearInterval(typer);
+  }, 55);
+
+  document.getElementById('cel-close-btn').onclick = () => {
+    stopFW(); stopStars(); clearInterval(typer);
+    overlay.classList.remove('open');
+  };
+}
 </script>
+
+<!-- ===== Celebration Overlay ===== -->
+<div id="cel-overlay">
+  <canvas id="cel-canvas"></canvas>
+  <div id="cel-card">
+    <div class="cel-emoji-wrap">🎉</div>
+    <div class="cel-heading">予約が完了しました！</div>
+    <div class="cel-booking-info" id="cel-booking-text"></div>
+    <hr class="cel-divider">
+    <div class="cel-fortune-label">今日のあなたの運勢</div>
+    <div class="cel-luck-badge" id="cel-luck-badge">大吉</div>
+    <div class="cel-fortune-text">
+      <span id="cel-fortune-emoji"></span><span id="cel-fortune-msg"></span>
+    </div>
+    <div class="cel-lucky-box">
+      <span class="cel-lucky-label-sm">ラッキーアイテム</span>
+      <span class="cel-lucky-name">「<span id="cel-lucky-val"></span>」</span>
+    </div>
+    <div class="cel-wait">では、当日お待ちしております ✂</div>
+    <button class="cel-close-btn" id="cel-close-btn">とじる</button>
+  </div>
+</div>
 </body>
 </html>

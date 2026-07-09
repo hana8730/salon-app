@@ -60,20 +60,65 @@ function startAdminFirebaseListener() {
   if (typeof firebase === 'undefined') return;
   firebase.database().ref('reservations').on('value', snapshot => {
     const data = snapshot.val() || {};
-    fbCustomerReservations = Object.values(data).map(v => ({
-      id:           'fb_' + v.localId,
-      customerName: v.customerName,
-      phone:        v.phone,
-      date:         v.date,
-      time:         v.time,
-      staffId:      v.staffId,
-      menuId:       v.menuId,
-      notes:        v.notes || '',
-      duration:     60,
-      source:       'customer'
-    }));
+    fbCustomerReservations = Object.entries(data)
+      .filter(([, v]) => v.status !== 'cancelled')
+      .map(([, v]) => ({
+        id:           'fb_' + v.localId,
+        customerName: v.customerName,
+        phone:        v.phone,
+        date:         v.date,
+        time:         v.time,
+        staffId:      v.staffId,
+        menuId:       v.menuId,
+        notes:        v.notes || '',
+        duration:     getMenu(v.menuId)?.duration || 60,
+        source:       'customer'
+      }));
     render();
   });
+}
+
+// 予約詳細ポップアップ（SB・顧客予約ブロックをタップした時に表示）
+function showResPopup(data) {
+  const existing = document.getElementById('__res-popup');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = '__res-popup';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;z-index:800;padding:16px;';
+
+  const box = document.createElement('div');
+  box.style.cssText = 'background:#fff;border-radius:14px;width:100%;max-width:340px;box-shadow:0 12px 40px rgba(0,0,0,.2);overflow:hidden;';
+
+  const rows = [
+    ['メニュー', data.menuName],
+    ['日時', `${data.date} ${data.time}〜${data.endTime}`],
+    data.phone ? ['電話', data.phone] : null,
+    data.notes ? ['備考', data.notes] : null,
+  ].filter(Boolean);
+
+  box.innerHTML = `
+    <div style="padding:16px 18px 12px;border-bottom:1px solid #E6DEF0;">
+      <div style="font-size:.72rem;font-weight:600;color:#7A6B82;margin-bottom:4px;">${data.tag}</div>
+      <div style="font-size:1.05rem;font-weight:700;color:#2D1F33;">${data.customerName}</div>
+    </div>
+    <div style="padding:4px 18px 4px;">
+      ${rows.map(([label, val], i) => `
+        <div style="display:flex;gap:10px;padding:9px 0;${i < rows.length - 1 ? 'border-bottom:1px solid #F0EAF6;' : ''}font-size:.88rem;">
+          <span style="color:#7A6B82;font-size:.75rem;font-weight:600;flex:0 0 54px;padding-top:2px;">${label}</span>
+          <span style="font-weight:${label === 'メニュー' ? '700' : '600'};color:${label === 'メニュー' ? '#C75B8A' : '#2D1F33'};">${val}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div style="padding:14px 18px;">
+      <button style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #E6DEF0;background:transparent;font-size:.9rem;cursor:pointer;color:#7A6B82;font-weight:600;">閉じる</button>
+    </div>
+  `;
+
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+  box.querySelector('button').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 }
 
 // Firebase の顧客予約を取得（render で使用）
@@ -548,13 +593,25 @@ function renderCalendar() {
 
       const block = document.createElement('div');
       block.className = 'sb-block';
-      block.style.cssText = `top:${topPx}px; height:${heightPx}px;`;
-      block.title = `[SalonBoard] ${res.customerName} ${res.time}〜 ${res.menu || ''}`;
+      block.style.cssText = `top:${topPx}px; height:${heightPx}px; cursor:pointer;`;
       block.innerHTML = `
         <span class="sb-tag">SB</span>
         <div class="sb-name">${res.customerName}</div>
         ${heightPx > 40 ? `<div class="sb-menu">${res.menu || ''}</div>` : ''}
       `;
+      block.addEventListener('click', e => {
+        e.stopPropagation();
+        showResPopup({
+          tag: 'サロンボード予約',
+          customerName: res.customerName,
+          menuName: res.menu || '(メニュー情報なし)',
+          date: res.date,
+          time: res.time,
+          endTime: addMinutes(res.time, res.duration || SB_DEFAULT_DURATION),
+          phone: '',
+          notes: res.reservationNo || '',
+        });
+      });
       slots.appendChild(block);
     });
 
@@ -570,8 +627,7 @@ function renderCalendar() {
 
       const block = document.createElement('div');
       block.className = 'sb-block';
-      block.style.cssText = `top:${topPx}px; height:${heightPx}px; background:repeating-linear-gradient(45deg,#fce4f0,#fce4f0 4px,#fff0f6 4px,#fff0f6 8px); border-left:3px solid #C75B8A;`;
-      block.title = `[顧客予約] ${res.customerName} ${res.time}〜 ${menu?.name || ''}`;
+      block.style.cssText = `top:${topPx}px; height:${heightPx}px; background:repeating-linear-gradient(45deg,#fce4f0,#fce4f0 4px,#fff0f6 4px,#fff0f6 8px); border-left:3px solid #C75B8A; cursor:pointer;`;
       block.innerHTML = `
         <span class="sb-tag" style="background:#C75B8A;">顧客</span>
         <div class="sb-name">${res.customerName}</div>
@@ -580,6 +636,19 @@ function renderCalendar() {
       `;
       const fbSbBtn = block.querySelector('.fb-sb-btn');
       if (fbSbBtn) fbSbBtn.addEventListener('click', e => { e.stopPropagation(); sendToSB(res); });
+      block.addEventListener('click', e => {
+        e.stopPropagation();
+        showResPopup({
+          tag: '顧客アプリ予約',
+          customerName: res.customerName,
+          menuName: menu?.name || '(メニュー不明)',
+          date: res.date,
+          time: res.time,
+          endTime: addMinutes(res.time, menu?.duration || 60),
+          phone: res.phone || '',
+          notes: res.notes || '',
+        });
+      });
       slots.appendChild(block);
     });
 

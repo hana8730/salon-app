@@ -588,12 +588,13 @@ emailjs.init('JBfpsbse34tP3lsdi');
 function sendReservationEmail(r, title = '新規予約') {
   const menu  = getMenu(r.menuId);
   const staff = getStaff(r.staffId);
+  const menuName = menu?.name || '(メニュー不明)';
   emailjs.send('service_8gqr39v', 'template_4lq4gfv', {
-    title:   title,
-    subject: title,
+    title:   `${title}【${menuName}】`,
+    subject: `${title}【${menuName}】`,
     name:    r.customerName,
-    time:    r.date + ' ' + r.time,
-    message: `日付: ${r.date}\n時間: ${r.time}\nメニュー: ${menu?.name || ''}\nスタッフ: ${staff?.name || ''}\n電話番号: ${r.phone}${r.notes ? '\nメモ: ' + r.notes : ''}`,
+    time:    `${r.date} ${r.time}（${menuName}）`,
+    message: `【メニュー】${menuName}\n【日付】${r.date}\n【時間】${r.time}\n【スタッフ】${staff?.name || ''}\n【電話番号】${r.phone || ''}${r.notes ? '\n【メモ】' + r.notes : ''}`,
     email:   ''
   }).catch(() => {}); // 送信失敗しても予約は通す
 }

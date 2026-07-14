@@ -807,7 +807,7 @@ function startFirebaseListener() {
     const fbData = snapshot.val() || {};
     // Object.entries で fbKey も取得してローカルに保持
     const fbList = Object.entries(fbData)
-      .filter(([, v]) => v.status !== 'cancelled')
+      .filter(([fbKey, v]) => v.status !== 'cancelled' && !_localCancelledKeys.has(fbKey))
       .map(([fbKey, v]) => ({
         id:           v.localId,
         fbKey:        fbKey,
@@ -895,6 +895,7 @@ const LAST_USER_KEY = 'salon_last_user';
 // ─── Data ─────────────────────────────────────────────────────────────────────
 let db = { staff: [], menus: [], reservations: [] };
 let currentUser = null; // { name, phone }
+const _localCancelledKeys = new Set(); // キャンセル済みfbKeyを記録してリスナー復活を防ぐ
 
 function loadDB() {
   const raw = localStorage.getItem(DB_KEY);
@@ -1512,9 +1513,24 @@ function cancelResFromCard(id, e) {
   db.reservations = db.reservations.filter(x => x.id !== id);
   saveDB();
   if (fbKey) {
+    _localCancelledKeys.add(fbKey);
     fbDB.ref('reservations/' + fbKey).update({ status: 'cancelled', cancelledAt: Date.now() });
   } else {
-    fbDB.ref('reservations/res_' + id).remove();
+    // fbKeyが不明な場合、Firebase全体からlocalIdまたは名前・日時でマッチする予約を検索してキャンセル
+    fbDB.ref('reservations').once('value').then(snap => {
+      const updates = {};
+      snap.forEach(child => {
+        const v = child.val();
+        if (v.status === 'cancelled') return;
+        if ((v.localId === r.id) ||
+            (v.customerName === r.customerName && v.date === r.date && v.time === r.time)) {
+          updates['reservations/' + child.key + '/status'] = 'cancelled';
+          updates['reservations/' + child.key + '/cancelledAt'] = Date.now();
+          _localCancelledKeys.add(child.key);
+        }
+      });
+      if (Object.keys(updates).length) fbDB.ref('/').update(updates);
+    });
   }
   sendReservationEmail(r, 'キャンセルが入りました');
   render();
@@ -1639,9 +1655,23 @@ function deleteRes() {
   db.reservations = db.reservations.filter(r => r.id !== editResId);
   saveDB();
   if (fbKey) {
+    _localCancelledKeys.add(fbKey);
     fbDB.ref('reservations/' + fbKey).update({ status: 'cancelled', cancelledAt: Date.now() });
   } else {
-    fbDB.ref('reservations/res_' + editResId).remove();
+    fbDB.ref('reservations').once('value').then(snap => {
+      const updates = {};
+      snap.forEach(child => {
+        const v = child.val();
+        if (v.status === 'cancelled') return;
+        if ((v.localId === existing.id) ||
+            (v.customerName === existing.customerName && v.date === existing.date && v.time === existing.time)) {
+          updates['reservations/' + child.key + '/status'] = 'cancelled';
+          updates['reservations/' + child.key + '/cancelledAt'] = Date.now();
+          _localCancelledKeys.add(child.key);
+        }
+      });
+      if (Object.keys(updates).length) fbDB.ref('/').update(updates);
+    });
   }
   sendReservationEmail(existing, 'キャンセルが入りました');
   closeModal('res-modal');

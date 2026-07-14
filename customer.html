@@ -805,8 +805,8 @@ function deleteResFromFirebase(id) {
 function startFirebaseListener() {
   fbDB.ref('reservations').on('value', snapshot => {
     const fbData = snapshot.val() || {};
-    // Object.entries で fbKey も取得してローカルに保持
-    const fbList = Object.entries(fbData)
+    const today = new Date().toISOString().slice(0, 10);
+    const activeList = Object.entries(fbData)
       .filter(([fbKey, v]) => v.status !== 'cancelled' && !_localCancelledKeys.has(fbKey))
       .map(([fbKey, v]) => ({
         id:           v.localId,
@@ -818,9 +818,23 @@ function startFirebaseListener() {
         staffId:      v.staffId,
         menuId:       v.menuId,
         notes:        v.notes || '',
-        source:       'customer'
+        source:       'customer',
+        updatedAt:    v.updatedAt || 0,
       }));
-    db.reservations = fbList;
+    // 1人1予約ルール: 未来の予約が同一ユーザーに複数ある場合は最新1件のみ残す
+    const futureByUser = {};
+    const past = [];
+    for (const r of activeList) {
+      if (r.date >= today) {
+        const k = normalizePhone(r.phone || '') + '|' + normalizeName(r.customerName || '');
+        if (!futureByUser[k] || r.updatedAt > futureByUser[k].updatedAt) {
+          futureByUser[k] = r;
+        }
+      } else {
+        past.push(r);
+      }
+    }
+    db.reservations = [...past, ...Object.values(futureByUser)];
     saveDB();
     renderAll();
   });
@@ -1632,6 +1646,16 @@ function commitReservation() {
     const i = db.reservations.findIndex(x => x.id === editResId);
     db.reservations[i] = r;
   } else {
+    // 新規予約: 同じユーザーの未来の予約を自動キャンセル（1人1予約ルール）
+    const today = dateStr(new Date());
+    const toCancel = db.reservations.filter(x => isOwnReservation(x) && x.date >= today);
+    for (const old of toCancel) {
+      if (old.fbKey) {
+        _localCancelledKeys.add(old.fbKey);
+        fbDB.ref('reservations/' + old.fbKey).update({ status: 'cancelled', cancelledAt: Date.now() });
+      }
+    }
+    db.reservations = db.reservations.filter(x => !(isOwnReservation(x) && x.date >= today));
     db.reservations.push(r);
   }
   saveResToFirebase(r);

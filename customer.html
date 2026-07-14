@@ -1526,17 +1526,25 @@ function cancelResFromCard(id, e) {
   const fbKey = r.fbKey;
   db.reservations = db.reservations.filter(x => x.id !== id);
   saveDB();
+  const cancelInFB = (key, res) => {
+    _localCancelledKeys.add(key);
+    fbDB.ref('cancelledReservations/' + key).set({
+      customerName: res.customerName,
+      date:         res.date,
+      time:         res.time,
+      phone:        res.phone || '',
+      cancelledAt:  Date.now()
+    }).then(() => fbDB.ref('reservations/' + key).remove());
+  };
   if (fbKey) {
-    _localCancelledKeys.add(fbKey);
-    fbDB.ref('reservations/' + fbKey).remove();
+    cancelInFB(fbKey, r);
   } else {
     fbDB.ref('reservations').once('value').then(snap => {
       snap.forEach(child => {
         const v = child.val();
         if ((v.localId === r.id) ||
             (v.customerName === r.customerName && v.date === r.date && v.time === r.time)) {
-          _localCancelledKeys.add(child.key);
-          fbDB.ref('reservations/' + child.key).remove();
+          cancelInFB(child.key, r);
         }
       });
     });
@@ -1673,17 +1681,25 @@ function deleteRes() {
   const fbKey = existing.fbKey; // ローカル削除前にfbKeyを保存
   db.reservations = db.reservations.filter(r => r.id !== editResId);
   saveDB();
+  const cancelInFBDel = (key, res) => {
+    _localCancelledKeys.add(key);
+    fbDB.ref('cancelledReservations/' + key).set({
+      customerName: res.customerName,
+      date:         res.date,
+      time:         res.time,
+      phone:        res.phone || '',
+      cancelledAt:  Date.now()
+    }).then(() => fbDB.ref('reservations/' + key).remove());
+  };
   if (fbKey) {
-    _localCancelledKeys.add(fbKey);
-    fbDB.ref('reservations/' + fbKey).remove();
+    cancelInFBDel(fbKey, existing);
   } else {
     fbDB.ref('reservations').once('value').then(snap => {
       snap.forEach(child => {
         const v = child.val();
         if ((v.localId === existing.id) ||
             (v.customerName === existing.customerName && v.date === existing.date && v.time === existing.time)) {
-          _localCancelledKeys.add(child.key);
-          fbDB.ref('reservations/' + child.key).remove();
+          cancelInFBDel(child.key, existing);
         }
       });
     });

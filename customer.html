@@ -1528,13 +1528,10 @@ function cancelResFromCard(id, e) {
   saveDB();
   const cancelInFB = (key, res) => {
     _localCancelledKeys.add(key);
-    fbDB.ref('cancelledReservations/' + key).set({
-      customerName: res.customerName,
-      date:         res.date,
-      time:         res.time,
-      phone:        res.phone || '',
-      cancelledAt:  Date.now()
-    }).then(() => fbDB.ref('reservations/' + key).remove());
+    fbDB.ref('reservations/' + key).update({
+      status:      'cancelled',
+      cancelledAt: Date.now()
+    });
   };
   if (fbKey) {
     cancelInFB(fbKey, r);
@@ -1683,13 +1680,10 @@ function deleteRes() {
   saveDB();
   const cancelInFBDel = (key, res) => {
     _localCancelledKeys.add(key);
-    fbDB.ref('cancelledReservations/' + key).set({
-      customerName: res.customerName,
-      date:         res.date,
-      time:         res.time,
-      phone:        res.phone || '',
-      cancelledAt:  Date.now()
-    }).then(() => fbDB.ref('reservations/' + key).remove());
+    fbDB.ref('reservations/' + key).update({
+      status:      'cancelled',
+      cancelledAt: Date.now()
+    });
   };
   if (fbKey) {
     cancelInFBDel(fbKey, existing);

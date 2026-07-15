@@ -1756,6 +1756,9 @@ document.addEventListener('DOMContentLoaded', () => {
     err.style.display = 'none';
     startSession(name, phone);
     showApp();
+    setTimeout(() => {
+      document.getElementById('line-popup-overlay').classList.add('open');
+    }, 1000);
   });
 
   // Allow pressing Enter in phone field to login
@@ -1843,6 +1846,10 @@ document.addEventListener('DOMContentLoaded', () => {
       pendingRes = null;
       closeModal('confirm-modal');
     }
+  });
+
+  document.getElementById('line-popup-close').addEventListener('click', () => {
+    document.getElementById('line-popup-overlay').classList.remove('open');
   });
 
   // ── Auto-refresh when admin syncs SalonBoard (cross-tab localStorage event)
@@ -2006,10 +2013,6 @@ function showCelebration(res) {
   document.getElementById('cel-close-btn').onclick = () => {
     stopFW(); stopStars(); clearInterval(typer);
     overlay.classList.remove('open');
-    document.getElementById('line-popup-overlay').classList.add('open');
-  };
-  document.getElementById('line-popup-close').onclick = () => {
-    document.getElementById('line-popup-overlay').classList.remove('open');
   };
 }
 </script>

@@ -569,6 +569,35 @@
     }
     .cel-close-btn:active { transform: scale(.96); }
     .cel-close-btn:hover  { background: rgba(255,255,255,.2); }
+
+    /* LINE案内ポップアップ */
+    #line-popup-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.5); z-index: 3000;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #line-popup-overlay.open { display: flex; }
+    #line-popup-card {
+      background: #fff; border-radius: 18px; padding: 28px 24px 24px;
+      max-width: 340px; width: 100%; text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    }
+    @media (prefers-color-scheme: dark) {
+      #line-popup-card { background: #1e1e1e; color: #f0f0f0; }
+    }
+    #line-popup-card .line-icon { font-size: 2rem; margin-bottom: 10px; }
+    #line-popup-card .line-msg {
+      font-size: .97rem; line-height: 1.7; color: inherit;
+      margin-bottom: 22px;
+    }
+    #line-popup-card .line-close-btn {
+      background: #06c755; color: #fff; border: none;
+      border-radius: 40px; padding: 12px 40px;
+      font-size: .93rem; font-weight: 700; cursor: pointer;
+      transition: opacity .2s;
+    }
+    #line-popup-card .line-close-btn:active { opacity: .8; }
   </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -1977,6 +2006,10 @@ function showCelebration(res) {
   document.getElementById('cel-close-btn').onclick = () => {
     stopFW(); stopStars(); clearInterval(typer);
     overlay.classList.remove('open');
+    document.getElementById('line-popup-overlay').classList.add('open');
+  };
+  document.getElementById('line-popup-close').onclick = () => {
+    document.getElementById('line-popup-overlay').classList.remove('open');
   };
 }
 </script>
@@ -2002,5 +2035,15 @@ function showCelebration(res) {
     <button class="cel-close-btn" id="cel-close-btn">とじる</button>
   </div>
 </div>
+
+<!-- ===== LINE案内ポップアップ ===== -->
+<div id="line-popup-overlay">
+  <div id="line-popup-card">
+    <div class="line-icon">💬</div>
+    <p class="line-msg">カットだけであれば、LINE にてご連絡ください。<br>割り込みさせていただきます。</p>
+    <button class="line-close-btn" id="line-popup-close">閉じる</button>
+  </div>
+</div>
+
 </body>
 </html>

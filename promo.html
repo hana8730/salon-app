@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美容室アイシス | 予約アプリ&プレゼント企画</title>
+<meta name="description" content="美容室アイシスの予約アプリのご紹介と、ハンディーファンプレゼント企画のお知らせ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:   #C75B8A;
+    --primary-h: #b04a77;
+    --accent:    #F4845F;
+    --bg:        #F7F4F9;
+    --surface:   #FFFFFF;
+    --border:    #E6DEF0;
+    --text:      #2D1F33;
+    --sub:       #7A6B82;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Helvetica Neue', sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.7;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 0 0 60px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(160deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff; padding: 48px 24px 56px; text-align: center;
+    border-radius: 0 0 32px 32px;
+  }
+  .hero-logo {
+    font-family: 'Klee One', 'Hiragino Maru Gothic ProN', sans-serif;
+    font-size: 1.05rem; letter-spacing: .15em; opacity: .85; margin-bottom: 6px;
+  }
+  .hero-title {
+    font-family: 'Klee One', 'Hiragino Maru Gothic ProN', sans-serif;
+    font-size: 2.1rem; font-weight: 600; margin-bottom: 14px;
+  }
+  .hero-sub { font-size: .95rem; opacity: .92; }
+
+  /* Section */
+  section { padding: 40px 24px 0; }
+  .section-title {
+    font-family: 'Klee One', 'Hiragino Maru Gothic ProN', sans-serif;
+    font-size: 1.3rem; font-weight: 600; color: var(--primary);
+    text-align: center; margin-bottom: 24px;
+  }
+
+  /* Feature cards */
+  .feature-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 20px 22px; margin-bottom: 16px;
+    display: flex; gap: 16px; align-items: flex-start;
+    box-shadow: 0 4px 16px rgba(199,91,138,.06);
+  }
+  .feature-icon { font-size: 1.8rem; line-height: 1; flex-shrink: 0; }
+  .feature-body h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .feature-body p { font-size: .87rem; color: var(--sub); }
+
+  /* CTA */
+  .cta-box {
+    margin: 8px 24px 0; text-align: center;
+  }
+  .cta-btn {
+    display: inline-block; width: 100%;
+    background: var(--primary); color: #fff; text-decoration: none;
+    font-weight: 700; font-size: 1.02rem;
+    padding: 16px 20px; border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(199,91,138,.3);
+    transition: background .2s, transform .15s;
+  }
+  .cta-btn:hover { background: var(--primary-h); }
+  .cta-btn:active { transform: scale(.98); }
+  .cta-note { font-size: .78rem; color: var(--sub); margin-top: 10px; }
+
+  /* Campaign */
+  .campaign-card {
+    margin: 40px 24px 0;
+    background: linear-gradient(160deg, #FFF6E9 0%, #FFEFF4 100%);
+    border: 2px solid #FFD79A;
+    border-radius: 20px; padding: 28px 22px; text-align: center;
+  }
+  .campaign-badge {
+    display: inline-block; background: var(--accent); color: #fff;
+    font-size: .72rem; font-weight: 700; letter-spacing: .08em;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 14px;
+  }
+  .campaign-emoji { font-size: 2.6rem; margin-bottom: 8px; }
+  .campaign-title {
+    font-family: 'Klee One', 'Hiragino Maru Gothic ProN', sans-serif;
+    font-size: 1.3rem; font-weight: 600; color: var(--text); margin-bottom: 10px;
+  }
+  .campaign-desc { font-size: .9rem; color: var(--sub); margin-bottom: 20px; }
+  .campaign-steps {
+    background: var(--surface); border-radius: 14px; padding: 18px 18px;
+    text-align: left; display: flex; flex-direction: column; gap: 12px;
+  }
+  .campaign-step { display: flex; gap: 12px; align-items: flex-start; }
+  .step-num {
+    flex: 0 0 24px; height: 24px; border-radius: 50%;
+    background: var(--primary); color: #fff; font-size: .8rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-text { font-size: .88rem; }
+  .step-text .highlight {
+    color: var(--primary); font-weight: 700;
+    background: #FDF0F7; padding: 1px 6px; border-radius: 4px;
+  }
+  .campaign-fine { font-size: .72rem; color: var(--sub); margin-top: 16px; }
+
+  footer {
+    text-align: center; font-size: .78rem; color: var(--sub);
+    margin-top: 48px; padding: 0 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-logo">HAIR SALON</div>
+    <div class="hero-title">アイシス</div>
+    <div class="hero-sub">ご予約はスマホから、かんたん・スピーディーに。</div>
+  </div>
+
+  <section>
+    <h2 class="section-title">予約アプリのご紹介</h2>
+
+    <div class="feature-card">
+      <div class="feature-icon">📅</div>
+      <div class="feature-body">
+        <h3>24時間いつでもWeb予約</h3>
+        <p>空いている時間を見て、その場でサクッとご予約いただけます。</p>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">✂️</div>
+      <div class="feature-body">
+        <h3>カット以外のメニューも豊富</h3>
+        <p>カラー・パーマ・縮毛矯正・髪質改善など、幅広いメニューからお選びいただけます。</p>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔮</div>
+      <div class="feature-body">
+        <h3>今日の運勢占い（意味はありません）</h3>
+        <p>予約完了時に、当たるも八卦当たらぬも八卦な「今日の運勢」がこっそり表示されます。ちょっとした息抜きにどうぞ。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-box">
+    <a class="cta-btn" href="./customer.html">ご予約はこちら →</a>
+    <div class="cta-note">お名前と電話番号でかんたんログインできます</div>
+  </div>
+
+  <div class="campaign-card">
+    <span class="campaign-badge">PRESENT CAMPAIGN</span>
+    <div class="campaign-emoji">🎁</div>
+    <div class="campaign-title">ハンディーファン抽選プレゼント</div>
+    <div class="campaign-desc">抽選で <strong>3名様</strong> に、ハンディーファンをプレゼントいたします。</div>
+
+    <div class="campaign-steps">
+      <div class="campaign-step">
+        <div class="step-num">1</div>
+        <div class="step-text">この公式LINEのトーク画面を開く</div>
+      </div>
+      <div class="campaign-step">
+        <div class="step-num">2</div>
+        <div class="step-text">メッセージで <span class="highlight">「ハンディーファン」</span> と送信</div>
+      </div>
+      <div class="campaign-step">
+        <div class="step-num">3</div>
+        <div class="step-text">応募完了！抽選で3名様に当選のご連絡をいたします</div>
+      </div>
+    </div>
+
+    <div class="campaign-fine">※ 当選者の発表は当選者様へのご連絡をもって代えさせていただきます</div>
+  </div>
+
+  <footer>
+    HAIR SALON ISIS
+  </footer>
+
+</div>
+
+</body>
+</html>

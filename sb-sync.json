@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-07-21T00:35:32.082Z",
+  "syncTime": "2026-07-21T02:55:00.000Z",
   "reservations": [
     {"date":"2026-07-21","time":"10:00","customerName":"前田 様 様","reservationNo":"YG78753688","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-21","time":"10:30","customerName":"長谷川 真 様","reservationNo":"YG92017615","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
@@ -24,12 +24,14 @@
     {"date":"2026-07-23","time":"17:30","customerName":"齋藤 友美 様","reservationNo":"BF32811456","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-23","time":"18:00","customerName":"田中 明子 様","reservationNo":"BF30412624","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-23","time":"18:30","customerName":"ササキ 様","reservationNo":"YG96079073","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-07-23","time":"19:00","customerName":"大川 雄己 様","reservationNo":"BF35579337","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-28","time":"10:30","customerName":"かや ふみ 様","reservationNo":"BF30643465","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-28","time":"14:30","customerName":"長棹 美雪 様","reservationNo":"YG91392802","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-07-28","time":"15:00","customerName":"新保 輝美 様","reservationNo":"BF34942620","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-29","time":"17:30","customerName":"柳平 倖希 様","reservationNo":"YG92524394","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-30","time":"18:30","customerName":"大川 亜希子 様","reservationNo":"BF35410176","stylist":"指名なし","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-08-04","time":"12:00","customerName":"オオトモ 様","reservationNo":"YG94578820","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-08-06","time":"17:00","customerName":"前田 高志 様","reservationNo":"YG96515499","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-12","time":"18:00","customerName":"正冨 良枝 様","reservationNo":"YG95334055","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"}
   ]
 }

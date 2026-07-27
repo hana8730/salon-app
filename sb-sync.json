@@ -2,7 +2,7 @@
   "syncTime": "2026-07-26T11:10:00.000Z",
   "reservations": [
     {"date":"2026-07-27","time":"17:00","customerName":"井上 菜々恵 様","reservationNo":"BF37604849","stylist":"指名なし","menu":"","duration":60,"source":"salonboard"},
-    {"date":"2026-07-27","time":"18:00","customerName":"熊谷 頼毅 様","reservationNo":"YG97311267","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-07-27","time":"18:00","customerName":"熊谷 頼毅 様","reservationNo":"YG97311267","stylist":"ハナ","menu":"カラー（白髪染め）","duration":90,"source":"salonboard"},
     {"date":"2026-07-27","time":"18:30","customerName":"内野 賀子 様","reservationNo":"BF38219884","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-28","time":"10:00","customerName":"西村 薫 様","reservationNo":"YG98883345","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-07-28","time":"10:30","customerName":"かや ふみ 様","reservationNo":"BF30643465","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},

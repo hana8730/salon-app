@@ -1095,7 +1095,9 @@ function normalizeName(s) {
 }
 function normalizePhone(s) {
   if (!s) return '';
-  return s.replace(/[\s\-ー－―]/g, '');           // スペース・ハイフン類除去
+  return s
+    .replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)) // 全角数字→半角
+    .replace(/[\s\-ー－―・(（)）]/g, '');           // スペース・ハイフン・括弧類除去
 }
 
 function isOwnReservation(res) {

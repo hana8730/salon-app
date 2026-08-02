@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-08-01T21:11:00.000Z",
+  "syncTime": "2026-08-02T06:44:00.000Z",
   "reservations": [
     {"date":"2026-08-03","time":"17:00","customerName":"渡辺 さちえ 様","reservationNo":"BF40679878","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-03","time":"17:30","customerName":"米田 千晶 様","reservationNo":"YH02700425","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
@@ -17,8 +17,10 @@
     {"date":"2026-08-04","time":"19:00","customerName":"小川 彩菜 様","reservationNo":"YH02906404","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-05","time":"17:00","customerName":"釣賀 江梨子 様","reservationNo":"YH01420867","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-05","time":"17:30","customerName":"岸田 真由子 様","reservationNo":"YH01420891","stylist":"ハナ","menu":"","duration":90,"source":"salonboard"},
+    {"date":"2026-08-05","time":"19:00","customerName":"大杉 まや 様","reservationNo":"BF41892870","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-06","time":"17:00","customerName":"前田 高志 様","reservationNo":"YG96515499","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-06","time":"17:30","customerName":"松田 ひかり 様","reservationNo":"YH00236074","stylist":"ハナ","menu":"","duration":90,"source":"salonboard"},
+    {"date":"2026-08-10","time":"17:00","customerName":"小林 ひとみ 様","reservationNo":"YH04634748","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"},
     {"date":"2026-08-10","time":"18:00","customerName":"結城 啓子 様","reservationNo":"YH01859364","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-10","time":"19:00","customerName":"長谷川 ななか 様","reservationNo":"YH03441840","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-12","time":"18:00","customerName":"正冨 良枝 様","reservationNo":"YG95334055","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},

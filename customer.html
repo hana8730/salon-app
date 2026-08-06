@@ -897,8 +897,13 @@ const SPECIAL_CLOSED = {
   '2026-07-05': '上海',
   '2026-07-06': '上海',
 };
+// 特別営業日（定休日でも受付する日付 → RSBと同期）
+const SPECIAL_OPEN = {
+  '2026-08-09': { open: '10:00', close: '19:30' },
+};
 function getBusinessHours(ds) {
   if (SPECIAL_CLOSED[ds]) return null;
+  if (SPECIAL_OPEN[ds]) return SPECIAL_OPEN[ds];
   if (ds >= BOOKING_CLOSED_FROM) return null;
   const dow = new Date(ds + 'T00:00:00').getDay();
   return BUSINESS_HOURS[dow] ?? null;

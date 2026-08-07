@@ -1,6 +1,7 @@
 {
-  "syncTime": "2026-08-07T01:43:00.000Z",
+  "syncTime": "2026-08-07T08:07:00.000Z",
   "reservations": [
+    {"date":"2026-08-09","time":"10:00","customerName":"播本 啓子 様","reservationNo":"BF46237803","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-09","time":"13:00","customerName":"渡邉 玲美 様","reservationNo":"BF45811391","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-10","time":"17:00","customerName":"小林 ひとみ 様","reservationNo":"YH04634748","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"},
     {"date":"2026-08-10","time":"18:00","customerName":"結城 啓子 様","reservationNo":"YH01859364","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},

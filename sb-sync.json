@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-08-09T22:38:45.000Z",
+  "syncTime": "2026-08-09T14:00:00.000Z",
   "reservations": [
     {"date":"2026-08-09","time":"10:00","customerName":"播本 啓子 様","reservationNo":"BF46237803","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-09","time":"10:30","customerName":"友渕 まり 様","reservationNo":"YH08145799","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
@@ -9,6 +9,8 @@
     {"date":"2026-08-09","time":"13:00","customerName":"渡邉 玲美 様","reservationNo":"BF45811391","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-09","time":"13:30","customerName":"中山 陽介 様","reservationNo":"YH08825974","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-08-09","time":"14:00","customerName":"山下 育美 様","reservationNo":"YH08751149","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
+    {"date":"2026-08-09","time":"14:30","customerName":"千葉 英恵 様","reservationNo":"BF47240879","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-08-09","time":"15:00","customerName":"大沼 和哉 様","reservationNo":"BF47280694","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-10","time":"17:00","customerName":"小林 ひとみ 様","reservationNo":"YH04634748","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"},
     {"date":"2026-08-10","time":"18:00","customerName":"結城 啓子 様","reservationNo":"YH01859364","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-10","time":"18:30","customerName":"中島 亮太 様","reservationNo":"YH04921318","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},

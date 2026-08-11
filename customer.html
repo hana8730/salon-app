@@ -840,7 +840,7 @@ function startFirebaseListener() {
     const activeList = Object.entries(fbData)
       .filter(([fbKey, v]) => v.status !== 'cancelled' && !_localCancelledKeys.has(fbKey))
       .map(([fbKey, v]) => ({
-        id:           v.localId,
+        id:           Number.isFinite(v.localId) ? v.localId : Date.now(),
         fbKey:        fbKey,
         customerName: v.customerName,
         phone:        v.phone,
@@ -1071,7 +1071,7 @@ function updateSyncBadge() {
 
 function getStaff(id) { return db.staff.find(s => s.id === +id); }
 function getMenu(id)  { return db.menus.find(m => m.id === +id); }
-function nextId(arr)  { return arr.length ? Math.max(...arr.map(x=>x.id))+1 : 1; }
+function nextId(arr)  { const ids = arr.map(x=>x.id).filter(Number.isFinite); return ids.length ? Math.max(...ids)+1 : 1; }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function dateStr(d) {

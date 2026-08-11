@@ -832,7 +832,9 @@ function deleteResFromFirebase(id) {
 // Firebase のリアルタイムリスナーを開始
 // Firebase 上のデータを db.reservations に反映して再描画
 function startFirebaseListener() {
+  fbDB.ref('reservations').off('value');
   fbDB.ref('reservations').on('value', snapshot => {
+    if (!currentUser) return;
     const fbData = snapshot.val() || {};
     const today = new Date().toISOString().slice(0, 10);
     const activeList = Object.entries(fbData)
@@ -1127,6 +1129,7 @@ function startSession(name, phone) {
 function endSession() {
   currentUser = null;
   sessionStorage.removeItem(SESSION_KEY);
+  fbDB.ref('reservations').off('value');
 }
 
 // ─── Login ────────────────────────────────────────────────────────────────────

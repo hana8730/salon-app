@@ -434,6 +434,12 @@
       font-size: .92rem; font-weight: 600; cursor: pointer; transition: all .18s;
     }
     .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-danger-solid {
+      padding: 12px 22px; background: var(--danger); color: #fff;
+      border: none; border-radius: 8px; font-size: .95rem; font-weight: 700;
+      cursor: pointer; transition: background .18s; width: 100%;
+    }
+    .btn-danger-solid:hover { background: #c0392b; }
     .conflict-warning {
       background: #FFF3CD; border: 1.5px solid #FFC107; border-radius: 8px;
       padding: 10px 14px; font-size: .82rem; margin-bottom: 12px;
@@ -457,6 +463,18 @@
       text-align: center; font-weight: 600; line-height: 1.6;
     }
     .confirm-actions { padding: 18px 24px 24px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+
+    /* ── Action Modal ────────────────────────────── */
+    .action-info { padding: 20px 24px 16px; }
+    .action-info-date { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+    .action-info-time { font-size: .92rem; color: var(--sub); margin-bottom: 2px; }
+    .action-info-menu { font-size: .92rem; color: var(--sub); }
+    .action-btns { padding: 16px 24px 28px; display: flex; flex-direction: column; gap: 10px; }
+    .action-btns .btn-secondary { width: 100%; text-align: center; font-size: .95rem; }
+    .cancel-confirm-body { padding: 28px 24px 12px; text-align: center; font-size: .95rem; line-height: 1.8; }
+    .my-res-card { cursor: pointer; }
+    .my-res-card:active { opacity: .85; }
+    .mrc-tap-hint { font-size: .78rem; color: var(--sub); text-align: right; padding: 6px 0 2px; }
 
     /* ── Celebration Overlay ─────────────────────── */
     #cel-overlay {
@@ -763,6 +781,38 @@
     <div class="confirm-actions">
       <button type="button" class="btn-secondary" id="confirm-back-btn">戻る</button>
       <button type="button" class="btn-primary" id="confirm-submit-btn">この内容で予約する</button>
+    </div>
+  </div>
+</div>
+
+<!-- アクション選択モーダル -->
+<div class="modal-overlay" id="res-action-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>予約を変更する</h3>
+      <button class="modal-close" id="res-action-close">×</button>
+    </div>
+    <div class="action-info" id="res-action-info"></div>
+    <div class="action-btns">
+      <button type="button" class="btn-danger-solid" id="res-action-cancel-btn">この日をキャンセル</button>
+      <button type="button" class="btn-secondary" id="res-action-edit-btn">他の日を選ぶ</button>
+    </div>
+  </div>
+</div>
+
+<!-- キャンセル確認モーダル -->
+<div class="modal-overlay" id="cancel-confirm-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>キャンセルの確認</h3>
+      <button class="modal-close" id="cancel-confirm-close">×</button>
+    </div>
+    <div class="cancel-confirm-body">
+      <p id="cancel-confirm-text"></p>
+    </div>
+    <div class="confirm-actions">
+      <button type="button" class="btn-secondary" id="cancel-confirm-back">戻る</button>
+      <button type="button" class="btn-danger-solid" id="cancel-confirm-btn" style="width:auto;padding:10px 22px">キャンセルする</button>
     </div>
   </div>
 </div>
@@ -1382,7 +1432,7 @@ function renderMyResList() {
     const [ry,rm,rd] = r.date.split('-').map(Number);
     const weekDay = WDAYS[new Date(ry,rm-1,rd).getDay()];
     return `
-      <div class="my-res-card">
+      <div class="my-res-card" ${!isPast ? `onclick="openResActionModal(${r.id})"` : ''}>
         <div class="mrc-top">
           <div class="mrc-dot" style="background:${staff?.color||'#ccc'}"></div>
           <div class="mrc-body">
@@ -1397,10 +1447,7 @@ function renderMyResList() {
           <span class="mrc-date-big">${displayDate(r.date)}（${weekDay}）</span>
           <span class="mrc-time-big">${r.time}〜${endT}</span>
         </div>
-        ${!isPast ? `<div class="mrc-actions">
-          <button class="mrc-btn mrc-btn-cancel" onclick="cancelResFromCard(${r.id},event)">予約をキャンセルする</button>
-        </div>
-        <p class="mrc-cancel-note">※ 再度ご予約の際は、カレンダーに戻って新規予約をお願いいたします。</p>` : ''}
+        ${!isPast ? '<p class="mrc-tap-hint">タップして変更・キャンセル</p>' : ''}
       </div>`;
   }).join('');
 }
@@ -1589,6 +1636,72 @@ function cancelResFromCard(id, e) {
   render();
 }
 window.cancelResFromCard = cancelResFromCard;
+
+// ─── アクション選択モーダル ────────────────────────────────────────────────────
+let actionResId = null;
+
+function openResActionModal(id) {
+  const r = db.reservations.find(x => x.id === id);
+  if (!r || !isOwnReservation(r)) return;
+  actionResId = id;
+  const [ry,rm,rd] = r.date.split('-').map(Number);
+  const wday = ['日','月','火','水','木','金','土'][new Date(ry,rm-1,rd).getDay()];
+  const menu = getMenu(r.menuId);
+  const endT = menu ? addMinutes(r.time, menu.duration) : '';
+  document.getElementById('res-action-info').innerHTML = `
+    <div class="action-info-date">${displayDate(r.date)}（${wday}）</div>
+    <div class="action-info-time">${r.time}〜${endT}</div>
+    <div class="action-info-menu">${menu?.name || '—'}</div>`;
+  openModal('res-action-modal');
+}
+window.openResActionModal = openResActionModal;
+
+function openCancelConfirmModal() {
+  const r = db.reservations.find(x => x.id === actionResId);
+  if (!r) return;
+  const [ry,rm,rd] = r.date.split('-').map(Number);
+  const wday = ['日','月','火','水','木','金','土'][new Date(ry,rm-1,rd).getDay()];
+  const menu = getMenu(r.menuId);
+  document.getElementById('cancel-confirm-text').innerHTML =
+    `${displayDate(r.date)}（${wday}）<br>メニューは「${menu?.name || '—'}」を<br>キャンセルしますか？`;
+  closeModal('res-action-modal');
+  openModal('cancel-confirm-modal');
+}
+
+function executeCancelRes() {
+  const id = actionResId;
+  if (!id) return;
+  const r = db.reservations.find(x => x.id === id);
+  if (!r || !isOwnReservation(r)) return;
+  const fbKey = r.fbKey;
+  db.reservations = db.reservations.filter(x => x.id !== id);
+  saveDB();
+  const cancelInFB = key => {
+    _localCancelledKeys.add(key);
+    fbDB.ref('reservations/' + key).update({ status: 'cancelled', cancelledAt: Date.now() });
+  };
+  if (fbKey) {
+    cancelInFB(fbKey);
+  } else {
+    fbDB.ref('reservations').once('value').then(snap => {
+      snap.forEach(child => {
+        const v = child.val();
+        if (v.localId === r.id || (v.customerName === r.customerName && v.date === r.date && v.time === r.time))
+          cancelInFB(child.key);
+      });
+    });
+  }
+  sendReservationEmail(r, 'キャンセルが入りました');
+  actionResId = null;
+  closeModal('cancel-confirm-modal');
+  render();
+}
+
+function openEditFromAction() {
+  const id = actionResId;
+  closeModal('res-action-modal');
+  openEditRes(id);
+}
 
 function saveRes(e) {
   e.preventDefault();
@@ -1860,6 +1973,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('line-popup-close').addEventListener('click', () => {
     document.getElementById('line-popup-overlay').classList.remove('open');
+  });
+
+  // ── アクション選択モーダル
+  document.getElementById('res-action-close').addEventListener('click', () => {
+    actionResId = null;
+    closeModal('res-action-modal');
+  });
+  document.getElementById('res-action-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('res-action-modal')) { actionResId = null; closeModal('res-action-modal'); }
+  });
+  document.getElementById('res-action-cancel-btn').addEventListener('click', openCancelConfirmModal);
+  document.getElementById('res-action-edit-btn').addEventListener('click', openEditFromAction);
+
+  // ── キャンセル確認モーダル
+  document.getElementById('cancel-confirm-close').addEventListener('click', () => {
+    closeModal('cancel-confirm-modal');
+    openModal('res-action-modal');
+  });
+  document.getElementById('cancel-confirm-back').addEventListener('click', () => {
+    closeModal('cancel-confirm-modal');
+    openModal('res-action-modal');
+  });
+  document.getElementById('cancel-confirm-btn').addEventListener('click', executeCancelRes);
+  document.getElementById('cancel-confirm-modal').addEventListener('click', e => {
+    if (e.target === document.getElementById('cancel-confirm-modal')) {
+      closeModal('cancel-confirm-modal');
+      openModal('res-action-modal');
+    }
   });
 
   // ── Auto-refresh when admin syncs SalonBoard (cross-tab localStorage event)

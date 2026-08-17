@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-08-17T08:30:00.000Z",
+  "syncTime": "2026-08-17T09:15:00.000Z",
   "reservations": [
     {"date":"2026-08-17","time":"17:00","customerName":"山本 千春 様","reservationNo":"YH05501454","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-17","time":"17:30","customerName":"小宮 千恵子 様","reservationNo":"BF49769973","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
@@ -11,9 +11,11 @@
     {"date":"2026-08-18","time":"12:00","customerName":"太田 珠理 様","reservationNo":"BF51497841","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-18","time":"12:30","customerName":"海寳 多可子 様","reservationNo":"BF48149978","stylist":"ハナ","menu":"","duration":150,"source":"salonboard"},
     {"date":"2026-08-18","time":"15:00","customerName":"岡本 紀子 様","reservationNo":"YH10332339","stylist":"ハナ","menu":"カット＋パーマ","duration":90,"source":"salonboard"},
+    {"date":"2026-08-18","time":"16:30","customerName":"小野塚 喜美子 様","reservationNo":"BF51567359","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-18","time":"17:00","customerName":"山中 洋子 様","reservationNo":"BF51243842","stylist":"指名なし","menu":"","duration":60,"source":"salonboard"},
     {"date":"2026-08-18","time":"17:30","customerName":"田代 大介 様","reservationNo":"BF51369464","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-18","time":"18:00","customerName":"高宮 麻紀子 様","reservationNo":"YH05501601","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-08-18","time":"18:30","customerName":"福田 めぐみ 様","reservationNo":"BF51586549","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-18","time":"19:00","customerName":"吉田 由美子 様","reservationNo":"BF44853697","stylist":"指名なし","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-08-19","time":"17:00","customerName":"福田 芙憂 様","reservationNo":"YH07112567","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-08-19","time":"17:30","customerName":"今泉 知子 様","reservationNo":"BF51513895","stylist":"指名なし","menu":"","duration":30,"source":"salonboard"},

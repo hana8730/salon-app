@@ -104,6 +104,27 @@
 
   .loading { color: var(--muted); font-size: 12px; }
   .err { color: #b83c3c; font-size: 12px; }
+
+  .btn-sync {
+    font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px;
+    background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary-mid);
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  }
+  .btn-sync:hover { background: var(--primary-mid); }
+  .btn-sync:disabled { opacity: .5; cursor: default; }
+  .sync-note { font-size: 10px; color: var(--muted); margin-top: -8px; margin-bottom: 12px; }
+
+  .freespace-wrap { margin-top: 10px; }
+  .fs-label { display: block; font-size: 10px; font-weight: 800; color: var(--muted); margin-bottom: 4px; }
+  textarea.freespace {
+    width: 100%; min-height: 64px; resize: vertical;
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+    font-family: inherit; font-size: 12.5px; color: var(--text);
+    background: var(--primary-light); outline: none;
+  }
+  textarea.freespace:focus { border-color: var(--primary); }
+  .fs-saved { font-size: 10px; color: var(--muted); margin-top: 3px; opacity: 0; transition: opacity .3s; }
+  .fs-saved.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -121,8 +142,12 @@
 <div class="grid">
 
   <div class="card">
-    <div class="card-title"><span class="icon">📅</span>サロンボード予約</div>
+    <div class="card-title" style="justify-content:space-between;">
+      <span><span class="icon">📅</span>サロンボード予約</span>
+      <button id="salon-refresh-btn" class="btn-sync" type="button">🔄 再取得</button>
+    </div>
     <div class="card-sub">sb-sync.json を自動取得（今日・明日）</div>
+    <div class="sync-note">※このボタンは最新の同期済みデータを再読み込みします。SalonBoard自体との実同期はAI秘書に「同期して」と伝えてください</div>
     <div id="salon-content" class="loading">読み込み中…</div>
   </div>
 
@@ -156,29 +181,62 @@ document.getElementById('today-label').textContent =
   today.getFullYear()+'年'+(today.getMonth()+1)+'月'+today.getDate()+'日';
 
 // ---- サロンボード ----
-fetch('sb-sync.json?t=' + Date.now())
-  .then(r => r.json())
-  .then(data => {
-    const res = data.reservations || [];
-    const byDate = (d) => res.filter(r => r.date === d).sort((a,b) => a.time.localeCompare(b.time));
-    const renderDay = (label, list) => {
-      let html = '<div class="day-label">' + label + '</div>';
-      if (!list.length) { html += '<div class="empty">予約なし</div>'; return html; }
-      list.forEach(r => {
-        const tag = r.reservationNo && r.reservationNo.startsWith('BF') ? 'HP' :
-                    r.reservationNo && r.reservationNo.startsWith('YG') ? '外部' : '直';
-        html += '<div class="res-row"><span class="res-time">' + r.time + '</span>' +
-                '<span class="res-name">' + r.customerName + '</span>' +
-                '<span class="res-tag">' + tag + '</span></div>';
-      });
-      return html;
-    };
-    document.getElementById('salon-content').innerHTML =
-      renderDay('今日', byDate(todayStr)) + renderDay('明日', byDate(tomorrowStr));
-  })
-  .catch(() => {
-    document.getElementById('salon-content').innerHTML = '<div class="err">取得に失敗しました</div>';
+function loadSalon() {
+  const btn = document.getElementById('salon-refresh-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ 取得中'; }
+  fetch('sb-sync.json?t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      const res = data.reservations || [];
+      const byDate = (d) => res.filter(r => r.date === d).sort((a,b) => a.time.localeCompare(b.time));
+      const renderDay = (label, list) => {
+        let html = '<div class="day-label">' + label + '</div>';
+        if (!list.length) { html += '<div class="empty">予約なし</div>'; return html; }
+        list.forEach(r => {
+          const tag = r.reservationNo && r.reservationNo.startsWith('BF') ? 'HP' :
+                      r.reservationNo && r.reservationNo.startsWith('YG') ? '外部' : '直';
+          html += '<div class="res-row"><span class="res-time">' + r.time + '</span>' +
+                  '<span class="res-name">' + r.customerName + '</span>' +
+                  '<span class="res-tag">' + tag + '</span></div>';
+        });
+        return html;
+      };
+      document.getElementById('salon-content').innerHTML =
+        renderDay('今日', byDate(todayStr)) + renderDay('明日', byDate(tomorrowStr));
+    })
+    .catch(() => {
+      document.getElementById('salon-content').innerHTML = '<div class="err">取得に失敗しました</div>';
+    })
+    .finally(() => {
+      if (btn) { btn.disabled = false; btn.textContent = '🔄 再取得'; }
+    });
+}
+loadSalon();
+document.getElementById('salon-refresh-btn').addEventListener('click', loadSalon);
+
+// ---- フリースペース（localStorage保存） ----
+function freespaceHtml(key, label) {
+  return '<div class="freespace-wrap">' +
+    '<label class="fs-label">' + label + '</label>' +
+    '<textarea class="freespace" data-key="' + key + '" placeholder="ここに書き込めます"></textarea>' +
+    '<div class="fs-saved" id="saved-' + key + '">保存しました</div>' +
+  '</div>';
+}
+function initFreespaces() {
+  document.querySelectorAll('textarea.freespace').forEach(ta => {
+    const key = ta.dataset.key;
+    ta.value = localStorage.getItem(key) || '';
+    let t;
+    ta.addEventListener('input', () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        localStorage.setItem(key, ta.value);
+        const el = document.getElementById('saved-' + key);
+        if (el) { el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1200); }
+      }, 400);
+    });
   });
+}
 
 // ---- 魂のOS / インスタ / 動画（dashboard-status.json） ----
 fetch('dashboard-status.json?t=' + Date.now())
@@ -189,15 +247,22 @@ fetch('dashboard-status.json?t=' + Date.now())
     let soulHtml = '<span class="status-pill progress">' + s.statusLabel + '</span>';
     soulHtml += '<div style="font-size:12.5px;font-weight:700;margin-bottom:4px;">' + s.title + '</div>';
     soulHtml += '<ul class="todo-list">' + s.todos.map(t => '<li>' + t + '</li>').join('') + '</ul>';
+    soulHtml += freespaceHtml('freespace-soulos', '📝 魂のOS用メモ');
     document.getElementById('soul-content').innerHTML = soulHtml;
 
-    // インスタ
+    // インスタ（アカウントごとにフリースペースを分ける）
     let igHtml = '';
     data.instagram.accounts.forEach(a => {
+      const isMariage = a.name.indexOf('mariage') !== -1;
+      const isSalon = a.name.indexOf('美容室') !== -1;
+      const fsKey = isMariage ? 'freespace-mariage' : isSalon ? 'freespace-salon' : null;
+      const fsLabel = isMariage ? '📝 mariage.isis用メモ' : isSalon ? '📝 美容室ISIS用メモ' : '';
       igHtml += '<div class="ig-account">' +
         '<div class="name">' + a.name + (a.handle ? ' <span style="color:var(--muted);font-weight:500;">' + a.handle + '</span>' : '') + '</div>' +
         '<div class="detail">' + a.status + ' — ' + a.detail + '</div>' +
-        '<div class="note">' + a.note + '</div></div>';
+        '<div class="note">' + a.note + '</div>' +
+        (fsKey ? freespaceHtml(fsKey, fsLabel) : '') +
+        '</div>';
     });
     document.getElementById('ig-content').innerHTML = igHtml;
 
@@ -207,6 +272,8 @@ fetch('dashboard-status.json?t=' + Date.now())
       v.compositions.map(c => '<span class="comp-chip">' + c.id + '</span>').join('') + '</div>';
     videoHtml += '<div class="video-latest">最新更新: ' + v.latestUpdate + '</div>';
     document.getElementById('video-content').innerHTML = videoHtml;
+
+    initFreespaces();
   })
   .catch(() => {
     ['soul-content','ig-content','video-content'].forEach(id => {

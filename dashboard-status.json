@@ -1,0 +1,49 @@
+{
+  "updatedAt": "2026-08-17",
+  "soulOs": {
+    "title": "魂のOS×AIマネジメント｜会員ページ",
+    "status": "in_progress",
+    "statusLabel": "本文貼り付け未確認・招待未実施",
+    "notionUrl": "",
+    "todos": [
+      "Notion本文が実際に反映されたか確認",
+      "招待（共有）の実行",
+      "カリキュラム Module 1-6 の実資料作成"
+    ]
+  },
+  "instagram": {
+    "accounts": [
+      {
+        "name": "mariage.isis（婚活）",
+        "handle": "@mariage_isis",
+        "status": "ブログ連動シリーズ継続中",
+        "detail": "ibj-blog-07（うさぎとかめ×婚活）まで作成済み",
+        "note": "影響力スコア10/20が最低スコア。母数拡大が最優先課題"
+      },
+      {
+        "name": "美容室ISIS",
+        "handle": "",
+        "status": "リールシリーズ企画中",
+        "detail": "①Before/After・③お客様の声（口コミ4.86/59件）を今週開始。②四柱推命×カットは保留",
+        "note": "広告テスト: 金土日各¥1,500(週¥4,500)を3ヶ月、4ヶ月目に効果測定"
+      }
+    ]
+  },
+  "video": {
+    "project": "/Users/hana/my-video",
+    "compositions": [
+      { "id": "MyComp", "size": "608x1080" },
+      { "id": "Konkatsu2", "size": "1080x1920" },
+      { "id": "Mariage3", "size": "608x1080" },
+      { "id": "Reel4", "size": "608x1080" },
+      { "id": "Reel5", "size": "608x1080" },
+      { "id": "Reel6", "size": "608x1080" },
+      { "id": "Reel7", "size": "608x1080" },
+      { "id": "IBJ1", "size": "544x960" },
+      { "id": "IBJ2", "size": "720x1280" },
+      { "id": "IBJ3", "size": "720x1280" },
+      { "id": "Usagi", "size": "720x1280" }
+    ],
+    "latestUpdate": "CompositionUsagi.tsx（2026-08-17）"
+  }
+}

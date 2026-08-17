@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>はなさん統合ダッシュボード</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #C75B8A;
+    --primary-light: #FAF0F5;
+    --primary-mid: #F0D0E2;
+    --primary-dark: #A8446F;
+    --bg: #F7F4F9;
+    --white: #FFFFFF;
+    --border: #E6DEF0;
+    --text: #2C1F3A;
+    --muted: #8E7DAB;
+    --gold: #C9975A;
+    --radius: 14px;
+    --shadow: 0 2px 12px rgba(60,20,80,.08);
+    --shadow-lg: 0 8px 32px rgba(60,20,80,.14);
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px;
+    padding-bottom: 40px;
+  }
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 14px 20px; box-shadow: var(--shadow);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+  .header h1 { font-size: 17px; font-weight: 800; color: var(--primary); }
+  .header .date { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .nav-links { display: flex; gap: 8px; padding: 10px 20px 0; flex-wrap: wrap; }
+  .nav-links a {
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    text-decoration: none; padding: 5px 12px; border-radius: 20px;
+    background: var(--white); border: 1px solid var(--border);
+  }
+  .nav-links a:hover { color: var(--primary); border-color: var(--primary-mid); }
+
+  .grid {
+    max-width: 1100px; margin: 20px auto 0; padding: 0 16px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;
+  }
+  .card {
+    background: var(--white); border-radius: var(--radius); border: 1px solid var(--border);
+    padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .card-title {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    font-size: 15px; font-weight: 800;
+  }
+  .card-title .icon { font-size: 18px; }
+  .card-sub { font-size: 11px; color: var(--muted); margin-top: -8px; margin-bottom: 12px; }
+
+  .res-row {
+    display: flex; align-items: center; gap: 10px; padding: 8px 0;
+    border-bottom: 1px solid var(--border); font-size: 12.5px;
+  }
+  .res-row:last-child { border-bottom: none; }
+  .res-time { font-weight: 800; color: var(--primary); width: 46px; flex-shrink: 0; }
+  .res-name { font-weight: 700; flex: 1; }
+  .res-tag {
+    font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+    background: var(--primary-mid); color: var(--primary-dark); flex-shrink: 0;
+  }
+  .day-label {
+    font-size: 11px; font-weight: 800; color: var(--muted);
+    margin: 14px 0 4px; text-transform: uppercase; letter-spacing: .3px;
+  }
+  .day-label:first-child { margin-top: 0; }
+  .empty { color: var(--muted); font-size: 12px; padding: 6px 0; }
+
+  .status-pill {
+    display: inline-block; font-size: 10px; font-weight: 800;
+    padding: 2px 9px; border-radius: 20px; margin-bottom: 8px;
+  }
+  .status-pill.progress { background: #FFF3CD; color: #8a6d1f; }
+  .status-pill.hold { background: #eee; color: #888; }
+  .status-pill.done { background: #D9F0DD; color: #2c7a3a; }
+
+  .todo-list { list-style: none; margin-top: 6px; }
+  .todo-list li {
+    font-size: 12px; padding: 4px 0 4px 18px; position: relative; color: var(--text);
+  }
+  .todo-list li::before { content: "○"; position: absolute; left: 0; color: var(--gold); }
+
+  .ig-account { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .ig-account:last-child { border-bottom: none; }
+  .ig-account .name { font-weight: 800; font-size: 13px; }
+  .ig-account .detail { font-size: 12px; color: var(--text); margin-top: 3px; }
+  .ig-account .note { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .comp-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .comp-chip {
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 8px;
+    background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary-mid);
+  }
+  .video-latest { font-size: 11px; color: var(--muted); margin-top: 10px; }
+
+  .loading { color: var(--muted); font-size: 12px; }
+  .err { color: #b83c3c; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>はなさん統合ダッシュボード</h1>
+  <div class="date" id="today-label"></div>
+</div>
+<div class="nav-links">
+  <a href="index.html">📅 予約管理</a>
+  <a href="https://www.instagram.com/mariage_isis/" target="_blank">📸 mariage.isis</a>
+  <a href="https://hana8730.github.io/seimitsu-seikaku-shindan/" target="_blank">🔗 婚活LP</a>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span>サロンボード予約</div>
+    <div class="card-sub">sb-sync.json を自動取得（今日・明日）</div>
+    <div id="salon-content" class="loading">読み込み中…</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🧠</span>魂のOS × AIマネジメント</div>
+    <div id="soul-content" class="loading">読み込み中…</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📸</span>インスタ企画</div>
+    <div id="ig-content" class="loading">読み込み中…</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎬</span>縦長動画（Remotion）</div>
+    <div id="video-content" class="loading">読み込み中…</div>
+  </div>
+
+</div>
+
+<script>
+function pad(n){ return String(n).padStart(2,'0'); }
+function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+const today = new Date();
+const tomorrow = new Date(today.getTime() + 86400000);
+const todayStr = ymd(today);
+const tomorrowStr = ymd(tomorrow);
+
+document.getElementById('today-label').textContent =
+  today.getFullYear()+'年'+(today.getMonth()+1)+'月'+today.getDate()+'日';
+
+// ---- サロンボード ----
+fetch('sb-sync.json?t=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    const res = data.reservations || [];
+    const byDate = (d) => res.filter(r => r.date === d).sort((a,b) => a.time.localeCompare(b.time));
+    const renderDay = (label, list) => {
+      let html = '<div class="day-label">' + label + '</div>';
+      if (!list.length) { html += '<div class="empty">予約なし</div>'; return html; }
+      list.forEach(r => {
+        const tag = r.reservationNo && r.reservationNo.startsWith('BF') ? 'HP' :
+                    r.reservationNo && r.reservationNo.startsWith('YG') ? '外部' : '直';
+        html += '<div class="res-row"><span class="res-time">' + r.time + '</span>' +
+                '<span class="res-name">' + r.customerName + '</span>' +
+                '<span class="res-tag">' + tag + '</span></div>';
+      });
+      return html;
+    };
+    document.getElementById('salon-content').innerHTML =
+      renderDay('今日', byDate(todayStr)) + renderDay('明日', byDate(tomorrowStr));
+  })
+  .catch(() => {
+    document.getElementById('salon-content').innerHTML = '<div class="err">取得に失敗しました</div>';
+  });
+
+// ---- 魂のOS / インスタ / 動画（dashboard-status.json） ----
+fetch('dashboard-status.json?t=' + Date.now())
+  .then(r => r.json())
+  .then(data => {
+    // 魂のOS
+    const s = data.soulOs;
+    let soulHtml = '<span class="status-pill progress">' + s.statusLabel + '</span>';
+    soulHtml += '<div style="font-size:12.5px;font-weight:700;margin-bottom:4px;">' + s.title + '</div>';
+    soulHtml += '<ul class="todo-list">' + s.todos.map(t => '<li>' + t + '</li>').join('') + '</ul>';
+    document.getElementById('soul-content').innerHTML = soulHtml;
+
+    // インスタ
+    let igHtml = '';
+    data.instagram.accounts.forEach(a => {
+      igHtml += '<div class="ig-account">' +
+        '<div class="name">' + a.name + (a.handle ? ' <span style="color:var(--muted);font-weight:500;">' + a.handle + '</span>' : '') + '</div>' +
+        '<div class="detail">' + a.status + ' — ' + a.detail + '</div>' +
+        '<div class="note">' + a.note + '</div></div>';
+    });
+    document.getElementById('ig-content').innerHTML = igHtml;
+
+    // 動画
+    const v = data.video;
+    let videoHtml = '<div class="comp-grid">' +
+      v.compositions.map(c => '<span class="comp-chip">' + c.id + '</span>').join('') + '</div>';
+    videoHtml += '<div class="video-latest">最新更新: ' + v.latestUpdate + '</div>';
+    document.getElementById('video-content').innerHTML = videoHtml;
+  })
+  .catch(() => {
+    ['soul-content','ig-content','video-content'].forEach(id => {
+      document.getElementById(id).innerHTML = '<div class="err">取得に失敗しました</div>';
+    });
+  });
+</script>
+
+</body>
+</html>

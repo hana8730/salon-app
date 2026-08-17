@@ -1806,13 +1806,13 @@ function commitReservation() {
     const i = db.reservations.findIndex(x => x.id === editResId);
     db.reservations[i] = r;
   } else {
-    // 新規予約: 同じユーザーの未来の予約を自動キャンセル（1人1予約ルール）
+    // 新規予約: 同じユーザーの未来の予約をキャンセル（1人1予約ルール・データは残す）
     const today = dateStr(new Date());
     const toCancel = db.reservations.filter(x => isOwnReservation(x) && x.date >= today);
     for (const old of toCancel) {
       if (old.fbKey) {
         _localCancelledKeys.add(old.fbKey);
-        fbDB.ref('reservations/' + old.fbKey).remove();
+        fbDB.ref('reservations/' + old.fbKey).update({ status: 'cancelled', cancelledAt: Date.now() });
       }
     }
     db.reservations = db.reservations.filter(x => !(isOwnReservation(x) && x.date >= today));

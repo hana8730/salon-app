@@ -727,7 +727,7 @@
       <div class="form-row">
         <div class="form-group">
           <label>日付 *</label>
-          <input type="date" id="res-date" max="2026-08-31" required>
+          <input type="date" id="res-date" required>
         </div>
         <div class="form-group">
           <label>開始時間 *</label>
@@ -1869,6 +1869,10 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+
+  // 日付上限: 今日から30日後を動的にセット
+  const _maxDate = new Date(); _maxDate.setDate(_maxDate.getDate() + 30);
+  document.getElementById('res-date').max = _maxDate.toISOString().slice(0,10);
 
   // ── Quick-login (前回情報)
   document.getElementById('ql-btn').addEventListener('click', () => {

@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-08-29T09:12:00.000Z",
+  "syncTime": "2026-08-29T10:43:30.000Z",
   "reservations": [
     {"date":"2026-08-31","time":"17:00","customerName":"山本 妙子 様","reservationNo":"YH01420930","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-31","time":"17:30","customerName":"島野広子 島野広子 様","reservationNo":"YH17452391","stylist":"ハナ","menu":"カットカラー","duration":90,"source":"salonboard"},
@@ -21,6 +21,7 @@
     {"date":"2026-09-03","time":"18:00","customerName":"ユウマ 様","reservationNo":"YH18121832","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-09-03","time":"19:00","customerName":"齋藤 齋藤 様","reservationNo":"YH21178619","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-09-22","time":"10:00","customerName":"栢富美 栢富美 様","reservationNo":"YH18702376","stylist":"ハナ","menu":"カットカラー","duration":90,"source":"salonboard"},
-    {"date":"2026-09-22","time":"12:30","customerName":"青山紀美子 青山紀美子 様","reservationNo":"YH18632182","stylist":"ハナ","menu":"髪質改善","duration":90,"source":"salonboard"}
+    {"date":"2026-09-22","time":"12:30","customerName":"青山紀美子 青山紀美子 様","reservationNo":"YH18632182","stylist":"ハナ","menu":"髪質改善","duration":90,"source":"salonboard"},
+    {"date":"2026-09-23","time":"14:30","customerName":"東條 香 様","reservationNo":"BF58628885","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"}
   ]
 }

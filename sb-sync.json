@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-08-29T23:41:00.000Z",
+  "syncTime": "2026-08-30T11:47:00.000Z",
   "reservations": [
     {"date":"2026-08-31","time":"17:00","customerName":"山本 妙子 様","reservationNo":"YH01420930","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-08-31","time":"17:30","customerName":"島野広子 島野広子 様","reservationNo":"YH17452391","stylist":"ハナ","menu":"カットカラー","duration":90,"source":"salonboard"},
@@ -21,10 +21,13 @@
     {"date":"2026-09-02","time":"18:00","customerName":"大野海翔 大野海翔 様","reservationNo":"YH18053322","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-09-02","time":"18:30","customerName":"戸塚 彩雪 様","reservationNo":"BF58802298","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
     {"date":"2026-09-02","time":"19:00","customerName":"李 英宏 様","reservationNo":"BF54523349","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
+    {"date":"2026-09-03","time":"17:00","customerName":"森志保 森志保 様","reservationNo":"YH21859359","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-09-03","time":"18:00","customerName":"ユウマ 様","reservationNo":"YH18121832","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
+    {"date":"2026-09-03","time":"18:30","customerName":"菅谷虎太郎 菅谷虎太郎 様","reservationNo":"YH21859436","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-09-03","time":"19:00","customerName":"齋藤 齋藤 様","reservationNo":"YH21178619","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-09-22","time":"10:00","customerName":"栢富美 栢富美 様","reservationNo":"YH18702376","stylist":"ハナ","menu":"カットカラー","duration":90,"source":"salonboard"},
     {"date":"2026-09-22","time":"12:30","customerName":"青山紀美子 青山紀美子 様","reservationNo":"YH18632182","stylist":"ハナ","menu":"髪質改善","duration":90,"source":"salonboard"},
-    {"date":"2026-09-23","time":"14:30","customerName":"東條 香 様","reservationNo":"BF58628885","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"}
+    {"date":"2026-09-23","time":"14:30","customerName":"東條 香 様","reservationNo":"BF58628885","stylist":"ハナ","menu":"","duration":60,"source":"salonboard"},
+    {"date":"2026-09-23","time":"17:00","customerName":"内野賀子 内野賀子 様","reservationNo":"YH21859280","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"}
   ]
 }

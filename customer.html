@@ -1870,8 +1870,8 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
 
-  // 日付上限: 今日から30日後を動的にセット
-  const _maxDate = new Date(); _maxDate.setDate(_maxDate.getDate() + 30);
+  // 日付上限: 来月末までを動的にセット（RSBの毎月の受付設定は当月+来月分が設定されるため、それに合わせる）
+  const _maxDate = new Date(); _maxDate.setMonth(_maxDate.getMonth() + 2, 0);
   document.getElementById('res-date').max = _maxDate.toISOString().slice(0,10);
 
   // ── Quick-login (前回情報)

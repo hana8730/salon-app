@@ -937,7 +937,11 @@ const BUSINESS_HOURS = [
   null,
   null,
 ];
-const BOOKING_CLOSED_FROM = '2026-10-01'; // 10月以降は受付停止
+// 受付停止日: 来月末の翌日から動的にセット（RSBの毎月の受付設定＝当月+来月分に合わせる）
+const BOOKING_CLOSED_FROM = (() => {
+  const d = new Date(); d.setMonth(d.getMonth() + 2, 1);
+  return d.toISOString().slice(0,10);
+})();
 // 特別休業日（日付 → 表示ラベル）
 const SPECIAL_CLOSED = {
   '2026-06-29': '上海',

@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-10-08T11:41:30.000Z",
+  "syncTime": "2026-10-08T12:01:30.000Z",
   "reservations": [
     {"date":"2026-10-08","time":"17:00","customerName":"河内 レイ子 様","reservationNo":"BF75148906","stylist":"ハナ","menu":"女性限定！デジタルパーマ＋シルエットカット15000円→9800円","duration":90,"source":"salonboard"},
     {"date":"2026-10-08","time":"18:30","customerName":"モリ 様","reservationNo":"YH37778520","stylist":"ハナ","menu":"","duration":30,"source":"salonboard"},
@@ -27,7 +27,6 @@
     {"date":"2026-10-20","time":"15:00","customerName":"山本 妙子 様","reservationNo":"YH44290894","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-10-20","time":"16:30","customerName":"澤野 陽子 様","reservationNo":"YH46874985","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-10-20","time":"19:00","customerName":"岩見 咲良 様","reservationNo":"BF78995305","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
-    {"date":"2026-10-21","time":"17:00","customerName":"松田 ひかり 様","reservationNo":"YH41040716","stylist":"ハナ","menu":"カットカラー","duration":90,"source":"salonboard"},
     {"date":"2026-10-21","time":"19:00","customerName":"飯利 彩香 様","reservationNo":"YH45614539","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-10-22","time":"17:00","customerName":"師水 佑実子 様","reservationNo":"YH46875189","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-10-27","time":"18:00","customerName":"甲斐 妙子 様","reservationNo":"BF82063542","stylist":"ハナ","menu":"【超人気！】レディースシルエットカット","duration":30,"source":"salonboard"},

@@ -937,11 +937,8 @@ const BUSINESS_HOURS = [
   null,
   null,
 ];
-// 受付停止日: 来月末の翌日から動的にセット（RSBの毎月の受付設定＝当月+来月分に合わせる）
-const BOOKING_CLOSED_FROM = (() => {
-  const d = new Date(); d.setMonth(d.getMonth() + 2, 1);
-  return d.toISOString().slice(0,10);
-})();
+// 受付停止日: RSBの「毎月の受付設定」で実際に設定済みの最終月の翌月1日（5の倍数日の同期でチェック・更新される）
+const BOOKING_CLOSED_FROM = '2026-11-01';
 // 特別休業日（日付 → 表示ラベル）
 const SPECIAL_CLOSED = {
   '2026-06-29': '上海',
@@ -1874,9 +1871,8 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 // ─── Bootstrap ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
 
-  // 日付上限: 来月末までを動的にセット（RSBの毎月の受付設定は当月+来月分が設定されるため、それに合わせる）
-  const _maxDate = new Date(); _maxDate.setMonth(_maxDate.getMonth() + 2, 0);
-  document.getElementById('res-date').max = _maxDate.toISOString().slice(0,10);
+  // 日付上限: RSBの「毎月の受付設定」で実際に設定済みの最終月の末日（5の倍数日の同期でチェック・更新される）
+  document.getElementById('res-date').max = '2026-10-31';
 
   // ── Quick-login (前回情報)
   document.getElementById('ql-btn').addEventListener('click', () => {

@@ -670,6 +670,7 @@
   <nav class="c-nav">
     <button class="c-tab active" data-view="calendar">カレンダー</button>
     <button class="c-tab" data-view="my-reservations">マイ予約ページ</button>
+    <button class="c-tab" data-view="shop">ショップ</button>
   </nav>
 
   <!-- Calendar View -->
@@ -700,6 +701,14 @@
   <div id="view-my-reservations" class="c-view">
     <div class="my-res-header"><h2>マイ予約ページ</h2></div>
     <div id="my-res-list"></div>
+  </div>
+
+  <!-- Shop View -->
+  <div id="view-shop" class="c-view">
+    <div class="my-res-empty">
+      <div class="es-icon">🛍️</div>
+      <div>ただいま作成中です</div>
+    </div>
   </div>
 
   <!-- Floating Action Button -->
@@ -1248,7 +1257,7 @@ function switchView(name) {
 function renderAll() { render(); }
 function render() {
   if (currentView === 'calendar') renderCalendar();
-  else renderMyResList();
+  else if (currentView === 'my-reservations') renderMyResList();
 }
 
 // ─── Calendar ─────────────────────────────────────────────────────────────────

@@ -1735,6 +1735,13 @@ function saveRes(e) {
   };
   if (!r.staffId || !r.menuId) { alert('スタッフとメニューを選択してください'); return; }
 
+  // 過去日付チェック（顧客は完全ブロック）
+  const todayStr3 = new Date().toISOString().slice(0,10);
+  if (r.date < todayStr3) {
+    alert('過去の日付は予約できません。');
+    return;
+  }
+
   // 営業時間チェック（顧客は完全ブロック）
   const bhCheck = getBusinessHours(r.date);
   if (!bhCheck) {
@@ -1881,6 +1888,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 日付上限: RSBの「毎月の受付設定」で実際に設定済みの最終月の末日（5の倍数日の同期でチェック・更新される）
   document.getElementById('res-date').max = '2026-11-30';
+  // 日付下限: 過去日付を選択させない
+  document.getElementById('res-date').min = new Date().toISOString().slice(0,10);
 
   // ── Quick-login (前回情報)
   document.getElementById('ql-btn').addEventListener('click', () => {
@@ -1962,7 +1971,13 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('res-menu').addEventListener('change', updateEndTimeHint);
   document.getElementById('res-staff').addEventListener('change', updateEndTimeHint);
   document.getElementById('res-date').addEventListener('change', () => {
-    const dateVal = document.getElementById('res-date').value;
+    const dateInput = document.getElementById('res-date');
+    const todayStr = new Date().toISOString().slice(0,10);
+    if (dateInput.value && dateInput.value < todayStr) {
+      alert('過去の日付は予約できません。');
+      dateInput.value = todayStr;
+    }
+    const dateVal = dateInput.value;
     const curTime = document.getElementById('res-time').value;
     populateTimeSelect(curTime, dateVal);
     updateEndTimeHint();

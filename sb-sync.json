@@ -1,5 +1,5 @@
 {
-  "syncTime": "2026-11-03T01:53:00.000Z",
+  "syncTime": "2026-11-03T08:11:00.000Z",
   "reservations": [
     {"date":"2026-11-03","time":"10:00","customerName":"近藤理与子 様","reservationNo":"YH56098799","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-11-03","time":"10:30","customerName":"坂本 利恵 様","reservationNo":"YH60687004","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
@@ -26,6 +26,7 @@
     {"date":"2026-11-17","time":"16:00","customerName":"荒木 美奈子 様","reservationNo":"YH62968293","stylist":"ハナ","menu":"","duration":90,"source":"salonboard"},
     {"date":"2026-11-18","time":"19:00","customerName":"李 英宏 様","reservationNo":"BF95664285","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
     {"date":"2026-11-19","time":"17:00","customerName":"サトウ エリカ 様","reservationNo":"BF95342689","stylist":"ハナ","menu":"【超人気！】レディースシルエットカット","duration":30,"source":"salonboard"},
-    {"date":"2026-11-19","time":"18:30","customerName":"望月 智子 様","reservationNo":"BF95050889","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"}
+    {"date":"2026-11-19","time":"18:30","customerName":"望月 智子 様","reservationNo":"BF95050889","stylist":"ハナ","menu":"シルエットカット","duration":30,"source":"salonboard"},
+    {"date":"2026-11-25","time":"17:00","customerName":"前田 安寿華 様","reservationNo":"YH63262232","stylist":"ハナ","menu":"カットカラー","duration":90,"source":"salonboard"}
   ]
 }
